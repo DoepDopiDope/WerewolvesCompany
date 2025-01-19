@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using WerewolvesCompany.Patches;
 
 namespace WerewolvesCompany
 {
     [BepInPlugin(modGUID, modName, modVersion)]
     public class WerewolvesCompanyBase : BaseUnityPlugin
     {
-        private const string modGUID = "Doep.WerewolvesCompany";
-        private const string modName = "WerewolvesCompany";
-        private const string modVersion = "1.0.0.0";
+        public const string modGUID = "Doep.WerewolvesCompany";
+        public const string modName = "WerewolvesCompany";
+        public const string modVersion = "1.0.0.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
         private static WerewolvesCompanyBase Instance;
 
-        internal ManualLogSource mls;
+        public static ManualLogSource mls;
 
         void Awake()
         {
@@ -34,6 +35,7 @@ namespace WerewolvesCompany
             mls.LogInfo("WerewolvesCompany has awaken.");
 
             harmony.PatchAll(typeof(WerewolvesCompanyBase));
+            harmony.PatchAll(typeof(StartOfRoundPatch));
         }
     }
 }
