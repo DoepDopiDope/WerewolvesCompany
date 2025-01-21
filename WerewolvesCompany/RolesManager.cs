@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using Unity.Netcode;
 using UnityEngine;
+using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany
 {
@@ -97,16 +99,18 @@ namespace WerewolvesCompany
             for (int i = 0; i<Nplayers;i++)
             {
                 GameObject player = allPlayers[i];
-                ulong playerId = player.GetComponent<PlayerControllerB>().playerClientId;
+                ulong playerId = player.GetComponent<PlayerControllerB>().actualClientId;
                 string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
                 logger.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
 
                 playersIds.Add(playerId);
             }
 
+            
+
             //foreach (GameObject player in allPlayers)
             //{
-            //    ulong playerId = player.GetComponent<PlayerControllerB>().playerClientId;
+            //    ulong playerId = player.GetComponent<PlayerControllerB>().actualClientId;
             //    string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
             //    logger.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
 
@@ -120,6 +124,7 @@ namespace WerewolvesCompany
             finalRoles = new Dictionary<ulong, Role>();
             for (int i = 0; i < Nplayers; i++)
             {
+                logger.LogInfo($"{playersIds[i]} {roles[i]}");
                 finalRoles.Add(playersIds[i], roles[i]);
             }
 

@@ -32,11 +32,11 @@ namespace WerewolvesCompany.Patches
         }
 
 
-
         [HarmonyPostfix]
         [HarmonyPatch("SetShipDoorsClosed")]
         static void SendPlayersTheirRole(StartOfRound __instance)
         {
+
             // Verify that this is the host, so that it does not send roles multiple times
             if (!(__instance.IsHost || __instance.IsServer))
             {
@@ -51,12 +51,23 @@ namespace WerewolvesCompany.Patches
             finalRoles = rolesManager.BuildFinalRolesFromScratch();
             logger.LogInfo("==== Roles generation has finished ==== ");
 
-
+            logger.LogInfo($"{finalRoles}");
             logger.LogInfo("==== Starting to send roles to each player ==== ");
             // Send the role to each player
             foreach (var item in finalRoles)
             {
-                NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Key, item.Value);
+                logger.LogInfo($"Trying to send role {item.Value} to player id {item.Key}");
+
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { item.Key }
+                    }
+                };
+                logger.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
+                logger.LogInfo("Invoking the SendRoleClientRpc method");
+                NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value, clientRpcParams);
             }
             logger.LogInfo("==== Finished sending roles to each player ==== ");
 

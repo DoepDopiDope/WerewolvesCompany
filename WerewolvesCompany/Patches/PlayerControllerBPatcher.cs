@@ -1,4 +1,5 @@
-﻿using GameNetcodeStuff;
+﻿using BepInEx.Logging;
+using GameNetcodeStuff;
 using HarmonyLib;
 using WerewolvesCompany.Managers;
 
@@ -7,6 +8,7 @@ namespace WerewolvesCompany.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatcher
     {
+        static public ManualLogSource logger = Plugin.instance.logger;
 
         [HarmonyPrefix]
         [HarmonyPatch("KillPlayer")]
@@ -33,5 +35,21 @@ namespace WerewolvesCompany.Patches
                 NetworkManagerWerewolvesCompany.Instance.RequestDeathNotificationServerRpc(__instance.playerClientId);
             }
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("Crouch")]
+        static void SimpleTipDisplay(PlayerControllerB __instance)
+        {
+            logger.LogInfo("Calling for a Simple Tip display");
+            if (__instance.IsHost || __instance.IsServer)
+            {
+                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayClientRpc();
+            }
+            else
+            {
+                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayClientRpc();
+            }
+        }
+
     }
 }

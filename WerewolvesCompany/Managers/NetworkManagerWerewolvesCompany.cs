@@ -30,6 +30,7 @@ namespace WerewolvesCompany.Managers
             DeathNotificationClientRpc(id);
         }
 
+
         [ClientRpc]
         public void DeathNotificationClientRpc(ulong id)
         {
@@ -40,30 +41,51 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        // Send Roles to players
-        [ServerRpc(RequireOwnership = false)]
-        public void SendRoleServerRpc(ulong id, Role role)
+        [ClientRpc]
+        public void SimpleTipDisplayClientRpc()
         {
-            SendRoleClientRpc(id, role);
+            logger.LogInfo("Displaying a simple tip");
+            HUDManager.Instance.DisplayTip("Test Header", "Test Text");
+            logger.LogInfo("Displayed a simple tip");
         }
 
-        [ClientRpc]
-        public void SendRoleClientRpc(ulong id, Role role)
-        {
-            //HUDManager.Instance.DisplayTip("Test", "Message received");
 
+        // Send Roles to players
+        //[ServerRpc(RequireOwnership = false)]
+        //public void SendRoleServerRpc(Role role)
+        //{
+        //    SendRoleClientRpc(role);
+        //}
+
+        [ClientRpc]
+        public void SendRoleClientRpc(Role role, ClientRpcParams clientRpcParams = default)
+        {
+            logger.LogInfo("Testing if I received the command");
+            HUDManager.Instance.DisplayTip("Test", "Message received");
+
+            logger.LogInfo("Grab the PlayerControllerB instance");
             PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 
-            if (!(player.playerClientId == id))
-            {
-                return;
-            }
+            //if (!(player.playerClientId == id))
+            //{
+            //    logger.LogInfo($"Skipping : Current player id {player.playerClientId}, Target id {id}, role {role}");
+            //    return;
+            //}
 
+            
+            logger.LogInfo("Grab the playerUsername from the HUDManager instance");
+            //string playerName = HUDManager.Instance.localPlayer.playerUsername;
             string playerName = player.playerUsername;
-            string roleName = role.roleName;
-            logger.LogInfo($"Sending role {roleName} to player {playerName}");
 
-            HUDManager.Instance.DisplayTip($"To {playerName}",$"Your role is {roleName}");
+            logger.LogInfo("Grab the role name from the role name itself");
+            string roleName = role.roleName;
+
+            logger.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
+            HUDManager.Instance.DisplayTip($"To {playerName}", $"Your role is {roleName}");
+
+            logger.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
+
+            
         }
         
     }
