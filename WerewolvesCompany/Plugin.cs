@@ -1,41 +1,85 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx;
-using BepInEx.Logging;
+﻿
+
+﻿using BepInEx;
 using HarmonyLib;
-using WerewolvesCompany.Patches;
+using WerewolvesCompany.Managers;
+using System.IO;
+using System.Reflection;
+using UnityEngine;
+using BepInEx.Logging;
 
 namespace WerewolvesCompany
 {
-    [BepInPlugin(modGUID, modName, modVersion)]
-    public class WerewolvesCompanyBase : BaseUnityPlugin
+    [BepInPlugin(GUID, NAME, VERSION)]
+    public class Plugin : BaseUnityPlugin
     {
-        public const string modGUID = "Doep.WerewolvesCompany";
-        public const string modName = "WerewolvesCompany";
-        public const string modVersion = "1.0.0.0";
+        const string GUID = "doep.WerewolvesCompany";
+        const string NAME = "WerewolvesCompany";
+        const string VERSION = "0.0.1";
 
-        private readonly Harmony harmony = new Harmony(modGUID);
+        private readonly Harmony harmony = new Harmony(GUID);
 
-        private static WerewolvesCompanyBase Instance;
+        public static Plugin instance;
 
-        public static ManualLogSource mls;
+        public GameObject netManagerPrefab;
+
+        public ManualLogSource logger;
+
+        public System.Random rng;
 
         void Awake()
         {
-            if (Instance == null)
+            // Does stuff for the netcode stuff
+            var types = Assembly.GetExecutingAssembly().GetTypes();
+            foreach (var type in types)
             {
-                Instance = this;
+                var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+                foreach (var method in methods)
+                {
+                    var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
+                    if (attributes.Length > 0)
+                    {
+                        method.Invoke(null, null);
+                    }
+                }
             }
 
-            mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
+            instance = this;
 
-            mls.LogInfo("WerewolvesCompany has awaken.");
+            string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "netcodemod");
+            AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
 
-            harmony.PatchAll(typeof(WerewolvesCompanyBase));
-            harmony.PatchAll(typeof(StartOfRoundPatch));
+            netManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/NetworkManagerWerewolvesCompany.prefab");
+            netManagerPrefab.AddComponent<NetworkManagerWerewolvesCompany>();
+
+            harmony.PatchAll();
+
+            // Initiate the logger
+            logger = BepInEx.Logging.Logger.CreateLogSource(GUID);
+            logger.LogInfo("Patched network Tutorial");
+
+
+            // Initiate the random number generator
+            rng = new System.Random();
+
+            // Iniate roles for testing
+            Role werewolf = new Werewolf();
+            Role villager = new Villager();
+
+            werewolf.PerformRoleAction();
+            villager.PerformRoleAction();
+
+            logger.LogInfo(rng.Next(10).ToString());
+
+        }
+
+        void Start()
+        {
+            Role werewolf = new Werewolf();
+            Role villager = new Villager();
+
+            werewolf.PerformRoleAction();
+            villager.PerformRoleAction();
         }
     }
 }
