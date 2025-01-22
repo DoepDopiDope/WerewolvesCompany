@@ -9,8 +9,8 @@ namespace WerewolvesCompany.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class PlayerControllerBPatcher
     {
-        static public ManualLogSource logger = Plugin.instance.logger;
-        static public ManualLogSource logdebug = Plugin.instance.logdebug;
+        static public ManualLogSource logger = Plugin.Instance.logger;
+        static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         [HarmonyPrefix]
         [HarmonyPatch("KillPlayer")]

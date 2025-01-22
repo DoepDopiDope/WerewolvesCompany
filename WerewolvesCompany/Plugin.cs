@@ -1,6 +1,4 @@
-﻿
-
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
 using WerewolvesCompany.Managers;
 using System.IO;
@@ -20,7 +18,7 @@ namespace WerewolvesCompany
 
         private readonly Harmony harmony = new Harmony(GUID);
 
-        public static Plugin instance;
+        public static Plugin Instance;
 
         public GameObject netManagerPrefab;
 
@@ -46,37 +44,76 @@ namespace WerewolvesCompany
                 }
             }
 
-            instance = this;
+            Logger.LogInfo("Plugin is initializing...");
 
-            string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "netcodemod");
-            AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
+            // Assign the plugin Instance
+            Instance = this;
 
-            netManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/NetworkManagerWerewolvesCompany.prefab");
-            netManagerPrefab.AddComponent<NetworkManagerWerewolvesCompany>();
-
-            harmony.PatchAll();
-
-            // Initiate the logger
+            // Setup logging
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
 
-            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
-            
+            // Patch the game using Harmony
+            harmony.PatchAll();
 
-            // Initiate the random number generator
+            // Initialize the random number generator
             rng = new System.Random();
 
-            // Initiate the Role Manager object
-            if (RolesManager.Instance == null)
+            // Load asset bundle for NetworkManagerWerewolvesCompany
+            string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "netcodemod");
+            AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
+            netManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/NetworkManagerWerewolvesCompany.prefab");
+            netManagerPrefab.AddComponent<NetworkManagerWerewolvesCompany>();
+
+            // Create a persistent ModManager to handle game initialization
+            GameObject modManagerObject = new GameObject("ModManager");
+            modManagerObject.AddComponent<ModManager>();
+            DontDestroyOnLoad(modManagerObject);
+
+            Logger.LogInfo("ModManager has been initialized.");
+        }
+    }
+
+    public class ModManager : MonoBehaviour
+    {
+        public static ModManager Instance { get; private set; }
+
+        void Awake()
+        {
+            // Singleton pattern to ensure only one Instance of ModManager exists
+            if (Instance != null)
             {
-                logdebug.LogInfo("RolesManager is null, therefore making it");
-                var rolesManagerGameObject = new GameObject("RolesManager");
-                rolesManagerGameObject.AddComponent<RolesManager>();
-                logger.LogInfo("RolesManager dynamically created in Start()");
+                Destroy(gameObject);
+                return;
             }
 
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
 
-            // Iniate roles for testing
+            // Initialize the RolesManager
+            if (RolesManager.Instance == null)
+            {
+                Plugin.Instance.logdebug.LogInfo("RolesManager is null, creating it.");
+                GameObject rolesManagerObject = new GameObject("RolesManager");
+                rolesManagerObject.AddComponent<RolesManager>();
+                Plugin.Instance.logger.LogInfo("RolesManager has been created.");
+            }
+
+            Plugin.Instance.logger.LogInfo("ModManager: Awake() called. Initialization started.");
+        }
+
+        void Start()
+        {
+            Plugin.Instance.logger.LogInfo("ModManager is setting up the game...");
+
+
+
+            // Add the HUDInitializer
+            GameObject hudInitializerObject = new GameObject("HUDInitializer");
+            hudInitializerObject.AddComponent<HUDInitializer>();
+            Plugin.Instance.logger.LogInfo("HUDInitializer has been added to the scene.");
+
+            // Example: Initialize some roles for testing
             Role werewolf = new Werewolf();
             Role villager = new Villager();
             Role witch = new Witch();
@@ -87,15 +124,10 @@ namespace WerewolvesCompany
             witch.PerformRoleAction();
             seer.PerformRoleAction();
 
-        }
-
-        void Start()
-        {
-            logdebug.LogMessage(" ===============================  I am the Plugin and I am runnint Start() ===============================");
-
-            // Add the HUDInitializer to the scene
-            GameObject hudInitializerObject = new GameObject("HUDInitializer");
-            hudInitializerObject.AddComponent<HUDInitializer>();
+            Plugin.Instance.logger.LogInfo("ModManager setup is complete.");
         }
     }
 }
+
+
+

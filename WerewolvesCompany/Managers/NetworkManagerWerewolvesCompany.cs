@@ -17,8 +17,8 @@ namespace WerewolvesCompany.Managers
     {
         public static NetworkManagerWerewolvesCompany Instance;
 
-        public ManualLogSource logger = Plugin.instance.logger;
-        public ManualLogSource logdebug = Plugin.instance.logdebug;
+        public ManualLogSource logger = Plugin.Instance.logger;
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         void Awake()
         {
@@ -70,6 +70,7 @@ namespace WerewolvesCompany.Managers
         public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
         {
             // Retrieve the role
+            logdebug.LogInfo($"Received roleInt {roleInt}");
             Role role = References.references()[roleInt];
             logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
 

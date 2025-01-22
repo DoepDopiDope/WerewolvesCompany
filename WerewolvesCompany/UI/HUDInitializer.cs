@@ -5,8 +5,8 @@ namespace WerewolvesCompany.UI
 {
     public class HUDInitializer : MonoBehaviour
     {
-        public ManualLogSource logger = Plugin.instance.logger;
-        public ManualLogSource logdebug = Plugin.instance.logdebug;
+        public ManualLogSource logger = Plugin.Instance.logger;
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         void Start()
         {

@@ -15,10 +15,10 @@ namespace WerewolvesCompany.Managers
 {
     internal class RolesManager : MonoBehaviour
     {
-        public ManualLogSource logger = Plugin.instance.logger;
-        public ManualLogSource logdebug = Plugin.instance.logdebug;
+        public ManualLogSource logger = Plugin.Instance.logger;
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
-        public System.Random rng = Plugin.instance.rng;
+        public System.Random rng = Plugin.Instance.rng;
         public static RolesManager Instance;
 
         public Role myRole { get; set; } = new Role();

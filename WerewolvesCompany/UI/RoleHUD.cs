@@ -11,8 +11,8 @@ namespace WerewolvesCompany.UI
 {
     internal class RoleHUD : MonoBehaviour
     {
-        public ManualLogSource logger = Plugin.instance.logger;
-        public ManualLogSource logdebug = Plugin.instance.logdebug;
+        public ManualLogSource logger = Plugin.Instance.logger;
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         private GameObject canvasObject;
         private Text roleNameText;

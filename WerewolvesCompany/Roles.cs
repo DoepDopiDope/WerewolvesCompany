@@ -31,7 +31,7 @@ namespace WerewolvesCompany
 
     public class Role
     {
-        public ManualLogSource logger = Plugin.instance.logger;
+        public ManualLogSource logger = Plugin.Instance.logger;
         
 
         public virtual string roleName { get; }

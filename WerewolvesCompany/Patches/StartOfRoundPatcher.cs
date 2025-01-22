@@ -15,8 +15,8 @@ namespace WerewolvesCompany.Patches
     [HarmonyPatch(typeof(StartOfRound))]
     internal class StartOfRoundPatcher
     {
-        static public ManualLogSource logger = Plugin.instance.logger;
-        static public ManualLogSource logdebug = Plugin.instance.logdebug;
+        static public ManualLogSource logger = Plugin.Instance.logger;
+        static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         //static public RolesManager rolesManager = new RolesManager();
 
@@ -28,7 +28,7 @@ namespace WerewolvesCompany.Patches
         {
             if (__instance.IsHost)
             {
-                GameObject go = GameObject.Instantiate(Plugin.instance.netManagerPrefab);
+                GameObject go = GameObject.Instantiate(Plugin.Instance.netManagerPrefab);
                 go.GetComponent<NetworkObject>().Spawn();
             }
         }
@@ -68,6 +68,11 @@ namespace WerewolvesCompany.Patches
                     }
                 };
                 logdebug.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
+                
+
+                Utils.PrintDictionary<ulong, Role>(finalRoles);
+                logdebug.LogInfo($"{item.Value.refInt}");
+
                 logdebug.LogInfo("Invoking the SendRoleClientRpc method");
                 NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }

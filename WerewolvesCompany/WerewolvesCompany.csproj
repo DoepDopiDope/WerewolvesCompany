@@ -94,6 +94,7 @@
     <Compile Include="UI\RoleHUD.cs" />
     <Compile Include="Roles.cs" />
     <Compile Include="Managers\RolesManager.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
