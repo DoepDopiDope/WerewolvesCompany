@@ -65,9 +65,13 @@ namespace WerewolvesCompany
             // Iniate roles for testing
             Role werewolf = new Werewolf();
             Role villager = new Villager();
+            Role witch = new Witch();
+            Role seer = new Seer();
 
             werewolf.PerformRoleAction();
             villager.PerformRoleAction();
+            witch.PerformRoleAction();
+            seer.PerformRoleAction();
 
             logger.LogInfo(rng.Next(10).ToString());
 

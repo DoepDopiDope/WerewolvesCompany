@@ -7,21 +7,37 @@ using System.Reflection;
 using UnityEngine;
 using BepInEx.Logging;
 using HarmonyLib.Tools;
+using System.Collections.Generic;
+using UnityEngine.Jobs;
 
 
 
 
 namespace WerewolvesCompany
 {
+    public class References
+    {
+        public static Dictionary<int, Role> references()
+        {
+            Dictionary<int, Role> dic = new Dictionary<int, Role>();
+            dic.Add(0, new Werewolf());
+            dic.Add(1, new Villager());
+            dic.Add(2, new Witch());
+            dic.Add(3, new Seer());
+
+            return dic;
+        }
+    }
+
     public class Role
     {
         public ManualLogSource logger = Plugin.instance.logger;
+        
+        public virtual string roleName { get; }
+        public virtual int refInt { get; }
 
-        public string roleName { get; set; }
-
-        public Role(string roleFullName)
+        public Role()
         {
-            roleName = roleFullName;
             
         }
 
@@ -36,11 +52,13 @@ namespace WerewolvesCompany
 
     public class Werewolf : Role
     {
-        public Werewolf() : base("Werewolf") { }
+        public override string roleName => "Werewolf";
+        public override int refInt => 0;
+        public Werewolf() : base() { }
 
         public override void PerformRoleAction()
         {
-            logger.LogInfo("The Werewolf is hunting!");
+            logger.LogInfo($"The {roleName} is hunting!");
 
         }
     }
@@ -48,33 +66,39 @@ namespace WerewolvesCompany
 
     public class Villager : Role
     {
-        public Villager() : base("Villager") { }
+        public override string roleName => "Villager";
+        public override int refInt => 1;
+        public Villager() : base() { }
 
         public override void PerformRoleAction()
         {
-            logger.LogInfo("The Villager is staying safe.");
+            logger.LogInfo($"The {roleName} is staying safe.");
         }
     }
 
 
     public class Witch : Role
     {
-        public Witch() : base("Witch") { }
+        public override string roleName => "Witch";
+        public override int refInt => 2;
+        public Witch() : base() { }
 
         public override void PerformRoleAction()
         {
-            logger.LogInfo("The Witch is staying safe.");
+            logger.LogInfo($"The {roleName} is making potions.");
         }
     }
 
 
     public class Seer : Role
     {
-        public Seer() : base("Seer") { }
+        public override string roleName => "Seer";
+        public override int refInt => 3;
+        public Seer() : base() { }
 
         public override void PerformRoleAction()
         {
-            logger.LogInfo("The Seer is staying safe.");
+            logger.LogInfo($"The {roleName} is omniscient.");
         }
     }
 }

@@ -58,9 +58,18 @@ namespace WerewolvesCompany.Managers
         //}
 
         [ClientRpc]
-        public void SendRoleClientRpc(Role role, ClientRpcParams clientRpcParams = default)
+        public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
         {
+
+            Dictionary<int, Role> references;
+            Role role;
+            
+            references = References.references();
+            role = references[roleInt];
+
+
             logger.LogInfo("Testing if I received the command");
+            logger.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
             HUDManager.Instance.DisplayTip("Test", "Message received");
 
             logger.LogInfo("Grab the PlayerControllerB instance");

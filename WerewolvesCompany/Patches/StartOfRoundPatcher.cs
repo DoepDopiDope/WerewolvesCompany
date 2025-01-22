@@ -67,7 +67,7 @@ namespace WerewolvesCompany.Patches
                 };
                 logger.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
                 logger.LogInfo("Invoking the SendRoleClientRpc method");
-                NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value, clientRpcParams);
+                NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
             logger.LogInfo("==== Finished sending roles to each player ==== ");
 
