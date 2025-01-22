@@ -11,14 +11,14 @@ namespace WerewolvesCompany.UI
 {
     internal class RoleHUD : MonoBehaviour
     {
-        public static RoleHUD Instance;
+        public RoleHUD Instance;
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
-        private GameObject canvasObject;
-        private Text roleNameText;
-        private Image roleIconImage;
+        public Canvas canvas;
+        public Text roleText;
+        public Image roleIcon;
 
         void Awake()
         {
@@ -50,67 +50,86 @@ namespace WerewolvesCompany.UI
 
         private void CreateRoleHUD()
         {
-            // Create Canvas
-            canvasObject = new GameObject("RoleHUDCanvas");
-            Canvas canvas = canvasObject.AddComponent<Canvas>();
+            // Create the canvas
+            canvas = new GameObject("RoleHUDCanvas").AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            DontDestroyOnLoad(canvas.gameObject);
 
-            // Scale the Canvas to screen size
-            CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            // Create a parent GameObject to hold the image and text
+            GameObject container = new GameObject("RoleContainer");
+            container.transform.SetParent(canvas.transform);
 
-            canvasObject.AddComponent<GraphicRaycaster>();
+            // Add Horizontal Layout Group to the container
+            HorizontalLayoutGroup layoutGroup = container.AddComponent<HorizontalLayoutGroup>();
+            layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+            layoutGroup.spacing = 10; // Space between image and text
+            layoutGroup.padding = new RectOffset(10, 10, 10, 10); // Add padding
 
-            // Create a Text element for the role name
-            GameObject textObject = new GameObject("RoleNameText");
-            textObject.transform.SetParent(canvasObject.transform); // Attach the textObject to the Canvas
+            // Configure RectTransform of the container
+            RectTransform containerTransform = container.GetComponent<RectTransform>();
+            containerTransform.anchorMin = new Vector2(0.5f, 1f); // Center top
+            containerTransform.anchorMax = new Vector2(0.5f, 1f); // Center top
+            containerTransform.pivot = new Vector2(0.5f, 1f);      // Pivot around top-center
+            containerTransform.anchoredPosition = new Vector2(0, -50); // Offset 50 units down from the top
+            containerTransform.sizeDelta = new Vector2(500, 100); // Offset 50 units down from the top
 
-            // Fill the textObject with the Role Name
-            roleNameText = textObject.AddComponent<Text>();
-            roleNameText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            roleNameText.fontSize = 24;
-            roleNameText.alignment = TextAnchor.MiddleCenter;
-            roleNameText.color = Color.white;
+            // Create a GameObject for the role image
+            GameObject imageObject = new GameObject("RoleImage");
+            imageObject.transform.SetParent(container.transform);
+            roleIcon = imageObject.AddComponent<Image>();
+            roleIcon.color = Color.white; // Default color
 
-            // Position and size the text
-            RectTransform textRect = textObject.GetComponent<RectTransform>();
-            textRect.sizeDelta = new Vector2(300, 50);
-            textRect.anchoredPosition = new Vector2(0, -50); // Adjust position as needed
+            // Load a placeholder image (replace "your-image-path" with your actual image path or asset)
+            Sprite placeholderSprite = Resources.Load<Sprite>("placeholder-image");
+            if (placeholderSprite != null)
+            {
+                roleIcon.sprite = placeholderSprite;
+            }
 
-            // Create an Image element for the role icon
-            GameObject imageObject = new GameObject("RoleIconImage");
-            imageObject.transform.SetParent(canvasObject.transform);
+            // Configure RectTransform of the image
+            RectTransform imageTransform = roleIcon.GetComponent<RectTransform>();
+            imageTransform.sizeDelta = new Vector2(50, 50); // Set image size (adjust as needed)
 
-            // Attach the actual role Icon to the imageObject
-            roleIconImage = imageObject.AddComponent<Image>();
-            roleIconImage.color = Color.white; // Set default color
+            // Create a GameObject for the role text
+            GameObject textObject = new GameObject("RoleText");
+            textObject.transform.SetParent(container.transform);
+            roleText = textObject.AddComponent<Text>();
+            roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            roleText.text = "Role: Unknown";
+            roleText.alignment = TextAnchor.MiddleLeft;
+            roleText.fontSize = 24;
+            roleText.color = Color.white;
 
-            // Position and size the image
-            RectTransform imageRect = imageObject.GetComponent<RectTransform>();
-            imageRect.sizeDelta = new Vector2(50, 50);
-            imageRect.anchoredPosition = new Vector2(0, 0); // Adjust position as needed
+            // Configure RectTransform of the text
+            RectTransform textTransform = roleText.GetComponent<RectTransform>();
+            textTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
+            textTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
+            textTransform.anchorMax = new Vector2(0, 0.5f);
+            textTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
+
         }
 
         public void UpdateRoleDisplay(Role role)
         {
-            if (canvasObject == null)
+            if (canvas == null)
             {
                 CreateRoleHUD();
             }
-            logdebug.LogInfo($"Updating display at layer = {canvasObject.GetComponent<Canvas>().sortingOrder}");
-            if (roleNameText != null)
+
+            logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
+            if (roleText != null)
             {
-                roleNameText.text = role.roleName;
+                roleText.text = role.roleName;
             }
 
-            if (roleIconImage != null && role.roleIcon != null)
+            if (roleIcon != null && role.roleIcon != null)
             {
-                roleIconImage.sprite = role.roleIcon;
-                roleIconImage.enabled = true;
+                roleIcon.sprite = role.roleIcon;
+                roleIcon.enabled = true;
             }
             else
             {
-                roleIconImage.enabled = false;
+                roleIcon.enabled = false;
             }
         }
     }

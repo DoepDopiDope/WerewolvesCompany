@@ -38,18 +38,36 @@ namespace WerewolvesCompany.Patches
             }
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch("Start")]
-        static void InitiateRole(PlayerControllerB __instance)
-        {
-            Role role = new Werewolf();
-        }
+
+        //[HarmonyPostfix]
+        //[HarmonyPatch("Crouch")]
+        //static void SwapShipDoors(PlayerControllerB __instance)
+        //{
+        //    if (__instance.IsHost || __instance.IsServer)
+        //    {
+        //        //NetworkManagerWerewolvesCompany.Instance.SwapShipDoorsClientRpc();
+        //        StartOfRound.Instance.SetDoorsClosedClientRpc(StartOfRound.Instance.hangarDoorsClosed);
+        //    }
+        //    else
+        //    {
+        //        //NetworkManagerWerewolvesCompany.Instance.SwapShipDoorsServerRpc();
+        //        StartOfRound.Instance.SetDoorsClosedServerRpc(StartOfRound.Instance.hangarDoorsClosed);
+        //    }
+
+        //}
 
         [HarmonyPostfix]
         [HarmonyPatch("Crouch")]
         static void DisplayRoleToolTip(PlayerControllerB __instance)
         {
             RolesManager.Instance.DisplayRoleToolTip();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("Start")]
+        static void InitiateRole(PlayerControllerB __instance)
+        {
+            Role role = new Werewolf();
         }
 
     }

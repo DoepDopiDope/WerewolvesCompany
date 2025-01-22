@@ -101,7 +101,19 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
         }
 
-        
-        
+        //[ServerRpc(RequireOwnership =false)]
+        //public void SwapShipDoorsServerRpc()
+        //{
+        //    SwapShipDoorsClientRpc();
+        //}
+
+        //[ClientRpc]
+        //public void SwapShipDoorsClientRpc()
+        //{
+        //    StartOfRound.Instance.SetShipDoorsClosed(StartOfRound.Instance.hangarDoorsClosed);
+        //}
+
+
+
     }
 }
