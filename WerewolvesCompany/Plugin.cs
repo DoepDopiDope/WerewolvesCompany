@@ -1,12 +1,13 @@
 ﻿
 
-﻿using BepInEx;
+using BepInEx;
 using HarmonyLib;
 using WerewolvesCompany.Managers;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
 using BepInEx.Logging;
+using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany
 {
@@ -90,11 +91,11 @@ namespace WerewolvesCompany
 
         void Start()
         {
-            Role werewolf = new Werewolf();
-            Role villager = new Villager();
+            logdebug.LogMessage(" ===============================  I am the Plugin and I am runnint Start() ===============================");
 
-            werewolf.PerformRoleAction();
-            villager.PerformRoleAction();
+            // Add the HUDInitializer to the scene
+            GameObject hudInitializerObject = new GameObject("HUDInitializer");
+            hudInitializerObject.AddComponent<HUDInitializer>();
         }
     }
 }

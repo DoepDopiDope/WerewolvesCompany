@@ -9,6 +9,7 @@ using GameNetcodeStuff;
 using HarmonyLib.Tools;
 using Unity.Netcode;
 using UnityEngine;
+using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Managers
 {
@@ -68,19 +69,25 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
         {
-
-            Dictionary<int, Role> references;
-            Role role;
-            
-            references = References.references();
-            role = references[roleInt];
-
-            logdebug.LogInfo("Testing if I received the command");
+            // Retrieve the role
+            Role role = References.references()[roleInt];
             logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
 
-            // Set the role
+
+            // Assign the player's role
             RolesManager.Instance.myRole = role;
             logdebug.LogInfo("I have succesfully set my own role");
+
+            // Display the tooltip for the role
+            RolesManager.Instance.DisplayRoleToolTip();
+            logdebug.LogInfo("I have successfully displayed my Role tooltip");
+
+            // Locate the RoleHUD and update it
+            RoleHUD roleHUD = FindObjectOfType<RoleHUD>();
+            if (roleHUD != null)
+            {
+                roleHUD.UpdateRoleDisplay(role);
+            }
 
             string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
             string roleName = RolesManager.Instance.myRole.roleName;

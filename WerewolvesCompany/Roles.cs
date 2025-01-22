@@ -38,6 +38,7 @@ namespace WerewolvesCompany
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
         public virtual string roleDescription { get; }
+        public virtual Sprite roleIcon => null; // Default icon (null if none)
 
         public Role()
         {
