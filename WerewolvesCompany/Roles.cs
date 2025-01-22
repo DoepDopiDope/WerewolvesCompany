@@ -33,8 +33,11 @@ namespace WerewolvesCompany
     {
         public ManualLogSource logger = Plugin.instance.logger;
         
+
         public virtual string roleName { get; }
         public virtual int refInt { get; }
+        public virtual string winCondition { get; }
+        public virtual string roleDescription { get; }
 
         public Role()
         {
@@ -54,6 +57,9 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Werewolf";
         public override int refInt => 0;
+        public override string winCondition => "You win by killing all Villagers";
+        public override string roleDescription => "You have the ability to kill other players";
+
         public Werewolf() : base() { }
 
         public override void PerformRoleAction()
@@ -68,6 +74,9 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Villager";
         public override int refInt => 1;
+        public override string winCondition => "You win by killing the Werewolves";
+        public override string roleDescription => "You do not have any special ability";
+
         public Villager() : base() { }
 
         public override void PerformRoleAction()
@@ -81,6 +90,9 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Witch";
         public override int refInt => 2;
+        public override string winCondition => "You win by killing the Werewolves";
+        public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
+
         public Witch() : base() { }
 
         public override void PerformRoleAction()
@@ -94,6 +106,9 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Seer";
         public override int refInt => 3;
+        public override string winCondition => "You win by killing the Werewolves";
+        public override string roleDescription => "You have the ability to see a player's role";
+
         public Seer() : base() { }
 
         public override void PerformRoleAction()

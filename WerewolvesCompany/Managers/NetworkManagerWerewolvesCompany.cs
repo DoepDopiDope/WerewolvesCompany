@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,36 +75,26 @@ namespace WerewolvesCompany.Managers
             references = References.references();
             role = references[roleInt];
 
-
             logdebug.LogInfo("Testing if I received the command");
             logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
-            HUDManager.Instance.DisplayTip("Test", "Message received");
 
-            logdebug.LogInfo("Grab the PlayerControllerB instance");
-            PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
+            // Set the role
+            RolesManager.Instance.myRole = role;
+            logdebug.LogInfo("I have succesfully set my own role");
 
-            //if (!(player.playerClientId == id))
-            //{
-            //    logger.LogInfo($"Skipping : Current player id {player.playerClientId}, Target id {id}, role {role}");
-            //    return;
-            //}
+            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
+            string roleName = RolesManager.Instance.myRole.roleName;
+            logdebug.LogInfo("I have succesfully grabbed my playerName and my roleName");
 
-            
-            logdebug.LogInfo("Grab the playerUsername from the HUDManager instance");
-            //string playerName = HUDManager.Instance.localPlayer.playerUsername;
-            string playerName = player.playerUsername;
+            // Display the tooltip
+            RolesManager.Instance.DisplayRoleToolTip();
+            logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
-            logdebug.LogInfo("Grab the role name from the role name itself");
-            string roleName = role.roleName;
-
-            logdebug.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
-            HUDManager.Instance.DisplayTip($"To {playerName}", $"Your role is {roleName}");
-
-            logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
-
-            
+            logger.LogInfo($"I have received the role {roleName}");
+            logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
         }
 
+        
         
     }
 }

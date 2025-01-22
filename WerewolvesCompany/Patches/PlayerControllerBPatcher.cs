@@ -1,6 +1,7 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using JetBrains.Annotations;
 using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany.Patches
@@ -38,18 +39,18 @@ namespace WerewolvesCompany.Patches
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch("Crouch")]
-        static void SimpleTipDisplay(PlayerControllerB __instance)
+        [HarmonyPatch("Start")]
+        static void InitiateRole(PlayerControllerB __instance)
         {
-            logdebug.LogInfo("Calling for a Simple Tip display");
-            if (__instance.IsHost || __instance.IsServer)
-            {
-                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayServerRpc();
-            }
-            else
-            {
-                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayClientRpc();
-            }
+            Role role = new Werewolf();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("Crouch")]
+        static void DisplayRoleToolTip(PlayerControllerB __instance)
+        {
+            logdebug.LogInfo("Displaying my role tooltip");
+            RolesManager.Instance.DisplayRoleToolTip();
         }
 
     }

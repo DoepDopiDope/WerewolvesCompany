@@ -59,7 +59,7 @@ namespace WerewolvesCompany
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
 
-            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
             
 
             // Initiate the random number generator

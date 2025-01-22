@@ -21,9 +21,11 @@ namespace WerewolvesCompany
         public System.Random rng = Plugin.instance.rng;
         public static RolesManager Instance;
 
+        public Role myRole { get; set; } = new Role();
         void Awake()
         {
             Instance = this;
+            myRole = new Role();
         }
 
         // Automatically gathers the number of players
@@ -133,7 +135,36 @@ namespace WerewolvesCompany
             return finalRoles;
         }
 
+        public Role DisplayRoleToolTip()
+        {
+            logdebug.LogInfo("Grabbing my Role");
+            Role role = RolesManager.Instance.myRole;
+            logdebug.LogInfo("Grab the PlayerControllerB instance");
+            PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 
+
+
+            //if (!(player.playerClientId == id))
+            //{
+            //    logger.LogInfo($"Skipping : Current player id {player.playerClientId}, Target id {id}, role {role}");
+            //    return;
+            //}
+
+
+            logdebug.LogInfo("Grab the playerUsername from the HUDManager instance");
+            //string playerName = HUDManager.Instance.localPlayer.playerUsername;
+            string playerName = player.playerUsername;
+
+            logdebug.LogInfo("Grab the role name from the role name itself");
+            string roleName = role.roleName;
+            string winCondition = role.winCondition;
+            string roleDescription = role.roleDescription;
+
+            logdebug.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
+            HUDManager.Instance.DisplayTip($"You are a {roleName}", $"{winCondition}\n{roleDescription}");
+            return role;
+
+        }
 
 
     }
