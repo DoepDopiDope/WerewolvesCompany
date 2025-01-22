@@ -96,9 +96,7 @@ namespace WerewolvesCompany
                 return;
             }
 
-            // Initialize the RolesManager
-            InitializeRolesManager();
-            logger.LogInfo($"ModManager: Awake() called. GameObject active: {gameObject.activeSelf}");
+            
             logger.LogInfo("ModManager: Awake() called. Initialization started.");
 
             // Run the Start() manually, I cannot figure out why it won't Start() on its own
@@ -111,6 +109,7 @@ namespace WerewolvesCompany
         void Start()
         {
             // Add the HUDInitializer
+            InitializeRolesManager();
             InitializeHUD();
             //GameObject hudInitializerObject = new GameObject("HUDInitializer");
             //hudInitializerObject.AddComponent<HUDInitializer>();
@@ -142,7 +141,7 @@ namespace WerewolvesCompany
             {
                 GameObject rolesManagerObject = new GameObject("RolesManager");
                 rolesManagerObject.AddComponent<RolesManager>();
-                Plugin.Instance.logger.LogInfo("RolesManager has been created.");
+                Plugin.Instance.logger.LogInfo("RolesManager has been recreated.");
             }
 
         }

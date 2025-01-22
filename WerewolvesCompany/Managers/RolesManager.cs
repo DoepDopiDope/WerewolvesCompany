@@ -11,17 +11,22 @@ using Unity.Netcode;
 using UnityEngine;
 using WerewolvesCompany.Managers;
 
+using UnityEngine.InputSystem;
+
 namespace WerewolvesCompany.Managers
 {
     internal class RolesManager : MonoBehaviour
     {
+        public RolesManager Instance;
+
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         public System.Random rng = Plugin.Instance.rng;
-        public static RolesManager Instance;
+        
 
         public Role myRole { get; set; } = new Role();
+
 
         void Awake()
         {
@@ -32,6 +37,7 @@ namespace WerewolvesCompany.Managers
             }
             else
             {
+                logger.LogInfo("Duplicate detected, delted the just-created RolesManager");
                 Destroy(gameObject); // Prevent duplicate instances
             }
         }
@@ -41,12 +47,24 @@ namespace WerewolvesCompany.Managers
             logger.LogError($"{name} has been destroyed!");
         }
 
+
+        void Update()
+        {
+
+            
+           
+        }
+
+
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
         {
             //return GenerateRoles(StartOfRound.Instance.allPlayerObjects.Length);
             return GenerateRoles(GameNetworkManager.Instance.connectedPlayers);
         }
+
+        
+
 
         // Specified number of players
         public List<Role> GenerateRoles(int totalPlayers)
@@ -152,7 +170,7 @@ namespace WerewolvesCompany.Managers
         {
             logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
-            Role role = RolesManager.Instance.myRole;
+            Role role = myRole;
             logdebug.LogInfo("Grab the PlayerControllerB instance");
             PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 

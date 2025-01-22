@@ -76,11 +76,14 @@ namespace WerewolvesCompany.Managers
 
 
             // Assign the player's role
-            RolesManager.Instance.myRole = role;
+            RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
+            roleManagerObject.myRole = role;
+            
+
             logdebug.LogInfo("I have succesfully set my own role");
 
             // Display the tooltip for the role
-            RolesManager.Instance.DisplayRoleToolTip();
+            roleManagerObject.DisplayRoleToolTip();
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
             // Locate the RoleHUD and update it
@@ -97,7 +100,7 @@ namespace WerewolvesCompany.Managers
             }
 
             string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            string roleName = RolesManager.Instance.myRole.roleName;
+            string roleName = roleManagerObject.myRole.roleName;
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
         }
 

@@ -3,6 +3,7 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using JetBrains.Annotations;
 using WerewolvesCompany.Managers;
+using WerewolvesCompany;
 
 namespace WerewolvesCompany.Patches
 {
@@ -60,7 +61,11 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("Crouch")]
         static void DisplayRoleToolTip(PlayerControllerB __instance)
         {
-            RolesManager.Instance.DisplayRoleToolTip();
+            //RolesManager rolesManager = new RolesManager();
+            //rolesManager.DisplayRoleToolTip();
+            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+            roleManagerObject.DisplayRoleToolTip();
+
         }
 
         [HarmonyPostfix]

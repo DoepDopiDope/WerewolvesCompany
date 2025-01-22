@@ -220,3 +220,4 @@ G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany.old\WerewolvesCompan
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany.old\WerewolvesCompany\obj\Debug\WerewolvesCompany.csproj.CoreCompileInputs.cache
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany.old\WerewolvesCompany\obj\Debug\Werewolv.2E23CB22.Up2Date
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany.old\WerewolvesCompany\obj\Debug\WerewolvesCompany.dll
+G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\bin\Debug\Unity.InputSystem.ForUI.dll

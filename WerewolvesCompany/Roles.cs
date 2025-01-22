@@ -9,6 +9,8 @@ using BepInEx.Logging;
 using HarmonyLib.Tools;
 using System.Collections.Generic;
 using UnityEngine.Jobs;
+using UnityEngine.Windows;
+
 
 
 
@@ -32,7 +34,7 @@ namespace WerewolvesCompany
     public class Role
     {
         public ManualLogSource logger = Plugin.Instance.logger;
-        
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         public virtual string roleName { get; }
         public virtual int refInt { get; }
@@ -44,6 +46,8 @@ namespace WerewolvesCompany
         {
             
         }
+        
+        
 
         public virtual void PerformRoleAction()
         {
