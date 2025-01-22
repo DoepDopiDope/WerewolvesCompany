@@ -16,6 +16,7 @@ namespace WerewolvesCompany.Managers
         public static NetworkManagerWerewolvesCompany Instance;
 
         public ManualLogSource logger = Plugin.instance.logger;
+        public ManualLogSource logdebug = Plugin.instance.logdebug;
 
         void Awake()
         {
@@ -41,12 +42,18 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        [ServerRpc(RequireOwnership = false)]
+        public void SimpleTipDisplayServerRpc()
+        {
+            SimpleTipDisplayClientRpc();
+        }
+
         [ClientRpc]
         public void SimpleTipDisplayClientRpc()
         {
-            logger.LogInfo("Displaying a simple tip");
+            logdebug.LogInfo("Displaying a simple tip");
             HUDManager.Instance.DisplayTip("Test Header", "Test Text");
-            logger.LogInfo("Displayed a simple tip");
+            logdebug.LogInfo("Displayed a simple tip");
         }
 
 
@@ -68,11 +75,11 @@ namespace WerewolvesCompany.Managers
             role = references[roleInt];
 
 
-            logger.LogInfo("Testing if I received the command");
-            logger.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
+            logdebug.LogInfo("Testing if I received the command");
+            logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
             HUDManager.Instance.DisplayTip("Test", "Message received");
 
-            logger.LogInfo("Grab the PlayerControllerB instance");
+            logdebug.LogInfo("Grab the PlayerControllerB instance");
             PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 
             //if (!(player.playerClientId == id))
@@ -82,20 +89,21 @@ namespace WerewolvesCompany.Managers
             //}
 
             
-            logger.LogInfo("Grab the playerUsername from the HUDManager instance");
+            logdebug.LogInfo("Grab the playerUsername from the HUDManager instance");
             //string playerName = HUDManager.Instance.localPlayer.playerUsername;
             string playerName = player.playerUsername;
 
-            logger.LogInfo("Grab the role name from the role name itself");
+            logdebug.LogInfo("Grab the role name from the role name itself");
             string roleName = role.roleName;
 
-            logger.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
+            logdebug.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
             HUDManager.Instance.DisplayTip($"To {playerName}", $"Your role is {roleName}");
 
-            logger.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
+            logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
 
             
         }
+
         
     }
 }

@@ -16,6 +16,8 @@ namespace WerewolvesCompany
     internal class RolesManager
     {
         public ManualLogSource logger = Plugin.instance.logger;
+        public ManualLogSource logdebug = Plugin.instance.logdebug;
+
         public System.Random rng = Plugin.instance.rng;
         public static RolesManager Instance;
 
@@ -70,7 +72,7 @@ namespace WerewolvesCompany
             List<ulong> playersIds;
 
 
-            logger.LogInfo("Getting the list of all connected players");
+            logdebug.LogInfo("Getting the list of all connected players");
             // Get list of all players
             int Nplayers = GameNetworkManager.Instance.connectedPlayers;
 
@@ -82,18 +84,18 @@ namespace WerewolvesCompany
                 string name = allPlayers[i].GetComponent<PlayerControllerB>().playerUsername;
                 stringnames += $"{name}";
             }
-            logger.LogInfo(stringnames);
+            logdebug.LogInfo(stringnames);
             //allPlayers = StartOfRound.Instance.allPlayerObjects;
 
-            logger.LogInfo("Generate the roles");
+            logdebug.LogInfo("Generate the roles");
             // Generate the roles
             roles = GenerateRoles();
 
-            logger.LogInfo("Shuffle the roles");
+            logdebug.LogInfo("Shuffle the roles");
             // Shuffle the roles
             ShuffleRoles(roles);
 
-            logger.LogInfo("Get the list of players client Ids");
+            logdebug.LogInfo("Get the list of players client Ids");
             // Get the list of players Client Ids
             playersIds = new List<ulong>();
             for (int i = 0; i<Nplayers;i++)
@@ -101,7 +103,7 @@ namespace WerewolvesCompany
                 GameObject player = allPlayers[i];
                 ulong playerId = player.GetComponent<PlayerControllerB>().actualClientId;
                 string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
-                logger.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
+                logdebug.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
 
                 playersIds.Add(playerId);
             }
@@ -118,13 +120,13 @@ namespace WerewolvesCompany
             //}
 
 
-            logger.LogInfo("Associate each client Id with a role");
+            logdebug.LogInfo("Associate each client Id with a role");
             // Associate each Client Id with a role
             Dictionary<ulong, Role> finalRoles;
             finalRoles = new Dictionary<ulong, Role>();
             for (int i = 0; i < Nplayers; i++)
             {
-                logger.LogInfo($"{playersIds[i]} {roles[i]}");
+                logdebug.LogInfo($"{playersIds[i]} {roles[i]}");
                 finalRoles.Add(playersIds[i], roles[i]);
             }
 

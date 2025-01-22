@@ -16,6 +16,8 @@ namespace WerewolvesCompany.Patches
     internal class StartOfRoundPatcher
     {
         static public ManualLogSource logger = Plugin.instance.logger;
+        static public ManualLogSource logdebug = Plugin.instance.logdebug;
+
         //static public RolesManager rolesManager = new RolesManager();
 
 
@@ -43,20 +45,20 @@ namespace WerewolvesCompany.Patches
                 return;
             }
 
-            logger.LogInfo(" ==== Roles generation has started ====");
+            logger.LogInfo("Roles generation has started");
             // Build roles
             Dictionary<ulong, Role> finalRoles;
 
             RolesManager rolesManager = new RolesManager();
             finalRoles = rolesManager.BuildFinalRolesFromScratch();
-            logger.LogInfo("==== Roles generation has finished ==== ");
+            logger.LogInfo("Roles generation has finished");
 
-            logger.LogInfo($"{finalRoles}");
-            logger.LogInfo("==== Starting to send roles to each player ==== ");
+            logdebug.LogInfo($"{finalRoles}");
+            logger.LogInfo("Sending roles to each player");
             // Send the role to each player
             foreach (var item in finalRoles)
             {
-                logger.LogInfo($"Trying to send role {item.Value} to player id {item.Key}");
+                logdebug.LogInfo($"Trying to send role {item.Value} to player id {item.Key}");
 
                 ClientRpcParams clientRpcParams = new ClientRpcParams
                 {
@@ -65,11 +67,11 @@ namespace WerewolvesCompany.Patches
                         TargetClientIds = new ulong[] { item.Key }
                     }
                 };
-                logger.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
-                logger.LogInfo("Invoking the SendRoleClientRpc method");
+                logdebug.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
+                logdebug.LogInfo("Invoking the SendRoleClientRpc method");
                 NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
-            logger.LogInfo("==== Finished sending roles to each player ==== ");
+            logger.LogInfo("Finished sending roles to each player");
 
 
             //if (__instance.IsHost || __instance.IsServer)

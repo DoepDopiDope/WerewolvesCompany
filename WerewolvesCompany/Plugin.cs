@@ -24,6 +24,7 @@ namespace WerewolvesCompany
         public GameObject netManagerPrefab;
 
         public ManualLogSource logger;
+        public ManualLogSource logdebug;
 
         public System.Random rng;
 
@@ -55,9 +56,11 @@ namespace WerewolvesCompany
             harmony.PatchAll();
 
             // Initiate the logger
-            logger = BepInEx.Logging.Logger.CreateLogSource(GUID);
-            logger.LogInfo("Patched network Tutorial");
+            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
+            logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
 
+            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            
 
             // Initiate the random number generator
             rng = new System.Random();

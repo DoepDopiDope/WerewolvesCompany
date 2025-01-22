@@ -9,6 +9,7 @@ namespace WerewolvesCompany.Patches
     internal class PlayerControllerBPatcher
     {
         static public ManualLogSource logger = Plugin.instance.logger;
+        static public ManualLogSource logdebug = Plugin.instance.logdebug;
 
         [HarmonyPrefix]
         [HarmonyPatch("KillPlayer")]
@@ -40,10 +41,10 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("Crouch")]
         static void SimpleTipDisplay(PlayerControllerB __instance)
         {
-            logger.LogInfo("Calling for a Simple Tip display");
+            logdebug.LogInfo("Calling for a Simple Tip display");
             if (__instance.IsHost || __instance.IsServer)
             {
-                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayClientRpc();
+                NetworkManagerWerewolvesCompany.Instance.SimpleTipDisplayServerRpc();
             }
             else
             {
