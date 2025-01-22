@@ -65,6 +65,16 @@ namespace WerewolvesCompany
             // Initiate the random number generator
             rng = new System.Random();
 
+            // Initiate the Role Manager object
+            if (RolesManager.Instance == null)
+            {
+                logdebug.LogInfo("RolesManager is null, therefore making it");
+                var rolesManagerGameObject = new GameObject("RolesManager");
+                rolesManagerGameObject.AddComponent<RolesManager>();
+                logger.LogInfo("RolesManager dynamically created in Start()");
+            }
+
+
             // Iniate roles for testing
             Role werewolf = new Werewolf();
             Role villager = new Villager();
@@ -75,8 +85,6 @@ namespace WerewolvesCompany
             villager.PerformRoleAction();
             witch.PerformRoleAction();
             seer.PerformRoleAction();
-
-            logger.LogInfo(rng.Next(10).ToString());
 
         }
 

@@ -75,18 +75,18 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roles.cs" />
-    <Compile Include="RolesManager.cs" />
+    <Compile Include="Managers\RolesManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-  <PostBuildEvent>echo Copying DLL
+    <PostBuildEvent>echo Copying DLL
 copy /Y "$(TargetDir)$(ProjectName).dll" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll"
 </PostBuildEvent>
   </PropertyGroup>
-<Target Name="NetcodePatch" BeforeTargets="PostBuildEvent">
-    <Exec Command="netcode-patch -nv 1.5.2 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
-</Target>
+  <Target Name="NetcodePatch" BeforeTargets="PostBuildEvent">
+    <Exec Command="netcode-patch -nv 1.5.2 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
+  </Target>
 </Project>

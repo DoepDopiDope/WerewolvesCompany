@@ -49,7 +49,6 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("Crouch")]
         static void DisplayRoleToolTip(PlayerControllerB __instance)
         {
-            logdebug.LogInfo("Displaying my role tooltip");
             RolesManager.Instance.DisplayRoleToolTip();
         }
 

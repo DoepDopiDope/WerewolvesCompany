@@ -11,9 +11,9 @@ using Unity.Netcode;
 using UnityEngine;
 using WerewolvesCompany.Managers;
 
-namespace WerewolvesCompany
+namespace WerewolvesCompany.Managers
 {
-    internal class RolesManager
+    internal class RolesManager : MonoBehaviour
     {
         public ManualLogSource logger = Plugin.instance.logger;
         public ManualLogSource logdebug = Plugin.instance.logdebug;
@@ -22,11 +22,20 @@ namespace WerewolvesCompany
         public static RolesManager Instance;
 
         public Role myRole { get; set; } = new Role();
+
         void Awake()
         {
-            Instance = this;
-            myRole = new Role();
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
+            }
+            else
+            {
+                Destroy(gameObject); // Prevent duplicate instances
+            }
         }
+
 
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
@@ -137,6 +146,7 @@ namespace WerewolvesCompany
 
         public Role DisplayRoleToolTip()
         {
+            logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
             Role role = RolesManager.Instance.myRole;
             logdebug.LogInfo("Grab the PlayerControllerB instance");
