@@ -27,7 +27,7 @@ namespace WerewolvesCompany.Managers
 
         public Role myRole { get; set; } = new Role();
 
-
+        
         void Awake()
         {
             if (Instance == null)
