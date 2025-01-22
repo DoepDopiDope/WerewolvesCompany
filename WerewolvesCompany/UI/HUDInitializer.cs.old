@@ -1,12 +1,33 @@
 ﻿using BepInEx.Logging;
 using UnityEngine;
+using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany.UI
 {
     public class HUDInitializer : MonoBehaviour
     {
+        public static HUDInitializer Instance;
+
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
+        
+        void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
+            }
+            else
+            {
+                logger.LogInfo("Duplicate detected, delted the just-created RoleInitializer");
+                Destroy(gameObject); // Prevent duplicate instances
+            }
+
+            logger.LogInfo("Manually Starting the HUDInitializer");
+            Start();
+        }
+
 
         void Start()
         {
@@ -18,6 +39,12 @@ namespace WerewolvesCompany.UI
 
             logdebug.LogInfo("roleHUDObject has the following properties:");
             logdebug.LogInfo($"-- roleHUDObject.activeSelf = {roleHUDObject.activeSelf}");
+        }
+
+
+        void OnDestroy()
+        {
+            logger.LogError($"{name} has been destroyed!");
         }
     }
 }

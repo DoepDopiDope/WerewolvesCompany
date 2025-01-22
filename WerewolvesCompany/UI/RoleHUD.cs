@@ -11,6 +11,8 @@ namespace WerewolvesCompany.UI
 {
     internal class RoleHUD : MonoBehaviour
     {
+        public static RoleHUD Instance;
+
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
@@ -18,11 +20,32 @@ namespace WerewolvesCompany.UI
         private Text roleNameText;
         private Image roleIconImage;
 
+        void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
+            }
+            else
+            {
+                logger.LogInfo("Duplicate detected, delted the just-created RoleHUD");
+                Destroy(gameObject); // Prevent duplicate instances
+            }
+
+            logger.LogInfo("Manually Starting the RoleHUD");
+            Start();
+        }
         void Start()
         {
-            logger.LogInfo("Creating the RoleHUD");
-            CreateRoleHUD();
-            logger.LogInfo("RoleHUD has been created");
+            //logger.LogInfo("Creating the RoleHUD");
+            //CreateRoleHUD();
+            //logger.LogInfo("RoleHUD has been created");
+        }
+
+        void OnDestroy()
+        {
+            //logger.LogError($"{name} has been destroyed!");
         }
 
         private void CreateRoleHUD()
@@ -70,6 +93,10 @@ namespace WerewolvesCompany.UI
 
         public void UpdateRoleDisplay(Role role)
         {
+            if (canvasObject == null)
+            {
+                CreateRoleHUD();
+            }
             logdebug.LogInfo($"Updating display at layer = {canvasObject.GetComponent<Canvas>().sortingOrder}");
             if (roleNameText != null)
             {

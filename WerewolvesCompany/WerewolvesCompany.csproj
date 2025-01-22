@@ -84,7 +84,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\HUDInitializer.cs" />
+    <None Include="UI\HUDInitializer.cs.old" />
     <Compile Include="Managers\NetworkManagerWerewolvesCompany.cs" />
     <Compile Include="Patches\GameNetworkManagerPatcher.cs" />
     <Compile Include="Patches\PlayerControllerBPatcher.cs" />

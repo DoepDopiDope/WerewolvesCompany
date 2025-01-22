@@ -84,21 +84,20 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
             // Locate the RoleHUD and update it
+            logdebug.LogInfo("Trying to update HUD");
             RoleHUD roleHUD = FindObjectOfType<RoleHUD>();
             if (roleHUD != null)
             {
+                logger.LogInfo("Update the HUD with the role");
                 roleHUD.UpdateRoleDisplay(role);
+            }
+            else
+            {
+                logger.LogInfo("Did not find the HUD");
             }
 
             string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
             string roleName = RolesManager.Instance.myRole.roleName;
-            logdebug.LogInfo("I have succesfully grabbed my playerName and my roleName");
-
-            // Display the tooltip
-            RolesManager.Instance.DisplayRoleToolTip();
-            logdebug.LogInfo("I have successfully displayed my Role tooltip");
-
-            logger.LogInfo($"I have received the role {roleName}");
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
         }
 

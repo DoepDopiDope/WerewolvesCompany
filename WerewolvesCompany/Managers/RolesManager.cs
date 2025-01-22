@@ -36,6 +36,10 @@ namespace WerewolvesCompany.Managers
             }
         }
 
+        void OnDestroy()
+        {
+            logger.LogError($"{name} has been destroyed!");
+        }
 
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
@@ -176,6 +180,8 @@ namespace WerewolvesCompany.Managers
 
         }
 
+
+        
 
     }
     

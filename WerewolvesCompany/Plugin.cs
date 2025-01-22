@@ -6,6 +6,8 @@ using System.Reflection;
 using UnityEngine;
 using BepInEx.Logging;
 using WerewolvesCompany.UI;
+using HarmonyLib.Tools;
+using UnityEngine.SceneManagement;
 
 namespace WerewolvesCompany
 {
@@ -44,7 +46,6 @@ namespace WerewolvesCompany
                 }
             }
 
-            Logger.LogInfo("Plugin is initializing...");
 
             // Assign the plugin Instance
             Instance = this;
@@ -52,7 +53,7 @@ namespace WerewolvesCompany
             // Setup logging
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
-
+            logger.LogInfo("Plugin is initializing...");
             // Patch the game using Harmony
             harmony.PatchAll();
 
@@ -66,52 +67,54 @@ namespace WerewolvesCompany
             netManagerPrefab.AddComponent<NetworkManagerWerewolvesCompany>();
 
             // Create a persistent ModManager to handle game initialization
+            logger.LogInfo("Plugin.Awake() is creating ModManager.");
             GameObject modManagerObject = new GameObject("ModManager");
             modManagerObject.AddComponent<ModManager>();
             DontDestroyOnLoad(modManagerObject);
-
-            Logger.LogInfo("ModManager has been initialized.");
+            Plugin.Instance.logger.LogInfo("ModManager GameObject created.");   
         }
     }
 
     public class ModManager : MonoBehaviour
     {
         public static ModManager Instance { get; private set; }
+        public ManualLogSource logger = Plugin.Instance.logger;
+        public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         void Awake()
         {
             // Singleton pattern to ensure only one Instance of ModManager exists
-            if (Instance != null)
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+                SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to scene
+            }
+            else
             {
                 Destroy(gameObject);
                 return;
             }
 
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
             // Initialize the RolesManager
-            if (RolesManager.Instance == null)
-            {
-                Plugin.Instance.logdebug.LogInfo("RolesManager is null, creating it.");
-                GameObject rolesManagerObject = new GameObject("RolesManager");
-                rolesManagerObject.AddComponent<RolesManager>();
-                Plugin.Instance.logger.LogInfo("RolesManager has been created.");
-            }
+            InitializeRolesManager();
+            logger.LogInfo($"ModManager: Awake() called. GameObject active: {gameObject.activeSelf}");
+            logger.LogInfo("ModManager: Awake() called. Initialization started.");
 
-            Plugin.Instance.logger.LogInfo("ModManager: Awake() called. Initialization started.");
+            // Run the Start() manually, I cannot figure out why it won't Start() on its own
+            logger.LogInfo("Manually initializing the ModManager");
+            Start();
+            logger.LogInfo("ModManager setup is complete.");
         }
+
 
         void Start()
         {
-            Plugin.Instance.logger.LogInfo("ModManager is setting up the game...");
-
-
-
             // Add the HUDInitializer
-            GameObject hudInitializerObject = new GameObject("HUDInitializer");
-            hudInitializerObject.AddComponent<HUDInitializer>();
-            Plugin.Instance.logger.LogInfo("HUDInitializer has been added to the scene.");
+            InitializeHUD();
+            //GameObject hudInitializerObject = new GameObject("HUDInitializer");
+            //hudInitializerObject.AddComponent<HUDInitializer>();
+            //logger.LogInfo("HUDInitializer has been added to the scene.");
 
             // Example: Initialize some roles for testing
             Role werewolf = new Werewolf();
@@ -124,8 +127,37 @@ namespace WerewolvesCompany
             witch.PerformRoleAction();
             seer.PerformRoleAction();
 
-            Plugin.Instance.logger.LogInfo("ModManager setup is complete.");
         }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            Plugin.Instance.logger.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
+            InitializeHUD();
+            InitializeRolesManager();
+        }
+
+        private void InitializeRolesManager()
+        {
+            if (FindObjectOfType<RolesManager>() == null)
+            {
+                GameObject rolesManagerObject = new GameObject("RolesManager");
+                rolesManagerObject.AddComponent<RolesManager>();
+                Plugin.Instance.logger.LogInfo("RolesManager has been created.");
+            }
+
+        }
+
+        private void InitializeHUD()
+        {
+            if (FindObjectOfType<RoleHUD>() == null)
+            {
+                GameObject roleHUDObject = new GameObject("RoleHUD");
+                roleHUDObject.AddComponent<RoleHUD>();
+                logger.LogInfo("RoleHUD has been recreated.");
+            }
+        }
+
+
     }
 }
 
