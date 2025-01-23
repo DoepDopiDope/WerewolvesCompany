@@ -13,6 +13,7 @@ using WerewolvesCompany.Managers;
 
 using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
+using static UnityEngine.InputSystem.Layouts.InputControlLayout;
 
 namespace WerewolvesCompany.Managers
 {
@@ -57,7 +58,7 @@ namespace WerewolvesCompany.Managers
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
             logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
             if (!keyContext.performed) return;
-            myRole.PerformRoleAction();
+            PerformRoleActionServerRpc();
         }
 
         public override void OnDestroy()
@@ -73,6 +74,8 @@ namespace WerewolvesCompany.Managers
             
            
         }
+
+        
 
 
         // Cast ray to check if a player
@@ -238,6 +241,87 @@ namespace WerewolvesCompany.Managers
         }
 
 
+
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Performing Role Action logic
+
+        [ServerRpc(RequireOwnership = false)]
+        public void PerformRoleActionServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong senderId = serverRpcParams.Receive.SenderClientId;
+            Role senderRole = allRoles[senderId];
+            logdebug.LogInfo($"Received action request from Player Id : {senderId}");
+
+            // Build the ClientRpcParams to answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+            
+            if (senderRole.IsAllowedToPerformAction()) // If can perform action, then perform it
+            {
+                PerformRoleActionClientRpc(clientRpcParams); 
+            }
+
+            else // Else, notify the sender that he cannot perform his action yet
+            {
+                CannotPerformThisActionYetClientRpc(clientRpcParams); 
+            }
+        }
+
+
+        [ClientRpc]
+        public void PerformRoleActionClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            myRole.GenericPerformRoleAction();
+        }
+
+
+        [ClientRpc]
+        public void CannotPerformThisActionYetClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            HUDManager.Instance.DisplayTip($"{myRole.roleName}", "You cannot perform this action yet");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SuccessFullyPerformedRoleActionServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} role action on cooldown");
+            ulong senderId = serverRpcParams.Receive.SenderClientId;
+            allRoles[senderId].SetRoleOnCooldown();
+
+            // Build the ClientRpcParams to answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+            logdebug.LogInfo("Sending the caller the order to set his role on cooldown");
+            SuccessFullyPerformedRoleActionClientRpc(clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void SuccessFullyPerformedRoleActionClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            logdebug.LogInfo("Setting my role action on cooldown");
+            myRole.SetRoleOnCooldown();
+        }
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Specific Roles Actions
+
         [ServerRpc(RequireOwnership = false)]
         public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
         {
@@ -265,6 +349,7 @@ namespace WerewolvesCompany.Managers
 
         }
 
+
         [ClientRpc]
         public void CheckRoleClientRpc(int refInt, string playerName, ClientRpcParams clientRpcParams = default)
         {
@@ -274,8 +359,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Reversed the refInt into a Role");
             new Seer().DisplayCheckedRole(role, playerName);
         }
-
     }
-    
+       
 }
 
