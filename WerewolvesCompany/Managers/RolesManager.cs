@@ -73,8 +73,17 @@ namespace WerewolvesCompany.Managers
         public void OnRoleKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
-            logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
+            
             if (!keyContext.performed) return;
+
+            if (!myRole.IsLocallyAllowedToPerformAction()) 
+            {
+                logdebug.LogInfo("I am not locally allowed to perform this my Role Action");
+                return;
+            }
+            
+            logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
+
             PerformRoleActionServerRpc();
         }
 
@@ -113,8 +122,8 @@ namespace WerewolvesCompany.Managers
 
             mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
+            logdebug.LogInfo($"The interact range value is {InteractRange.Value}");
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
-
             foreach (RaycastHit hit in pushRay)
             {
                 if (hit.transform.gameObject != playerObject)
@@ -167,10 +176,11 @@ namespace WerewolvesCompany.Managers
             List<Role> roles = new List<Role>();
 
             // Example logic: One Werewolf and the rest are Villagers
+            roles.Add(new Werewolf());
             roles.Add(new Seer());
-            for (int i = 1; i < totalPlayers; i++)
+            for (int i = 2; i < totalPlayers; i++)
             {
-                roles.Add(new Werewolf());
+                roles.Add(new Villager());
             }
 
             return roles;
@@ -249,7 +259,7 @@ namespace WerewolvesCompany.Managers
             return finalRoles;
         }
 
-        public Role DisplayRoleToolTip()
+        public Role DisplayMyRolePopUp()
         {
             logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
@@ -289,8 +299,13 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I have succesfully set my own role");
 
             // Display the tooltip for the role
-            DisplayRoleToolTip();
+            DisplayMyRolePopUp();
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
+
+            // Update my own role
+            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
+            string roleName = myRole.roleName;
+
 
             // Locate the RoleHUD and update it
             logdebug.LogInfo("Trying to update HUD");
@@ -305,8 +320,6 @@ namespace WerewolvesCompany.Managers
                 logger.LogInfo("Did not find the HUD");
             }
 
-            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            string roleName = myRole.roleName;
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
         }
 
@@ -350,6 +363,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void PerformRoleActionClientRpc(ClientRpcParams clientRpcParams = default)
         {
+
             myRole.GenericPerformRoleAction();
         }
 

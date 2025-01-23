@@ -45,22 +45,28 @@ namespace WerewolvesCompany
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
         public ulong? targetInRange { get; set; }
-
+        public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName}";}  }
+        public virtual string roleActionKey { get { return "K"; } }
+        public virtual string roleActionName { get { return "Action Name"; } }
 
         public Role()
         {
             
         }
         
-        
+        public virtual bool IsLocallyAllowedToPerformAction()
+        {
+            return true;
+        }
+
         public virtual bool IsAllowedToPerformAction()
         {
-            logger.LogWarning("Action is allowed by default as no requirements for it were implemented");
             return true;
         }
 
         public void GenericPerformRoleAction()
         {
+
             bool flag = false;
             try
             {
@@ -112,8 +118,15 @@ namespace WerewolvesCompany
         public override int refInt => 0;
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
+        public override string roleActionName => "Kill";
 
         public Werewolf() : base() { }
+
+        public override bool IsLocallyAllowedToPerformAction()
+        {
+            if (targetInRange == null) return false;
+            return true;
+        }
 
         public override void PerformRoleAction()
         {
@@ -124,6 +137,7 @@ namespace WerewolvesCompany
             roleManagerObject.WerewolfKillPlayerServerRpc(targetId);
 
         }
+
         
     }
 
@@ -134,6 +148,7 @@ namespace WerewolvesCompany
         public override int refInt => 1;
         public override string winCondition => "You win by killing the Werewolves";
         public override string roleDescription => "You do not have any special ability";
+        public override string roleActionText => "";
 
         public Villager() : base() { }
 
@@ -150,6 +165,7 @@ namespace WerewolvesCompany
         public override int refInt => 2;
         public override string winCondition => "You win by killing the Werewolves";
         public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
+        public override string roleActionName => "NotImplemented";
 
         public Witch() : base() { }
 
@@ -166,8 +182,15 @@ namespace WerewolvesCompany
         public override int refInt => 3;
         public override string winCondition => "You win by killing the Werewolves";
         public override string roleDescription => "You have the ability to see a player's role";
+        public override string roleActionName => "Check role";
 
         public Seer() : base() { }
+
+        public override bool IsLocallyAllowedToPerformAction()
+        {
+            if (targetInRange == null) return false;
+            return true;
+        }
 
         public override void PerformRoleAction()
         {
@@ -177,8 +200,6 @@ namespace WerewolvesCompany
             ulong targetId = GrabTargetPlayer();
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
             roleManagerObject.CheckRoleServerRpc(targetId);
-
-
         }
 
         public void DisplayCheckedRole(Role role, string playerName)

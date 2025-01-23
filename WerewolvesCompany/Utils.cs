@@ -36,7 +36,7 @@ namespace WerewolvesCompany
 
         static public PlayerControllerB GetLocalPlayerControllerB()
         {
-            PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
+            PlayerControllerB player = StartOfRound.Instance?.localPlayerController;
             return player;
         }
     }

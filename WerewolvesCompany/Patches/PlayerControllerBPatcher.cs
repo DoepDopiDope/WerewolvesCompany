@@ -4,6 +4,8 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany;
+using WerewolvesCompany.UI;
+using System.Diagnostics;
 
 namespace WerewolvesCompany.Patches
 {
@@ -16,10 +18,10 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch("Crouch")]
-        static void DisplayRoleToolTip()
+        static void DisplayMyRolePopUp()
         {
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            roleManagerObject.DisplayRoleToolTip();
+            roleManagerObject.DisplayMyRolePopUp();
 
         }
 
@@ -30,11 +32,10 @@ namespace WerewolvesCompany.Patches
             Role role = new Werewolf();
         }
 
-
-
+        
         [HarmonyPostfix]
-        [HarmonyPatch("Update")]
-        static void Update(PlayerControllerB __instance)
+        [HarmonyPatch("LateUpdate")]
+        static void LateUpdate(PlayerControllerB __instance)
         {
             if (!__instance.IsOwner) return;
 
@@ -42,10 +43,11 @@ namespace WerewolvesCompany.Patches
             ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
 
             roleManagerObject.myRole.targetInRange = hitPlayer;
-            if ((hitPlayer == null)) return;
 
-            logdebug.LogInfo($"Found player with id: {hitPlayer}");
-
+            //__instance.cursorTip.text = "Coucou";
+            //Utils.GetLocalPlayerControllerB().cursorTip.text = "Coucou";
+            RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
+            roleHUD.UpdateToolTip();
         }
     }
 }
