@@ -44,6 +44,8 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
+        public ulong? targetInRange { get; set; }
+
 
         public Role()
         {
