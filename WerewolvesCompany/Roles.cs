@@ -93,6 +93,16 @@ namespace WerewolvesCompany
         {
             return;
         }
+
+        public ulong GrabTargetPlayer()
+        {
+            if (targetInRange == null)
+            {
+                logger.LogError("targetInRange is null. It should have been caught earlier. Halting execution");
+                throw new Exception("targetInRange should not be null at this point");
+            }
+            return targetInRange.Value;
+        }
     }
 
 
@@ -108,6 +118,10 @@ namespace WerewolvesCompany
         public override void PerformRoleAction()
         {
             logger.LogInfo($"The {roleName} is hunting!");
+            ulong targetId = GrabTargetPlayer();
+
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.WerewolfKillPlayerServerRpc(targetId);
 
         }
         
@@ -160,24 +174,9 @@ namespace WerewolvesCompany
             logger.LogInfo($"The {roleName} is omniscient.");
             logger.LogInfo("Looking the role of someone");
 
-            logdebug.LogInfo("Gather the desired player");
-            GameObject[] allPlayers;
-            allPlayers = StartOfRound.Instance.allPlayerObjects;
-            logdebug.LogInfo("Grabbed all Players");
-            ulong targetIdOld    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
-            string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
-            logdebug.LogInfo("Grabbed target Id");
-
-            ulong? targetId = targetInRange;
-
-            if (targetId == null)
-            {
-                logger.LogError("targetInRange is null. It should have been caught earlier");
-            }
-            
-            
+            ulong targetId = GrabTargetPlayer();
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.CheckRoleServerRpc(targetId.Value);
+            roleManagerObject.CheckRoleServerRpc(targetId);
 
 
         }

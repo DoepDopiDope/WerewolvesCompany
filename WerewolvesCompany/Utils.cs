@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
+using GameNetcodeStuff;
+using Unity.Netcode;
 
 namespace WerewolvesCompany
 {
@@ -18,6 +20,24 @@ namespace WerewolvesCompany
             {
                 logdebug.LogInfo($"{item.Key} > {item.Value}");
             }
+        }
+
+        static public ClientRpcParams BuildClientRpcParams(ulong targetId)
+        {
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { targetId }
+                }
+            };
+            return clientRpcParams;
+        }
+
+        static public PlayerControllerB GetLocalPlayerControllerB()
+        {
+            PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
+            return player;
         }
     }
 }

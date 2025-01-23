@@ -128,6 +128,7 @@ namespace WerewolvesCompany.Managers
             return null;
         }
 
+
         private static GameObject GetPlayerByNetworkId(ulong playerId)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerId, out NetworkObject networkObject))
@@ -138,10 +139,20 @@ namespace WerewolvesCompany.Managers
             return null;
         }
 
+        PlayerControllerB GetPlayerById(ulong playerId)
+        {
+            GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
+            foreach (GameObject player in allPlayers)
+            {
+                if (playerId == player.GetComponent<PlayerControllerB>().actualClientId)
+                {
+                    return player.GetComponent<PlayerControllerB>();
+                }
+            }
+            logger.LogError("Could not find the desired player");
+            throw new Exception("Could not find the player");
 
-
-        // Cast ray to check if a player
-
+        }
 
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
@@ -149,9 +160,6 @@ namespace WerewolvesCompany.Managers
             //return GenerateRoles(StartOfRound.Instance.allPlayerObjects.Length);
             return GenerateRoles(GameNetworkManager.Instance.connectedPlayers);
         }
-
-        
-
 
         // Specified number of players
         public List<Role> GenerateRoles(int totalPlayers)
@@ -162,7 +170,7 @@ namespace WerewolvesCompany.Managers
             roles.Add(new Seer());
             for (int i = 1; i < totalPlayers; i++)
             {
-                roles.Add(new Villager());
+                roles.Add(new Werewolf());
             }
 
             return roles;
@@ -401,13 +409,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
 
             // Build the clientRpcParams to only answer to the caller
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { senderId }
-                }
-            };
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(senderId);
 
             logdebug.LogInfo("Built ClientRpcParams");
 
@@ -427,19 +429,20 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        PlayerControllerB GetPlayerById(ulong playerId)
+        [ServerRpc(RequireOwnership = false)]
+        public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
-            GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
-            foreach (GameObject player in allPlayers)
-            {
-                if (playerId == player.GetComponent<PlayerControllerB>().actualClientId)
-                {
-                    return player.GetComponent<PlayerControllerB>();
-                }
-            }
-            logger.LogError("Could not find the desired player");
-            throw new Exception("Could not find the player");
-            
+            string werewolfName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            WerewolfKillPlayerClientRpc(werewolfName, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void WerewolfKillPlayerClientRpc(string werewolfName, ClientRpcParams clientRpcParams = default)
+        {
+            PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
+            controller.KillPlayer(new Vector3(0, 0, 0));
+            HUDManager.Instance.DisplayTip("You were mawled", $"You  died from a werewolf: {werewolfName}");
         }
     }
        
