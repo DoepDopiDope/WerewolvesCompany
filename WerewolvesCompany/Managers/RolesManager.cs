@@ -74,6 +74,9 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        // Cast ray to check if a player
+
+
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
         {

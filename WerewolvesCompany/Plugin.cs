@@ -8,6 +8,7 @@ using BepInEx.Logging;
 using WerewolvesCompany.UI;
 using HarmonyLib.Tools;
 using UnityEngine.SceneManagement;
+using BepInEx.Configuration;
 
 using LethalCompanyInputUtils.Api;
 
@@ -34,8 +35,21 @@ namespace WerewolvesCompany
 
         public System.Random rng;
 
+
+        public static ConfigEntry<float>
+            config_InteractRange,
+            config_RoleActionCoolDown;
+
+
+
         void Awake()
         {
+            // Setup logging
+            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
+            logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
+            logger.LogInfo("Plugin is initializing...");
+
+
             // Does stuff for the netcode stuff
             var types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (var type in types)
@@ -51,17 +65,15 @@ namespace WerewolvesCompany
                 }
             }
 
-
             // Assign the plugin Instance
             Instance = this;
 
+            // Initiate config
+            ConfigSetup();
+
             // Initiate the Inputs class
             InputActionsInstance = new MyExampleInputClass();
-
-            // Setup logging
-            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
-            logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
-            logger.LogInfo("Plugin is initializing...");
+            
             // Patch the game using Harmony
             harmony.PatchAll();
 
@@ -81,6 +93,14 @@ namespace WerewolvesCompany
             DontDestroyOnLoad(modManagerObject);
             Plugin.Instance.logger.LogInfo("ModManager GameObject created.");   
         }
+
+        private void ConfigSetup()
+        {
+            config_InteractRange = Config.Bind("Interact Range", "Value", 3.0f, "How far the player can use his Action on another player");
+            config_RoleActionCoolDown = Config.Bind("Role Action Cooldown", "Value", 60f, "How often can a player use his action.");
+        }
+
+
     }
 
     public class ModManager : MonoBehaviour
