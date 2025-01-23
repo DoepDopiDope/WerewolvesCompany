@@ -177,7 +177,7 @@ namespace WerewolvesCompany
             
             
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.CheckRoleServerRpc(targetId.Value, playerName);
+            roleManagerObject.CheckRoleServerRpc(targetId.Value);
 
 
         }
