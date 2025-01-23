@@ -80,11 +80,11 @@ namespace WerewolvesCompany
             // Initialize the random number generator
             rng = new System.Random();
 
-            // Load asset bundle for NetworkManagerWerewolvesCompany
+            // Load asset bundle for RolesManager
             string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "netcodemod");
             AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
-            netManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/NetworkManagerWerewolvesCompany.prefab");
-            netManagerPrefab.AddComponent<NetworkManagerWerewolvesCompany>();
+            netManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/RolesManager.prefab");
+            netManagerPrefab.AddComponent<RolesManager>();
 
             // Create a persistent ModManager to handle game initialization
             logger.LogInfo("Plugin.Awake() is creating ModManager.");

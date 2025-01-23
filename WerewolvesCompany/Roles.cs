@@ -43,7 +43,6 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        public virtual 
 
         public Role()
         {
@@ -132,7 +131,9 @@ namespace WerewolvesCompany
             string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
             logdebug.LogInfo("Grabbed target Id");
 
-            NetworkManagerWerewolvesCompany.Instance.CheckRoleServerRpc(targetId, playerName);
+            
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.CheckRoleServerRpc(targetId, playerName);
 
 
         }

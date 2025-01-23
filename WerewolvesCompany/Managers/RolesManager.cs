@@ -12,10 +12,11 @@ using UnityEngine;
 using WerewolvesCompany.Managers;
 
 using UnityEngine.InputSystem;
+using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Managers
 {
-    internal class RolesManager : MonoBehaviour
+    internal class RolesManager : NetworkBehaviour
     {
         
         public RolesManager Instance;
@@ -24,7 +25,6 @@ namespace WerewolvesCompany.Managers
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         public System.Random rng = Plugin.Instance.rng;
-        public bool IsHost = false;
         public Dictionary<ulong, Role> allRoles;
 
         public Role myRole { get; set; } = new Role();
@@ -60,8 +60,9 @@ namespace WerewolvesCompany.Managers
             myRole.PerformRoleAction();
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             logger.LogError($"{name} has been destroyed!");
         }
 
@@ -161,17 +162,6 @@ namespace WerewolvesCompany.Managers
                 playersIds.Add(playerId);
             }
 
-            
-
-            //foreach (GameObject player in allPlayers)
-            //{
-            //    ulong playerId = player.GetComponent<PlayerControllerB>().actualClientId;
-            //    string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
-            //    logger.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
-
-            //    playersIds.Add(playerId);
-            //}
-
 
             logdebug.LogInfo("Associate each client Id with a role");
             // Associate each Client Id with a role
@@ -194,17 +184,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Grab the PlayerControllerB instance");
             PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 
-
-
-            //if (!(player.playerClientId == id))
-            //{
-            //    logger.LogInfo($"Skipping : Current player id {player.playerClientId}, Target id {id}, role {role}");
-            //    return;
-            //}
-
-
             logdebug.LogInfo("Grab the playerUsername from the HUDManager instance");
-            //string playerName = HUDManager.Instance.localPlayer.playerUsername;
             string playerName = player.playerUsername;
 
             logdebug.LogInfo("Grab the role name from the role name itself");
@@ -219,7 +199,81 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        
+        [ClientRpc]
+        public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
+        {
+            // Retrieve the role
+            logdebug.LogInfo($"Received roleInt {roleInt}");
+            Role role = References.references()[roleInt];
+            logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
+
+
+            // Assign the player's role
+            //RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
+            myRole = role;
+
+
+            logdebug.LogInfo("I have succesfully set my own role");
+
+            // Display the tooltip for the role
+            DisplayRoleToolTip();
+            logdebug.LogInfo("I have successfully displayed my Role tooltip");
+
+            // Locate the RoleHUD and update it
+            logdebug.LogInfo("Trying to update HUD");
+            RoleHUD roleHUD = FindObjectOfType<RoleHUD>();
+            if (roleHUD != null)
+            {
+                logger.LogInfo("Update the HUD with the role");
+                roleHUD.UpdateRoleDisplay(role);
+            }
+            else
+            {
+                logger.LogInfo("Did not find the HUD");
+            }
+
+            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
+            string roleName = myRole.roleName;
+            logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
+        }
+
+
+        [ServerRpc(RequireOwnership = false)]
+        public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Executing ServerRpc while I am the host: {IsHost || IsServer}");
+
+            //RolesManager roleManagerObject = FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            //logdebug.LogInfo("Grabbed RoleManager");
+            ulong senderId = serverRpcParams.Receive.SenderClientId; // Get the sender Id
+            logdebug.LogInfo($"Grabbed sender ID: {senderId}");
+            int refInt = allRoles[targetId].refInt; // Find the refInt of the desired role
+            logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
+
+            // Build the clientRpcParams to only answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+            logdebug.LogInfo("Built ClientRpcParams");
+
+            CheckRoleClientRpc(refInt, playerName, clientRpcParams);
+
+        }
+
+        [ClientRpc]
+        public void CheckRoleClientRpc(int refInt, string playerName, ClientRpcParams clientRpcParams = default)
+        {
+            // Retrieve the role
+            logdebug.LogInfo($"Received refInt {refInt}");
+            Role role = References.references()[refInt];
+            logdebug.LogInfo("Reversed the refInt into a Role");
+            new Seer().DisplayCheckedRole(role, playerName);
+        }
 
     }
     

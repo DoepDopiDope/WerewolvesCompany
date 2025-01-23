@@ -51,7 +51,6 @@ namespace WerewolvesCompany.Patches
             // Build roles
             RolesManager rolesManager =  Plugin.FindObjectOfType<RolesManager>();
             Dictionary<ulong, Role> finalRoles;
-            rolesManager.IsHost = true;
             finalRoles = rolesManager.BuildFinalRolesFromScratch();
             logger.LogInfo("Roles generation has finished");
 
@@ -76,7 +75,7 @@ namespace WerewolvesCompany.Patches
                 logdebug.LogInfo($"{item.Value.refInt}");
 
                 logdebug.LogInfo("Invoking the SendRoleClientRpc method");
-                NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
+                rolesManager.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
 
             logger.LogInfo("Finished sending roles to each player");
