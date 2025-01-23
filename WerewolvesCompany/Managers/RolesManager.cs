@@ -122,8 +122,8 @@ namespace WerewolvesCompany.Managers
 
             mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
+            logdebug.LogInfo($"The interact range value is {InteractRange.Value}");
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
-
             foreach (RaycastHit hit in pushRay)
             {
                 if (hit.transform.gameObject != playerObject)
@@ -259,7 +259,7 @@ namespace WerewolvesCompany.Managers
             return finalRoles;
         }
 
-        public Role DisplayRoleToolTip()
+        public Role DisplayMyRolePopUp()
         {
             logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
@@ -299,7 +299,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I have succesfully set my own role");
 
             // Display the tooltip for the role
-            DisplayRoleToolTip();
+            DisplayMyRolePopUp();
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
             // Update my own role

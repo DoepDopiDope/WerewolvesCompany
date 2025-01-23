@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
+using GameNetcodeStuff;
 using UnityEngine;
 using UnityEngine.UI;
 using WerewolvesCompany.Managers;
@@ -21,7 +22,7 @@ namespace WerewolvesCompany.UI
         public Canvas canvas;
         public Text roleText;
         public Image roleIcon;
-        public Text toolTipText;
+        //public Text toolTipText;
 
         void Awake()
         {
@@ -111,30 +112,31 @@ namespace WerewolvesCompany.UI
             // Configure RectTransform of the text
             RectTransform textTransform = roleText.GetComponent<RectTransform>();
             textTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
-            textTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
-            textTransform.anchorMax = new Vector2(0, 0.5f);
+            textTransform.anchorMin = new Vector2(0.5f, 0.5f); // Anchor to center-left of the parent
+            textTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            containerTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
             textTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
 
 
 
 
-            // Create the tooltip in the middle  of the screen
-            GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
-            toolTipTextObject.transform.SetParent(canvas.transform);
+            //// Create the tooltip in the middle  of the screen
+            //GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
+            //toolTipTextObject.transform.SetParent(canvas.transform);
 
-            toolTipText = toolTipTextObject.AddComponent<Text>();
-            toolTipText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
-            toolTipText.text = "Role: Unknown";
-            toolTipText.alignment = TextAnchor.MiddleLeft;
-            toolTipText.fontSize = 24;
-            toolTipText.color = Color.white;
+            //toolTipText = toolTipTextObject.AddComponent<Text>();
+            //toolTipText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            //toolTipText.text = "Role: Unknown";
+            //toolTipText.alignment = TextAnchor.MiddleLeft;
+            //toolTipText.fontSize = 24;
+            //toolTipText.color = Color.white;
 
-            // Configure RectTransform of the text
-            RectTransform toolTipTextTransform = toolTipText.GetComponent<RectTransform>();
-            toolTipTextTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
-            toolTipTextTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
-            toolTipTextTransform.anchorMax = new Vector2(0, 0.5f);
-            toolTipTextTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
+            //// Configure RectTransform of the text
+            //RectTransform toolTipTextTransform = toolTipText.GetComponent<RectTransform>();
+            //toolTipTextTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
+            //toolTipTextTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
+            //toolTipTextTransform.anchorMax = new Vector2(0, 0.5f);
+            //toolTipTextTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
 
         }
 
@@ -163,19 +165,22 @@ namespace WerewolvesCompany.UI
                 roleIcon.enabled = false;
             }
 
-            toolTipText.text = myRole.roleActionText;
+            //toolTipText.text = myRole.roleActionText;
         }
 
         public void UpdateToolTip()
         {
             RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
+            PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
+
             if (roleManagerObject.myRole.targetInRange == null)
             {
-                toolTipText.enabled = false;
+                localPlayer.cursorTip.text = "";
             }
             else
             {
-                toolTipText.enabled = true;
+                localPlayer.cursorTip.text = roleManagerObject.myRole.roleActionText;
+
             }
 
 

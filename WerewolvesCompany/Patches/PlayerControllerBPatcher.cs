@@ -18,10 +18,10 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch("Crouch")]
-        static void DisplayRoleToolTip()
+        static void DisplayMyRolePopUp()
         {
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            roleManagerObject.DisplayRoleToolTip();
+            roleManagerObject.DisplayMyRolePopUp();
 
         }
 
@@ -32,11 +32,10 @@ namespace WerewolvesCompany.Patches
             Role role = new Werewolf();
         }
 
-
-
+        
         [HarmonyPostfix]
-        [HarmonyPatch("Update")]
-        static void Update(PlayerControllerB __instance)
+        [HarmonyPatch("LateUpdate")]
+        static void LateUpdate(PlayerControllerB __instance)
         {
             if (!__instance.IsOwner) return;
 
@@ -45,9 +44,10 @@ namespace WerewolvesCompany.Patches
 
             roleManagerObject.myRole.targetInRange = hitPlayer;
 
+            //__instance.cursorTip.text = "Coucou";
+            //Utils.GetLocalPlayerControllerB().cursorTip.text = "Coucou";
             RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
             roleHUD.UpdateToolTip();
-
         }
     }
 }
