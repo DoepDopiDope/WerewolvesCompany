@@ -9,14 +9,19 @@ using WerewolvesCompany.UI;
 using HarmonyLib.Tools;
 using UnityEngine.SceneManagement;
 
+using LethalCompanyInputUtils.Api;
+
 namespace WerewolvesCompany
 {
     [BepInPlugin(GUID, NAME, VERSION)]
+    [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
     public class Plugin : BaseUnityPlugin
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
         const string VERSION = "0.0.1";
+
+        internal static MyExampleInputClass InputActionsInstance;
 
         private readonly Harmony harmony = new Harmony(GUID);
 
@@ -49,6 +54,9 @@ namespace WerewolvesCompany
 
             // Assign the plugin Instance
             Instance = this;
+
+            // Initiate the Inputs class
+            InputActionsInstance = new MyExampleInputClass();
 
             // Setup logging
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");

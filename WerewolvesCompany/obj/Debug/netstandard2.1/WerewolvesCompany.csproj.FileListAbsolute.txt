@@ -116,3 +116,5 @@ G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\bi
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\obj\Debug\netstandard2.1\Werewolv.2E23CB22.Up2Date
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\obj\Debug\netstandard2.1\WerewolvesCompany.dll
 G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\obj\Debug\netstandard2.1\WerewolvesCompany.pdb
+G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\bin\Debug\netstandard2.1\LethalCompanyInputUtils.dll
+G:\Custom Games\Modding\LethalCompanyMods\WerewolvesCompany\WerewolvesCompany\bin\Debug\netstandard2.1\LethalCompanyInputUtils.pdb

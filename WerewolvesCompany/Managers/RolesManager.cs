@@ -40,6 +40,22 @@ namespace WerewolvesCompany.Managers
                 logger.LogInfo("Duplicate detected, delted the just-created RolesManager");
                 Destroy(gameObject); // Prevent duplicate instances
             }
+
+            SetupKeybindCallbacks();
+
+        }
+
+        private void SetupKeybindCallbacks()
+        {
+            Plugin.InputActionsInstance.RoleActionKey.performed += OnExplodeKeyPressed;
+        }
+
+        public void OnExplodeKeyPressed(InputAction.CallbackContext keyContext)
+        {
+            if (myRole.roleName == null) return; // Prevents the default Role class to use the function
+            logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
+            if (!keyContext.performed) return;
+            myRole.PerformRoleAction();
         }
 
         void OnDestroy()

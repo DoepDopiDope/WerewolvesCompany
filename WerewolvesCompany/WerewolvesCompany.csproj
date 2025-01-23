@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 <PropertyGroup>
     <PostBuildEvent>echo Copying DLL
@@ -12,6 +12,7 @@ copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\comm
   <Target Name="NetcodePatch" BeforeTargets="PostBuildEvent">
     <Exec Command="netcode-patch -nv 1.5.2 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
+
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\core\0Harmony.dll</HintPath>
@@ -21,6 +22,9 @@ copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\comm
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="LethalCompanyInputUtils">
+      <HintPath>..\..\LethalCompanyInputUtils\plugins\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
