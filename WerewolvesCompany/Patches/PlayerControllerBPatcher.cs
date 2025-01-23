@@ -37,13 +37,14 @@ namespace WerewolvesCompany.Patches
         static void Update(PlayerControllerB __instance)
         {
             if (!__instance.IsOwner) return;
+            logupdate.LogInfo("I am updating");
 
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
+            ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId);
 
-            if ((hitPlayer == null)) return;
-
-            logdebug.LogInfo($"Found player with id: {hitPlayer}");
+            roleManagerObject.myRole.targetInRange = hitPlayer;
+            logupdate.LogInfo($"Detected Player {hitPlayer}");
+            
 
         }
     }
