@@ -10,6 +10,7 @@ using HarmonyLib.Tools;
 using System.Collections.Generic;
 using UnityEngine.Jobs;
 using UnityEngine.Windows;
+using GameNetcodeStuff;
 
 
 
@@ -119,6 +120,25 @@ namespace WerewolvesCompany
         public override void PerformRoleAction()
         {
             logger.LogInfo($"The {roleName} is omniscient.");
+            logger.LogInfo("Looking the role of someone");
+
+            logdebug.LogInfo("Gather the desired player");
+            GameObject[] allPlayers;
+            allPlayers = StartOfRound.Instance.allPlayerObjects;
+            logdebug.LogInfo("Grabbed all Players");
+            ulong targetId    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
+            string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
+            logdebug.LogInfo("Grabbed target Id");
+
+            NetworkManagerWerewolvesCompany.Instance.CheckRoleServerRpc(targetId, playerName);
+
+
+        }
+
+        public void DisplayCheckedRole(Role role, string playerName)
+        {
+            logdebug.LogInfo("Displaying Checked role on HUD");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{playerName} is a {role.roleName}");
         }
     }
 }

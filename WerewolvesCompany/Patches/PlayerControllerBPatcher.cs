@@ -59,7 +59,7 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch("Crouch")]
-        static void DisplayRoleToolTip(PlayerControllerB __instance)
+        static void DisplayRoleToolTip()
         {
             //RolesManager rolesManager = new RolesManager();
             //rolesManager.DisplayRoleToolTip();
@@ -70,7 +70,7 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch("Start")]
-        static void InitiateRole(PlayerControllerB __instance)
+        static void InitiateRole()
         {
             Role role = new Werewolf();
         }

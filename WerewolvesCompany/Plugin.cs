@@ -124,15 +124,15 @@ namespace WerewolvesCompany
             //logger.LogInfo("HUDInitializer has been added to the scene.");
 
             // Example: Initialize some roles for testing
-            Role werewolf = new Werewolf();
-            Role villager = new Villager();
-            Role witch = new Witch();
-            Role seer = new Seer();
+            //Role werewolf = new Werewolf();
+            //Role villager = new Villager();
+            //Role witch = new Witch();
+            //Role seer = new Seer();
 
-            werewolf.PerformRoleAction();
-            villager.PerformRoleAction();
-            witch.PerformRoleAction();
-            seer.PerformRoleAction();
+            //werewolf.PerformRoleAction();
+            //villager.PerformRoleAction();
+            //witch.PerformRoleAction();
+            //seer.PerformRoleAction();
 
         }
 

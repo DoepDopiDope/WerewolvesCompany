@@ -104,17 +104,44 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
         }
 
-        //[ServerRpc(RequireOwnership =false)]
-        //public void SwapShipDoorsServerRpc()
-        //{
-        //    SwapShipDoorsClientRpc();
-        //}
 
-        //[ClientRpc]
-        //public void SwapShipDoorsClientRpc()
-        //{
-        //    StartOfRound.Instance.SetShipDoorsClosed(StartOfRound.Instance.hangarDoorsClosed);
-        //}
+        [ServerRpc(RequireOwnership = false)]
+        public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Executing ServerRpc while I am the host: {NetworkManagerWerewolvesCompany.Instance.IsHost || NetworkManagerWerewolvesCompany.Instance.IsServer}");
+
+            RolesManager roleManagerObject = FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            logdebug.LogInfo("Grabbed RoleManager");
+            ulong senderId = serverRpcParams.Receive.SenderClientId; // Get the sender Id
+            logdebug.LogInfo($"Grabbed sender ID: {senderId}");
+            int refInt = roleManagerObject.allRoles[targetId].refInt; // Find the refInt of the desired role
+            logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
+
+            // Build the clientRpcParams to only answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+            logdebug.LogInfo("Built ClientRpcParams");
+
+            CheckRoleClientRpc(refInt, playerName,  clientRpcParams);
+
+        }
+
+        [ClientRpc]
+        public void CheckRoleClientRpc(int refInt, string playerName, ClientRpcParams clientRpcParams = default)
+        {
+            // Retrieve the role
+            logdebug.LogInfo($"Received refInt {refInt}");
+            Role role = References.references()[refInt];
+            logdebug.LogInfo("Reversed the refInt into a Role");
+            new Seer().DisplayCheckedRole(role, playerName);
+        }
+
 
 
 

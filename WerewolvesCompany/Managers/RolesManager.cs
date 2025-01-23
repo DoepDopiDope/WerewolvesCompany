@@ -17,13 +17,15 @@ namespace WerewolvesCompany.Managers
 {
     internal class RolesManager : MonoBehaviour
     {
+        
         public RolesManager Instance;
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         public System.Random rng = Plugin.Instance.rng;
-        
+        public bool IsHost = false;
+        public Dictionary<ulong, Role> allRoles;
 
         public Role myRole { get; set; } = new Role();
 
@@ -47,10 +49,10 @@ namespace WerewolvesCompany.Managers
 
         private void SetupKeybindCallbacks()
         {
-            Plugin.InputActionsInstance.RoleActionKey.performed += OnExplodeKeyPressed;
+            Plugin.InputActionsInstance.RoleActionKey.performed += OnRoleKeyPressed;
         }
 
-        public void OnExplodeKeyPressed(InputAction.CallbackContext keyContext)
+        public void OnRoleKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
             logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
@@ -88,7 +90,7 @@ namespace WerewolvesCompany.Managers
             List<Role> roles = new List<Role>();
 
             // Example logic: One Werewolf and the rest are Villagers
-            roles.Add(new Werewolf());
+            roles.Add(new Seer());
             for (int i = 1; i < totalPlayers; i++)
             {
                 roles.Add(new Villager());
@@ -124,7 +126,6 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Getting the list of all connected players");
             // Get list of all players
             int Nplayers = GameNetworkManager.Instance.connectedPlayers;
-
             allPlayers = StartOfRound.Instance.allPlayerObjects;
 
             string stringnames = $"Found {Nplayers} players : ";

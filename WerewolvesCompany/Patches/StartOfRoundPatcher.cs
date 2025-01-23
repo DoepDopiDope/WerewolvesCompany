@@ -44,12 +44,14 @@ namespace WerewolvesCompany.Patches
             {
                 return;
             }
-
+    
             logger.LogInfo("Roles generation has started");
-            // Build roles
-            Dictionary<ulong, Role> finalRoles;
 
-            RolesManager rolesManager = new RolesManager();
+
+            // Build roles
+            RolesManager rolesManager =  Plugin.FindObjectOfType<RolesManager>();
+            Dictionary<ulong, Role> finalRoles;
+            rolesManager.IsHost = true;
             finalRoles = rolesManager.BuildFinalRolesFromScratch();
             logger.LogInfo("Roles generation has finished");
 
@@ -76,17 +78,11 @@ namespace WerewolvesCompany.Patches
                 logdebug.LogInfo("Invoking the SendRoleClientRpc method");
                 NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
+
             logger.LogInfo("Finished sending roles to each player");
 
-
-            //if (__instance.IsHost || __instance.IsServer)
-            //{
-            //    NetworkManagerWerewolvesCompany.Instance.SendRoleServerRpc();
-            //}
-            //else
-            //{
-            //    NetworkManagerWerewolvesCompany.Instance.SendRoleClientRpc();
-            //}
+            rolesManager.allRoles = finalRoles;
+            logdebug.LogInfo("Stored all roles in RolesManager.");
         }
     }
 }
