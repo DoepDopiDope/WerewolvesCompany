@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
 using UnityEngine;
 using UnityEngine.UI;
+using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany.UI
 {
@@ -19,6 +21,7 @@ namespace WerewolvesCompany.UI
         public Canvas canvas;
         public Text roleText;
         public Image roleIcon;
+        public Text toolTipText;
 
         void Awake()
         {
@@ -112,6 +115,27 @@ namespace WerewolvesCompany.UI
             textTransform.anchorMax = new Vector2(0, 0.5f);
             textTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
 
+
+
+
+            // Create the tooltip in the middle  of the screen
+            GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
+            toolTipTextObject.transform.SetParent(canvas.transform);
+
+            toolTipText = toolTipTextObject.AddComponent<Text>();
+            toolTipText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            toolTipText.text = "Role: Unknown";
+            toolTipText.alignment = TextAnchor.MiddleLeft;
+            toolTipText.fontSize = 24;
+            toolTipText.color = Color.white;
+
+            // Configure RectTransform of the text
+            RectTransform toolTipTextTransform = toolTipText.GetComponent<RectTransform>();
+            toolTipTextTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
+            toolTipTextTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
+            toolTipTextTransform.anchorMax = new Vector2(0, 0.5f);
+            toolTipTextTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
+
         }
 
         public void UpdateRoleDisplay(Role role)
@@ -121,21 +145,40 @@ namespace WerewolvesCompany.UI
                 CreateRoleHUD();
             }
 
-            logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
+            Role myRole = FindObjectOfType<RolesManager>().myRole;
+
+            //logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
             if (roleText != null)
             {
-                roleText.text = role.roleName;
+                roleText.text = myRole.roleName;
             }
 
-            if (roleIcon != null && role.roleIcon != null)
+            if (roleIcon != null && myRole.roleIcon != null)
             {
-                roleIcon.sprite = role.roleIcon;
+                roleIcon.sprite = myRole.roleIcon;
                 roleIcon.enabled = true;
             }
             else
             {
                 roleIcon.enabled = false;
             }
+
+            toolTipText.text = myRole.roleActionText;
+        }
+
+        public void UpdateToolTip()
+        {
+            RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
+            if (roleManagerObject.myRole.targetInRange == null)
+            {
+                toolTipText.enabled = false;
+            }
+            else
+            {
+                toolTipText.enabled = true;
+            }
+
+
         }
     }
 }

@@ -4,6 +4,8 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany;
+using WerewolvesCompany.UI;
+using System.Diagnostics;
 
 namespace WerewolvesCompany.Patches
 {
@@ -42,9 +44,9 @@ namespace WerewolvesCompany.Patches
             ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
 
             roleManagerObject.myRole.targetInRange = hitPlayer;
-            if ((hitPlayer == null)) return;
 
-            logdebug.LogInfo($"Found player with id: {hitPlayer}");
+            RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
+            roleHUD.UpdateToolTip();
 
         }
     }
