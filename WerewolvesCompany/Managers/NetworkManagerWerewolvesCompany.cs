@@ -26,23 +26,6 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        // Send death notification to everyone
-        [ServerRpc(RequireOwnership = false)]
-        public void RequestDeathNotificationServerRpc(ulong id)
-        {
-            DeathNotificationClientRpc(id);
-        }
-
-
-        [ClientRpc]
-        public void DeathNotificationClientRpc(ulong id)
-        {
-            string name = StartOfRound.Instance.allPlayerObjects[(int)id].GetComponent<PlayerControllerB>().playerUsername;
-            ;
-            HUDManager.Instance.DisplayTip("Player Has Died", $"{name} is now dead");
-            
-        }
-
 
         [ServerRpc(RequireOwnership = false)]
         public void SimpleTipDisplayServerRpc()
@@ -59,88 +42,8 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        // Send Roles to players
-        //[ServerRpc(RequireOwnership = false)]
-        //public void SendRoleServerRpc(Role role)
-        //{
-        //    SendRoleClientRpc(role);
-        //}
 
-        [ClientRpc]
-        public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
-        {
-            // Retrieve the role
-            logdebug.LogInfo($"Received roleInt {roleInt}");
-            Role role = References.references()[roleInt];
-            logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
-
-
-            // Assign the player's role
-            RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
-            roleManagerObject.myRole = role;
-            
-
-            logdebug.LogInfo("I have succesfully set my own role");
-
-            // Display the tooltip for the role
-            roleManagerObject.DisplayRoleToolTip();
-            logdebug.LogInfo("I have successfully displayed my Role tooltip");
-
-            // Locate the RoleHUD and update it
-            logdebug.LogInfo("Trying to update HUD");
-            RoleHUD roleHUD = FindObjectOfType<RoleHUD>();
-            if (roleHUD != null)
-            {
-                logger.LogInfo("Update the HUD with the role");
-                roleHUD.UpdateRoleDisplay(role);
-            }
-            else
-            {
-                logger.LogInfo("Did not find the HUD");
-            }
-
-            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            string roleName = roleManagerObject.myRole.roleName;
-            logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");   
-        }
-
-
-        [ServerRpc(RequireOwnership = false)]
-        public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
-        {
-            logdebug.LogInfo($"Executing ServerRpc while I am the host: {NetworkManagerWerewolvesCompany.Instance.IsHost || NetworkManagerWerewolvesCompany.Instance.IsServer}");
-
-            RolesManager roleManagerObject = FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            logdebug.LogInfo("Grabbed RoleManager");
-            ulong senderId = serverRpcParams.Receive.SenderClientId; // Get the sender Id
-            logdebug.LogInfo($"Grabbed sender ID: {senderId}");
-            int refInt = roleManagerObject.allRoles[targetId].refInt; // Find the refInt of the desired role
-            logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
-
-            // Build the clientRpcParams to only answer to the caller
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { senderId }
-                }
-            };
-
-            logdebug.LogInfo("Built ClientRpcParams");
-
-            CheckRoleClientRpc(refInt, playerName,  clientRpcParams);
-
-        }
-
-        [ClientRpc]
-        public void CheckRoleClientRpc(int refInt, string playerName, ClientRpcParams clientRpcParams = default)
-        {
-            // Retrieve the role
-            logdebug.LogInfo($"Received refInt {refInt}");
-            Role role = References.references()[refInt];
-            logdebug.LogInfo("Reversed the refInt into a Role");
-            new Seer().DisplayCheckedRole(role, playerName);
-        }
+        
 
 
 

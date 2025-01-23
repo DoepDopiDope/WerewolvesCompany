@@ -12,7 +12,8 @@ using UnityEngine.Jobs;
 using UnityEngine.Windows;
 using GameNetcodeStuff;
 using BepInEx.Configuration;
-
+using System;
+using static UnityEngine.GraphicsBuffer;
 
 
 
@@ -43,7 +44,6 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        public virtual 
 
         public Role()
         {
@@ -51,12 +51,45 @@ namespace WerewolvesCompany
         }
         
         
+        public virtual bool IsAllowedToPerformAction()
+        {
+            logger.LogWarning("Action is allowed by default as no requirements for it were implemented");
+            return true;
+        }
+
+        public void GenericPerformRoleAction()
+        {
+            bool flag = false;
+            try
+            {
+                PerformRoleAction();
+                flag = true;
+            }
+            catch (Exception e)
+            {
+                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Role Action");
+                logger.LogError("Failed to perform my role action");
+                logger.LogError(e);
+            }
+
+            if (flag)
+            {
+                RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object}
+                roleManagerObject.SuccessFullyPerformedRoleActionServerRpc();
+            }
+
+        }
 
         public virtual void PerformRoleAction()
         {
             // Default behavior for a role
 
             logger.LogInfo($"Performing action for role: {roleName}");
+        }
+
+        public virtual void SetRoleOnCooldown()
+        {
+            return;
         }
     }
 
@@ -75,6 +108,7 @@ namespace WerewolvesCompany
             logger.LogInfo($"The {roleName} is hunting!");
 
         }
+        
     }
 
 
@@ -132,7 +166,9 @@ namespace WerewolvesCompany
             string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
             logdebug.LogInfo("Grabbed target Id");
 
-            NetworkManagerWerewolvesCompany.Instance.CheckRoleServerRpc(targetId, playerName);
+            
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.CheckRoleServerRpc(targetId, playerName);
 
 
         }
