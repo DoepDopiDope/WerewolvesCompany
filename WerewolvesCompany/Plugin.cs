@@ -143,7 +143,7 @@ namespace WerewolvesCompany
         void Start()
         {
             // Add the HUDInitializer
-            InitializeRolesManager();
+            //InitializeRolesManager();
             InitializeHUD();
             //GameObject hudInitializerObject = new GameObject("HUDInitializer");
             //hudInitializerObject.AddComponent<HUDInitializer>();
@@ -166,7 +166,7 @@ namespace WerewolvesCompany
         {
             Plugin.Instance.logger.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
             InitializeHUD();
-            InitializeRolesManager();
+            //InitializeRolesManager();
         }
 
         private void InitializeRolesManager()

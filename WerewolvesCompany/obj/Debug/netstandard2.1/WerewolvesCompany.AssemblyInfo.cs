@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WerewolvesCompany")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0168c7591aa24cf245b06d3cd38c5f11d9a76f50")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f0575cd9d69a1561702bea0a16bb263e0d6231c")]
 [assembly: System.Reflection.AssemblyProductAttribute("WerewolvesCompany")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WerewolvesCompany")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

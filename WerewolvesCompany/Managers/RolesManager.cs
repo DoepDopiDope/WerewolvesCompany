@@ -14,6 +14,7 @@ using WerewolvesCompany.Managers;
 using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
 using static UnityEngine.InputSystem.Layouts.InputControlLayout;
+using System.ComponentModel;
 
 
 
@@ -98,7 +99,7 @@ namespace WerewolvesCompany.Managers
 
 
             mls.LogInfo("Grab the playerObject");
-            GameObject playerObject = GetPlayerById(myId);
+            GameObject playerObject = GetPlayerByNetworkId(myId);
             mls.LogInfo("Grab the PlayerControllerB");
             PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
             //PlayerControllerB player = HUDManager.Instance.localPlayer;
@@ -127,7 +128,7 @@ namespace WerewolvesCompany.Managers
             return null;
         }
 
-        private static GameObject GetPlayerById(ulong playerId)
+        private static GameObject GetPlayerByNetworkId(ulong playerId)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerId, out NetworkObject networkObject))
             {
@@ -384,7 +385,7 @@ namespace WerewolvesCompany.Managers
         // Specific Roles Actions
 
         [ServerRpc(RequireOwnership = false)]
-        public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
+        public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
             logdebug.LogInfo($"Executing ServerRpc while I am the host: {IsHost || IsServer}");
 
@@ -392,6 +393,10 @@ namespace WerewolvesCompany.Managers
             //logdebug.LogInfo("Grabbed RoleManager");
             ulong senderId = serverRpcParams.Receive.SenderClientId; // Get the sender Id
             logdebug.LogInfo($"Grabbed sender ID: {senderId}");
+            //string playerName = GetPlayerById(targetId).GetComponent<PlayerControllerB>().playerUsername;
+
+            string playerName = GetPlayerById(targetId).GetComponent<PlayerControllerB>().playerUsername;
+            //string playerName = "test player name";
             int refInt = allRoles[targetId].refInt; // Find the refInt of the desired role
             logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
 
@@ -419,6 +424,22 @@ namespace WerewolvesCompany.Managers
             Role role = References.references()[refInt];
             logdebug.LogInfo("Reversed the refInt into a Role");
             new Seer().DisplayCheckedRole(role, playerName);
+        }
+
+
+        PlayerControllerB GetPlayerById(ulong playerId)
+        {
+            GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
+            foreach (GameObject player in allPlayers)
+            {
+                if (playerId == player.GetComponent<PlayerControllerB>().actualClientId)
+                {
+                    return player.GetComponent<PlayerControllerB>();
+                }
+            }
+            logger.LogError("Could not find the desired player");
+            throw new Exception("Could not find the player");
+            
         }
     }
        

@@ -44,6 +44,8 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
+        public ulong? targetInRange { get; set; }
+
 
         public Role()
         {
@@ -162,13 +164,20 @@ namespace WerewolvesCompany
             GameObject[] allPlayers;
             allPlayers = StartOfRound.Instance.allPlayerObjects;
             logdebug.LogInfo("Grabbed all Players");
-            ulong targetId    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
+            ulong targetIdOld    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
             string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
             logdebug.LogInfo("Grabbed target Id");
 
+            ulong? targetId = targetInRange;
+
+            if (targetId == null)
+            {
+                logger.LogError("targetInRange is null. It should have been caught earlier");
+            }
+            
             
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.CheckRoleServerRpc(targetId, playerName);
+            roleManagerObject.CheckRoleServerRpc(targetId.Value);
 
 
         }
