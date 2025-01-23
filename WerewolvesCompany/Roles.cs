@@ -44,7 +44,7 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        public ulong? targetInRange = null;
+
         public Role()
         {
             
@@ -158,21 +158,17 @@ namespace WerewolvesCompany
             logger.LogInfo($"The {roleName} is omniscient.");
             logger.LogInfo("Looking the role of someone");
 
-            //logdebug.LogInfo("Gather the desired player");
-            //GameObject[] allPlayers;
-            //allPlayers = StartOfRound.Instance.allPlayerObjects;
-            //logdebug.LogInfo("Grabbed all Players");
-            //ulong targetId    = allPlayers[targetInRange].GetComponent<PlayerControllerB>().actualClientId;
-            //string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
-            //logdebug.LogInfo("Grabbed target Id");
+            logdebug.LogInfo("Gather the desired player");
+            GameObject[] allPlayers;
+            allPlayers = StartOfRound.Instance.allPlayerObjects;
+            logdebug.LogInfo("Grabbed all Players");
+            ulong targetId    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
+            string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
+            logdebug.LogInfo("Grabbed target Id");
 
-            if (targetInRange == null)
-            {
-                logger.LogError("No target in range, and it should hav ebeen caught earlier in the code");
-            }
-
+            
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.CheckRoleServerRpc(targetInRange.Value);
+            roleManagerObject.CheckRoleServerRpc(targetId, playerName);
 
 
         }

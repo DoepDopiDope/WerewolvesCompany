@@ -90,27 +90,27 @@ namespace WerewolvesCompany.Managers
 
         }
 
-        public ulong? CheckForPlayerInRange(ulong myId)
+        public ulong? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
         {
 
             //ulong myId = NetworkObjectId;
-            //mls.LogInfo($"My networkObjectId is {myId}");
+            mls.LogInfo($"My networkObjectId is {myId}");
 
 
-            //mls.LogInfo("Grab the playerObject");
+            mls.LogInfo("Grab the playerObject");
             GameObject playerObject = GetPlayerById(myId);
-            //mls.LogInfo("Grab the PlayerControllerB");
+            mls.LogInfo("Grab the PlayerControllerB");
             PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
             //PlayerControllerB player = HUDManager.Instance.localPlayer;
-            //mls.LogInfo("Grab the Camera");
+            mls.LogInfo("Grab the Camera");
             Camera playerCamera = player.gameplayCamera;
 
 
             // Cast rays to check whether another player is in range
-            //mls.LogInfo("Grab the layer");
+            mls.LogInfo("Grab the layer");
             int playerLayerMask = 1 << playerObject.layer;
 
-            //mls.LogInfo("Cast rays");
+            mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
 
@@ -384,7 +384,7 @@ namespace WerewolvesCompany.Managers
         // Specific Roles Actions
 
         [ServerRpc(RequireOwnership = false)]
-        public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        public void CheckRoleServerRpc(ulong targetId, string playerName, ServerRpcParams serverRpcParams = default)
         {
             logdebug.LogInfo($"Executing ServerRpc while I am the host: {IsHost || IsServer}");
 
@@ -392,7 +392,6 @@ namespace WerewolvesCompany.Managers
             //logdebug.LogInfo("Grabbed RoleManager");
             ulong senderId = serverRpcParams.Receive.SenderClientId; // Get the sender Id
             logdebug.LogInfo($"Grabbed sender ID: {senderId}");
-            string playerName = GetPlayerById(targetId).GetComponent<PlayerControllerB>().playerUsername;
             int refInt = allRoles[targetId].refInt; // Find the refInt of the desired role
             logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
 
