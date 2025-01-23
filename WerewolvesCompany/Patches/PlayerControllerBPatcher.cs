@@ -42,8 +42,6 @@ namespace WerewolvesCompany.Patches
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
             ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId);
 
-            if ((hitPlayer == null)) return;
-
             roleManagerObject.myRole.targetInRange = hitPlayer;
             logupdate.LogInfo($"Detected Player {hitPlayer}");
             

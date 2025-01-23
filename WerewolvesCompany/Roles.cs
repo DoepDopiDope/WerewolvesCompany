@@ -44,9 +44,7 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        public ulong? targetInRange;
-
-
+        public ulong? targetInRange = null;
         public Role()
         {
             
@@ -164,7 +162,7 @@ namespace WerewolvesCompany
             //GameObject[] allPlayers;
             //allPlayers = StartOfRound.Instance.allPlayerObjects;
             //logdebug.LogInfo("Grabbed all Players");
-            //ulong targetId    = allPlayers[0].GetComponent<PlayerControllerB>().actualClientId;
+            //ulong targetId    = allPlayers[targetInRange].GetComponent<PlayerControllerB>().actualClientId;
             //string playerName = allPlayers[0].GetComponent<PlayerControllerB>().playerUsername;
             //logdebug.LogInfo("Grabbed target Id");
 
