@@ -15,6 +15,8 @@ using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
 using static UnityEngine.InputSystem.Layouts.InputControlLayout;
 
+
+
 namespace WerewolvesCompany.Managers
 {
     internal class RolesManager : NetworkBehaviour
@@ -24,13 +26,27 @@ namespace WerewolvesCompany.Managers
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
+        public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;
 
         public Role myRole { get; set; } = new Role();
 
-        
+
+
+        private NetworkVariable<float> InteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private NetworkVariable<float> RoleActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+            {
+                InteractRange.Value = Plugin.config_InteractRange.Value;
+                RoleActionCoolDown.Value = Plugin.config_RoleActionCoolDown.Value;
+            }
+        }
+
         void Awake()
         {
             if (Instance == null)
@@ -71,11 +87,56 @@ namespace WerewolvesCompany.Managers
         void Update()
         {
 
-            
-           
+
         }
 
-        
+        public ulong? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
+        {
+
+            //ulong myId = NetworkObjectId;
+            mls.LogInfo($"My networkObjectId is {myId}");
+
+
+            mls.LogInfo("Grab the playerObject");
+            GameObject playerObject = GetPlayerById(myId);
+            mls.LogInfo("Grab the PlayerControllerB");
+            PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
+            //PlayerControllerB player = HUDManager.Instance.localPlayer;
+            mls.LogInfo("Grab the Camera");
+            Camera playerCamera = player.gameplayCamera;
+
+
+            // Cast rays to check whether another player is in range
+            mls.LogInfo("Grab the layer");
+            int playerLayerMask = 1 << playerObject.layer;
+
+            mls.LogInfo("Cast rays");
+            Vector3 castDirection = playerCamera.transform.forward.normalized;
+            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
+
+            foreach (RaycastHit hit in pushRay)
+            {
+                if (hit.transform.gameObject != playerObject)
+                {
+                    PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
+                    ulong hitPlayerId = hitPlayer.actualClientId;
+                    return hitPlayerId;
+
+                }
+            }
+            return null;
+        }
+
+        private static GameObject GetPlayerById(ulong playerId)
+        {
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerId, out NetworkObject networkObject))
+            {
+                return networkObject.gameObject;
+            }
+
+            return null;
+        }
+
 
 
         // Cast ray to check if a player

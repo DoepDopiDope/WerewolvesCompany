@@ -43,6 +43,11 @@ namespace WerewolvesCompany.UI
             //logger.LogInfo("RoleHUD has been created");
         }
 
+        void Update()
+        {
+            //logdebug.LogInfo("RoleHUD is updating");
+        }
+
         void OnDestroy()
         {
             //logger.LogError($"{name} has been destroyed!");

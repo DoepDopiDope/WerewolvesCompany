@@ -12,6 +12,7 @@ namespace WerewolvesCompany.Patches
     {
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
+        static public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         [HarmonyPostfix]
         [HarmonyPatch("Crouch")]
@@ -29,5 +30,21 @@ namespace WerewolvesCompany.Patches
             Role role = new Werewolf();
         }
 
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch("Update")]
+        static void Update(PlayerControllerB __instance)
+        {
+            if (!__instance.IsOwner) return;
+
+            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+            ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
+
+            if ((hitPlayer == null)) return;
+
+            logdebug.LogInfo($"Found player with id: {hitPlayer}");
+
+        }
     }
 }
