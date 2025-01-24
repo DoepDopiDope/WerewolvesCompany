@@ -1,5 +1,5 @@
 .vs/
 NetcodePatcher/
-**/bin/
-**/obj/
-*.zip
+WerewolvesCompany/bin/*
+WerewolvesCompany/.vs/
+bin/
