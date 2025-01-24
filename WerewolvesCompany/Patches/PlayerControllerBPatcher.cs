@@ -59,5 +59,13 @@ namespace WerewolvesCompany.Patches
             RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
             roleHUD.UpdateToolTip();
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("KillPlayer")]
+        static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
+        {
+            Utils.GetRolesManager().OnSomebodyDeathServerRpc(__instance.actualClientId);
+        }
+
     }
 }

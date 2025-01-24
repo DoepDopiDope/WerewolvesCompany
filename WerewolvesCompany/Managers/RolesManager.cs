@@ -147,7 +147,7 @@ namespace WerewolvesCompany.Managers
             return null;
         }
 
-        PlayerControllerB GetPlayerById(ulong playerId)
+        public PlayerControllerB GetPlayerById(ulong playerId)
         {
             GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
             foreach (GameObject player in allPlayers)
@@ -175,7 +175,7 @@ namespace WerewolvesCompany.Managers
             List<Role> roles = new List<Role>();
 
             // Example logic: One Werewolf and the rest are Villagers
-            roles.Add(new Werewolf());
+            roles.Add(new WildBoy());
             roles.Add(new Seer());
             for (int i = 2; i < totalPlayers; i++)
             {
@@ -258,26 +258,13 @@ namespace WerewolvesCompany.Managers
             return finalRoles;
         }
 
-        public Role DisplayMyRolePopUp()
+        public void DisplayMyRolePopUp()
         {
             logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
             Role role = myRole;
-            logdebug.LogInfo("Grab the PlayerControllerB instance");
-            PlayerControllerB player = GameNetworkManager.Instance.localPlayerController;
 
-            logdebug.LogInfo("Grab the playerUsername from the HUDManager instance");
-            string playerName = player.playerUsername;
-
-            logdebug.LogInfo("Grab the role name from the role name itself");
-            string roleName = role.roleName;
-            string winCondition = role.winCondition;
-            string roleDescription = role.roleDescription;
-
-            logdebug.LogInfo("Display the role using the HUDManager.Instance.DisplayTip method");
-            HUDManager.Instance.DisplayTip($"You are a {roleName}", $"{winCondition}\n{roleDescription}");
-            return role;
-
+            role.DisplayRolePopUp();
         }
 
 
@@ -456,6 +443,60 @@ namespace WerewolvesCompany.Managers
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
             HUDManager.Instance.DisplayTip("You were mawled", $"You  died from a werewolf: {werewolfName}");
+        }
+
+
+        [ServerRpc(RequireOwnership = false)]
+        public void IdolizeServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            IdolizeClientRpc(targetId, clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void IdolizeClientRpc(ulong targetId, ClientRpcParams clientRpcParams = default)
+        {
+            ((WildBoy)myRole).ConfirmIdolization(targetId);
+        }
+
+        [ServerRpc(RequireOwnership =false)]
+        public void OnSomebodyDeathServerRpc(ulong deadId)
+        {
+            logdebug.LogInfo("Someone just died");
+            // Somebody just died, go through all players and check for Wild Boys.
+            // If there are wild boys, provide them with the dead ID, and eventually trigger their transformation
+            foreach (var item in allRoles)
+            {
+                if (!(item.Value.GetType() == typeof(WildBoy))) continue;
+
+                ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(item.Key);
+                NotifyWildBoyOfDeathClientRpc(deadId, clientRpcParams);
+            }
+        }
+
+
+        [ClientRpc]
+        public void NotifyWildBoyOfDeathClientRpc(ulong deadId, ClientRpcParams clientRpcParams)
+        {
+            if (deadId == ((WildBoy)Utils.GetRolesManager().myRole).idolizedId.Value)
+            {
+                BecomeWerewolfServerRpc();
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void BecomeWerewolfServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            allRoles[serverRpcParams.Receive.SenderClientId] = new Werewolf();
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            BecomeWerewolfClientRpc(clientRpcParams);
+
+        }
+
+        [ClientRpc]
+        public void BecomeWerewolfClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            ((WildBoy)myRole).BecomeWerewolf();
         }
     }
        

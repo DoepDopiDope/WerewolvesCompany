@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using Unity.Netcode;
+using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany
 {
@@ -38,6 +39,12 @@ namespace WerewolvesCompany
         {
             PlayerControllerB player = StartOfRound.Instance?.localPlayerController;
             return player;
+        }
+
+        static public RolesManager GetRolesManager()
+        {
+            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+            return roleManagerObject;
         }
     }
 }

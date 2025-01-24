@@ -14,6 +14,9 @@ using GameNetcodeStuff;
 using BepInEx.Configuration;
 using System;
 using static UnityEngine.GraphicsBuffer;
+using System.Data;
+using JetBrains.Annotations;
+using Unity.IO.LowLevel.Unsafe;
 
 
 
@@ -28,6 +31,7 @@ namespace WerewolvesCompany
             dic.Add(1, new Villager());
             dic.Add(2, new Witch());
             dic.Add(3, new Seer());
+            dic.Add(4, new WildBoy());
 
             return dic;
         }
@@ -41,7 +45,8 @@ namespace WerewolvesCompany
         public virtual string roleName { get; }
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
-        public virtual string roleDescription { get; }
+        public virtual string roleDescription { get; set; }
+        public virtual string rolePopUp  => $"{winCondition} {roleDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
         public ulong? targetInRangeId { get; set; }
@@ -52,11 +57,19 @@ namespace WerewolvesCompany
         public virtual string roleActionKey { get { return "K"; } }
         public virtual string roleActionName { get { return "Action Name"; } }
 
+
+
         public Role()
         {
             
         }
         
+        public void DisplayRolePopUp()
+        {
+            logdebug.LogInfo("Display the role PopUp");
+            HUDManager.Instance.DisplayTip($"You are a {roleName}", rolePopUp);
+        }
+
         public virtual bool IsLocallyAllowedToPerformAction()
         {
             return true;
@@ -149,8 +162,8 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Villager";
         public override int refInt => 1;
-        public override string winCondition => "You win by killing the Werewolves";
-        public override string roleDescription => "You do not have any special ability";
+        public override string winCondition => "You win by killing the Werewolves.";
+        public override string roleDescription => "You do not have any special ability.";
         public override string roleActionText => "";
 
         public Villager() : base() { }
@@ -166,7 +179,7 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Witch";
         public override int refInt => 2;
-        public override string winCondition => "You win by killing the Werewolves";
+        public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
         public override string roleActionName => "NotImplemented";
 
@@ -183,8 +196,8 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Seer";
         public override int refInt => 3;
-        public override string winCondition => "You win by killing the Werewolves";
-        public override string roleDescription => "You have the ability to see a player's role";
+        public override string winCondition => "You win by killing the Werewolves.";
+        public override string roleDescription => "You have the ability to see a player's role.";
         public override string roleActionName => "Check role";
 
         public Seer() : base() { }
@@ -211,4 +224,59 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{playerName} is a {role.roleName}");
         }
     }
+
+    public class WildBoy : Role
+    {
+        public override string roleName => "Wild Boy";
+        public override int refInt => 4;
+        public override string winCondition => "For now, you win with the village.";
+        public string _roleDescription = "You can idolize a player. If he dies, you become a werewolf.";
+        public override string roleDescription
+        {
+            get { return _roleDescription; }
+            set { _roleDescription = value; }
+        }
+        
+        public override string roleActionName => "Idolize";
+        public ulong? idolizedId;
+        public WildBoy() : base() { }
+
+        public override bool IsLocallyAllowedToPerformAction()
+        {
+            if (targetInRangeId == null) return false;
+            return true;
+        }
+
+        public override void PerformRoleAction()
+        {
+            logger.LogInfo($"The {roleName} is loitering.");
+            logger.LogInfo("Idolizing someone");
+
+            ulong targetId = GrabTargetPlayer();
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.IdolizeServerRpc(targetId);
+        }
+
+        public void ConfirmIdolization(ulong targetId)
+        {
+            logdebug.LogInfo("I am running the Idolization Confirmation");
+            idolizedId = targetId;
+
+            logdebug.LogInfo("I have set my idolization mentor");
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            string playerName = roleManagerObject.GetPlayerById(targetId).playerUsername;
+
+            roleDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
+            logdebug.LogInfo("Displaying Idolization on HUD");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If he dies, you will become a werewolf.");
+
+        }
+
+        public void BecomeWerewolf()
+        {
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor {Utils.GetRolesManager().GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a werewolf.");
+            Utils.GetRolesManager().myRole = new Werewolf();
+        }
+    }
+
 }
