@@ -106,7 +106,6 @@ namespace WerewolvesCompany
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
-
             // Does stuff for the netcode stuff
             var types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (var type in types)

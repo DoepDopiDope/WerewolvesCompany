@@ -110,26 +110,45 @@ namespace WerewolvesCompany.Managers
 
         private void SetupKeybindCallbacks()
         {
-            Plugin.InputActionsInstance.RoleActionKey.performed += OnRoleKeyPressed;
+            Plugin.InputActionsInstance.MainRoleActionKey.performed += OnRoleMainKeyPressed;
+            Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += OnRoleSecondaryKeyPressed;
             Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
         }
 
-        public void OnRoleKeyPressed(InputAction.CallbackContext keyContext)
+        public void OnRoleMainKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
             
             if (!keyContext.performed) return;
 
-            if (!myRole.IsLocallyAllowedToPerformAction()) 
+            if (!myRole.IsLocallyAllowedToPerformMainAction()) 
             {
-                logdebug.LogInfo("I am not locally allowed to perform this my Role Action");
+                logdebug.LogInfo("I am not locally allowed to perform my Main Action");
                 return;
             }
             
-            logdebug.LogInfo($"Pressed the key, performing action for my role {myRole.roleName}");
+            logdebug.LogInfo($"Pressed the key, performing main action for my role {myRole.roleName}");
 
-            PerformRoleActionServerRpc();
+            PerformMainActionServerRpc();
         }
+
+        public void OnRoleSecondaryKeyPressed(InputAction.CallbackContext keyContext)
+        {
+            if (myRole.roleName == null) return; // Prevents the default Role class to use the function
+
+            if (!keyContext.performed) return;
+
+            if (!myRole.IsLocallyAllowedToPerformSecondaryAction())
+            {
+                logdebug.LogInfo("I am not locally allowed to perform my Secondary Action");
+                return;
+            }
+
+            logdebug.LogInfo($"Pressed the key, performing secondary action for my role {myRole.roleName}");
+
+            PerformSecondaryActionServerRpc();
+        }
+
 
         public void OnDistributeRolesKeyPressed(InputAction.CallbackContext keyContext)
         {
@@ -195,7 +214,6 @@ namespace WerewolvesCompany.Managers
             {
                 return networkObject.gameObject;
             }
-
             return null;
         }
 
@@ -211,7 +229,6 @@ namespace WerewolvesCompany.Managers
             }
             logger.LogError("Could not find the desired player");
             throw new Exception("Could not find the player");
-
         }
 
 
@@ -409,10 +426,10 @@ namespace WerewolvesCompany.Managers
 
 
         // ------------------------------------------------------------------------------------
-        // Performing Role Action logic
+        // Performing Main Action logic
 
         [ServerRpc(RequireOwnership = false)]
-        public void PerformRoleActionServerRpc(ServerRpcParams serverRpcParams = default)
+        public void PerformMainActionServerRpc(ServerRpcParams serverRpcParams = default)
         {
             ulong senderId = serverRpcParams.Receive.SenderClientId;
             Role senderRole = allRoles[senderId];
@@ -428,9 +445,9 @@ namespace WerewolvesCompany.Managers
             };
 
             
-            if (senderRole.IsAllowedToPerformAction()) // If can perform action, then perform it
+            if (senderRole.IsAllowedToPerformMainAction()) // If can perform action, then perform it
             {
-                PerformRoleActionClientRpc(clientRpcParams); 
+                PerformMainActionClientRpc(clientRpcParams); 
             }
 
             else // Else, notify the sender that he cannot perform his action yet
@@ -441,25 +458,25 @@ namespace WerewolvesCompany.Managers
 
 
         [ClientRpc]
-        public void PerformRoleActionClientRpc(ClientRpcParams clientRpcParams = default)
+        public void PerformMainActionClientRpc(ClientRpcParams clientRpcParams = default)
         {
 
-            myRole.GenericPerformRoleAction();
+            myRole.GenericPerformMainAction();
         }
 
 
         [ClientRpc]
         public void CannotPerformThisActionYetClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            HUDManager.Instance.DisplayTip($"{myRole.roleName}", "You cannot perform this action yet");
+            HUDManager.Instance.DisplayTip($"{myRole.roleName}", "You cannot perform this action.");
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void SuccessFullyPerformedRoleActionServerRpc(ServerRpcParams serverRpcParams = default)
+        public void SuccessFullyPerformedMainActionServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} role action on cooldown");
+            logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} main action on cooldown");
             ulong senderId = serverRpcParams.Receive.SenderClientId;
-            allRoles[senderId].SetRoleOnCooldown();
+            allRoles[senderId].SetMainActionOnCooldown();
 
             // Build the ClientRpcParams to answer to the caller
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -470,15 +487,84 @@ namespace WerewolvesCompany.Managers
                 }
             };
 
-            logdebug.LogInfo("Sending the caller the order to set his role on cooldown");
-            SuccessFullyPerformedRoleActionClientRpc(clientRpcParams);
+            logdebug.LogInfo("Sending the caller the order to set his main action on cooldown");
+            SuccessFullyPerformedMainActionClientRpc(clientRpcParams);
         }
 
         [ClientRpc]
-        public void SuccessFullyPerformedRoleActionClientRpc(ClientRpcParams clientRpcParams = default)
+        public void SuccessFullyPerformedMainActionClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            logdebug.LogInfo("Setting my role action on cooldown");
-            myRole.SetRoleOnCooldown();
+            logdebug.LogInfo("Setting my main action on cooldown");
+            myRole.SetMainActionOnCooldown();
+        }
+
+
+        // ------------------------------------------------------------------------------------
+        // Performing Secondary Action logic
+
+        [ServerRpc(RequireOwnership = false)]
+        public void PerformSecondaryActionServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong senderId = serverRpcParams.Receive.SenderClientId;
+            Role senderRole = allRoles[senderId];
+            logdebug.LogInfo($"Received secondary action request from Player Id : {senderId}");
+
+            // Build the ClientRpcParams to answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+
+            if (senderRole.IsAllowedToPerformSecondaryAction()) // If can perform action, then perform it
+            {
+                PerformSecondaryActionClientRpc(clientRpcParams);
+            }
+
+            else // Else, notify the sender that he cannot perform his action yet
+            {
+                CannotPerformThisActionYetClientRpc(clientRpcParams);
+            }
+        }
+
+
+        [ClientRpc]
+        public void PerformSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+
+            myRole.GenericPerformSecondaryAction();
+        }
+
+
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SuccessFullyPerformedSecondaryActionServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} secondary action on cooldown");
+            ulong senderId = serverRpcParams.Receive.SenderClientId;
+            allRoles[senderId].SetMainActionOnCooldown();
+
+            // Build the ClientRpcParams to answer to the caller
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { senderId }
+                }
+            };
+
+            logdebug.LogInfo("Sending the caller the order to set his secondary action on cooldown");
+            SuccessFullyPerformedSecondaryActionClientRpc(clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void SuccessFullyPerformedSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            logdebug.LogInfo("Setting my secondary action on cooldown");
+            myRole.SetSecondaryActionOnCooldown();
         }
 
 

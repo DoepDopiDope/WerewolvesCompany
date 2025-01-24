@@ -75,28 +75,38 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip($"You are a {roleName}", rolePopUp);
         }
 
-        public virtual bool IsLocallyAllowedToPerformAction()
+        public virtual bool IsLocallyAllowedToPerformMainAction()
         {
             return true;
         }
 
-        public virtual bool IsAllowedToPerformAction()
+        public virtual bool IsAllowedToPerformMainAction()
         {
             return true;
         }
 
-        public void GenericPerformRoleAction()
+        public virtual bool IsLocallyAllowedToPerformSecondaryAction()
+        {
+            return true;
+        }
+
+        public virtual bool IsAllowedToPerformSecondaryAction()
+        {
+            return true;
+        }
+
+        public void GenericPerformMainAction()
         {
 
             bool flag = false;
             try
             {
-                PerformRoleAction();
+                PerformMainAction();
                 flag = true;
             }
             catch (Exception e)
             {
-                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Role Action");
+                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Main Action");
                 logger.LogError("Failed to perform my role action");
                 logger.LogError(e);
             }
@@ -104,21 +114,63 @@ namespace WerewolvesCompany
             if (flag)
             {
                 RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object}
-                roleManagerObject.SuccessFullyPerformedRoleActionServerRpc();
+                roleManagerObject.SuccessFullyPerformedMainActionServerRpc();
             }
 
         }
 
-        public virtual void PerformRoleAction()
+        public void GenericPerformSecondaryAction()
+        {
+
+            bool flag = false;
+            try
+            {
+                PerformSecondaryAction();
+                flag = true;
+            }
+            catch (Exception e)
+            {
+                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Secondary Action");
+                logger.LogError("Failed to perform my secondary action");
+                logger.LogError(e);
+            }
+
+            if (flag)
+            {
+                RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object}
+                roleManagerObject.SuccessFullyPerformedSecondaryActionServerRpc();
+            }
+
+        }
+
+
+
+        public virtual void PerformMainAction()
         {
             // Default behavior for a role
 
-            logger.LogInfo($"Performing action for role: {roleName}");
+            logger.LogInfo($"{roleName} has no main action.");
         }
 
-        public virtual void SetRoleOnCooldown()
+        public virtual void PerformSecondaryAction()
+        {
+            // Default behavior for a role
+
+            logger.LogInfo($"{roleName} has no secondary action.");
+        }
+
+
+
+        public virtual void SetMainActionOnCooldown()
         {
             return;
+        }
+
+        public virtual void SetSecondaryActionOnCooldown()
+        {
+            return;
+
+
         }
 
         public ulong GrabTargetPlayer()
@@ -145,13 +197,13 @@ namespace WerewolvesCompany
 
         public Werewolf() : base() { }
 
-        public override bool IsLocallyAllowedToPerformAction()
+        public override bool IsLocallyAllowedToPerformMainAction()
         {
             if (targetInRangeId == null) return false;
             return true;
         }
 
-        public override void PerformRoleAction()
+        public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is hunting!");
             ulong targetId = GrabTargetPlayer();
@@ -177,9 +229,10 @@ namespace WerewolvesCompany
 
         public Villager() : base() { }
 
-        public override void PerformRoleAction()
+        public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is staying safe.");
+            HUDManager.Instance.DisplayTip($"{roleName}", "*pat pat*");
         }
     }
 
@@ -197,7 +250,7 @@ namespace WerewolvesCompany
 
         public Witch() : base() { }
 
-        public override void PerformRoleAction()
+        public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is making potions.");
         }
@@ -217,13 +270,13 @@ namespace WerewolvesCompany
 
         public Seer() : base() { }
 
-        public override bool IsLocallyAllowedToPerformAction()
+        public override bool IsLocallyAllowedToPerformMainAction()
         {
             if (targetInRangeId == null) return false;
             return true;
         }
 
-        public override void PerformRoleAction()
+        public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is omniscient.");
             logger.LogInfo("Looking the role of someone");
@@ -261,13 +314,13 @@ namespace WerewolvesCompany
 
         public WildBoy() : base() { }
 
-        public override bool IsLocallyAllowedToPerformAction()
+        public override bool IsLocallyAllowedToPerformMainAction()
         {
             if (targetInRangeId == null) return false;
             return true;
         }
 
-        public override void PerformRoleAction()
+        public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is loitering.");
             logger.LogInfo("Idolizing someone");
