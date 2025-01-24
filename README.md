@@ -37,6 +37,8 @@ The Witch has two potions, and can do two things:
 - Poison another player and kill him (once per round)
 - Protect another player and make him immune **once** to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status
 
+Note that unlike the original Werewolves game, the Witch here does not revive a dead player. This change was made so that a killed-player cannot instantly reveal the Werewolf(ves) identity.
+
 ### Seer
 
 The Witch shall find and kill the Werewolves before ship departure
@@ -61,6 +63,7 @@ Theses features are not implemented yet, but are planned:
 - Roles Setup: Setup roles in the game from the terminal
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
+- More roles (planned: Cupid, Apprentice Seer)
 
 ## Contact
 
