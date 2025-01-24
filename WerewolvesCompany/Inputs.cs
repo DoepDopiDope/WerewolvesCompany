@@ -13,7 +13,11 @@ public class InputsClass : LcInputActions
     [InputAction(KeyboardControl.L, Name = "SecondaryRoleActionKey")]
     public InputAction SecondaryRoleActionKey { get; set; }
 
-    [InputAction(KeyboardControl.P, Name = "DistributeRoles")]
+    [InputAction(KeyboardControl.M, Name = "PopUpRole")]
+    public InputAction PopUpRoleActionKey { get; set; }
+
+
+    [InputAction(KeyboardControl.P, Name = "DistributeRoles", KbmInteractions = "hold(duration = 5)")]
     public InputAction DistributeRolesKey { get; set; }
 
 }

@@ -16,14 +16,14 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
-        [HarmonyPostfix]
-        [HarmonyPatch("Crouch")]
-        static void DisplayMyRolePopUp()
-        {
-            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            roleManagerObject.DisplayMyRolePopUp();
+        //[HarmonyPostfix]
+        //[HarmonyPatch("Crouch")]
+        //static void DisplayMyRolePopUp()
+        //{
+        //    RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+        //    roleManagerObject.DisplayMyRolePopUp();
 
-        }
+        //}
 
         [HarmonyPostfix]
         [HarmonyPatch("Start")]

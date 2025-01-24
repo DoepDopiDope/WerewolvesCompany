@@ -125,6 +125,7 @@ namespace WerewolvesCompany.Managers
         {
             Plugin.InputActionsInstance.MainRoleActionKey.performed += OnRoleMainKeyPressed;
             Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += OnRoleSecondaryKeyPressed;
+            Plugin.InputActionsInstance.PopUpRoleActionKey.performed += OnPopUpRoleActionKeyPressed;
             Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
         }
 
@@ -164,6 +165,10 @@ namespace WerewolvesCompany.Managers
             PerformSecondaryActionServerRpc();
         }
 
+        public void OnPopUpRoleActionKeyPressed(InputAction.CallbackContext keyContext)
+        {
+            DisplayMyRolePopUp();
+        }
 
         public void OnDistributeRolesKeyPressed(InputAction.CallbackContext keyContext)
         {
