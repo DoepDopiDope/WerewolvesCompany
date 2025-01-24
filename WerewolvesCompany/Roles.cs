@@ -50,18 +50,31 @@ namespace WerewolvesCompany
         public virtual string rolePopUp  => $"{winCondition} {roleDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
+
+        // Who's in range
         public ulong? targetInRangeId { get; set; }
 #nullable enable
         public string? targetInRangeName { get; set; }
-
-
 #nullable disable
-        public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName} {targetInRangeName}";}  }
-        public virtual string roleActionKey { get { return "K"; } }
-        public virtual string roleActionName { get { return "Action Name"; } }
 
+
+        // ToolTip
+        public virtual string mainActionText { get { return $"[{mainActionKey}] {mainActionName} {targetInRangeName}";}  }
+        public virtual string secondaryActionText { get { return $"[{secondaryActionKey}] {secondaryActionName} {targetInRangeName}"; } }
+        public virtual string roleActionText { get { return $"{mainActionText}\n{secondaryActionText}"; } }
+        public virtual string mainActionKey { get { return "K"; } }
+        public virtual string secondaryActionKey { get { return "L"; } }
+        public virtual string mainActionName { get { return "Main Action Name"; } }
+        public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
+
+
+        // Settings
         public virtual NetworkVariable<float> interactRange => Utils.GetRolesManager().DefaultInteractRange;
         public virtual NetworkVariable<float> actionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
+
+
+        // Interactions with others roles
+        public bool isImmune = false;
 
 
         public Role()
@@ -173,6 +186,44 @@ namespace WerewolvesCompany
 
         }
 
+
+        // Notifications of success and failed actions
+        public virtual void NotifyMainActionSuccess(string targetPlayerName)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Main action success");
+        }
+
+
+        public virtual void NotifySecondaryActionSuccess(string targetPlayerName)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Main action success");
+        }
+
+        public virtual void NotifyMainActionFailed(string targetPlayerName)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Main action failed");
+        }
+
+
+        public virtual void NotifySecondaryActionFailed(string targetPlayerName)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Main action failed");
+        }
+
+
+        // Alternative parameters inputs for the Seer
+        public virtual void NotifyMainActionSuccess(string targetPlayerName, Role role)
+        {
+            return;
+        }
+
+        // Alternative parameters inputs for the Wild Boy
+        public virtual void NotifyMainActionSuccess(ulong targetId)
+        {
+            return;
+        }
+
+
         public ulong GrabTargetPlayer()
         {
             if (targetInRangeId == null)
@@ -191,7 +242,7 @@ namespace WerewolvesCompany
         public override int refInt => 0;
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
-        public override string roleActionName => "Kill";
+        public override string mainActionName => "Kill";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WerewolfInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
 
@@ -207,13 +258,23 @@ namespace WerewolvesCompany
         {
             logger.LogInfo($"The {roleName} is hunting!");
             ulong targetId = GrabTargetPlayer();
-
+            
             RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            logger.LogInfo($"Killing {roleManagerObject.GetPlayerById(targetId).playerUsername}.");
             roleManagerObject.WerewolfKillPlayerServerRpc(targetId);
-
         }
 
-        
+        public override void NotifyMainActionSuccess(string targetPlayerName)
+        {
+            logger.LogInfo($"Successfully killed {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip($"{roleName}", $"You killed {targetPlayerName}.");
+        }
+
+        public override void NotifyMainActionFailed(string targetPlayerName)
+        {
+            logger.LogInfo($"Failed to kill {targetPlayerName}, he was immune");
+            HUDManager.Instance.DisplayTip($"{roleName}", $"{targetPlayerName} was immune");
+        }
     }
 
 
@@ -242,17 +303,50 @@ namespace WerewolvesCompany
         public override string roleName => "Witch";
         public override int refInt => 2;
         public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
-        public override string roleActionName => "NotImplemented";
+        public override string roleDescription => "You have the ability to protect one player, and kill another one.";
+        public override string mainActionName => "Poison";
+        public override string secondaryActionName => "Protect";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WitchInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
 
 
         public Witch() : base() { }
 
+        public override bool IsLocallyAllowedToPerformMainAction()
+        {
+            if (targetInRangeId == null) return false;
+            return true;
+        }
+
+
         public override void PerformMainAction()
         {
-            logger.LogInfo($"The {roleName} is making potions.");
+            logger.LogInfo($"The {roleName} is poisoning someone.");
+            ulong targetId = GrabTargetPlayer();
+
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.WitchPoisonPlayerServerRpc(targetId);
+        }
+
+
+        public override void PerformSecondaryAction()
+        {
+            logger.LogInfo($"The {roleName} is immunising someone.");
+            ulong targetId = GrabTargetPlayer();
+            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
+            roleManagerObject.WitchImmunizePlayerServerRpc(targetId);
+        }
+
+        public override void NotifyMainActionSuccess(string targetPlayerName)
+        {
+            logger.LogInfo($"Successfully poisoned {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip($"{roleName}", $"You poisoned {targetPlayerName}.");
+        }
+
+        public override void NotifySecondaryActionFailed(string targetPlayerName)
+        {
+            logger.LogInfo($"Successfully immunized {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip($"{roleName}", $"You immunized {targetPlayerName}.");
         }
     }
 
@@ -263,7 +357,7 @@ namespace WerewolvesCompany
         public override int refInt => 3;
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to see a player's role.";
-        public override string roleActionName => "Check role";
+        public override string mainActionName => "Check role";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().SeerActionCooldown;
 
@@ -286,12 +380,14 @@ namespace WerewolvesCompany
             roleManagerObject.CheckRoleServerRpc(targetId);
         }
 
-        public void DisplayCheckedRole(Role role, string playerName)
+
+        public override void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
             logdebug.LogInfo("Displaying Checked role on HUD");
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{playerName} is a {role.roleName}");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{targetPlayerName} is a {role.roleName}");
         }
     }
+
 
     public class WildBoy : Role
     {
@@ -305,7 +401,7 @@ namespace WerewolvesCompany
             set { _roleDescription = value; }
         }
         
-        public override string roleActionName => "Idolize";
+        public override string mainActionName => "Idolize";
         public ulong? idolizedId;
 
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WildBoyInteractRange;
@@ -330,7 +426,7 @@ namespace WerewolvesCompany
             roleManagerObject.IdolizeServerRpc(targetId);
         }
 
-        public void ConfirmIdolization(ulong targetId)
+        public override void NotifyMainActionSuccess(ulong targetId)
         {
             logdebug.LogInfo("I am running the Idolization Confirmation");
             idolizedId = targetId;
@@ -342,8 +438,8 @@ namespace WerewolvesCompany
             roleDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
             logdebug.LogInfo("Displaying Idolization on HUD");
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If he dies, you will become a werewolf.");
-
         }
+
 
         public void BecomeWerewolf()
         {

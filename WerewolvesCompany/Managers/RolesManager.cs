@@ -286,8 +286,8 @@ namespace WerewolvesCompany.Managers
             List<Role> roles = new List<Role>();
 
             // Example logic: One Werewolf and the rest are Villagers
-            roles.Add(new WildBoy());
-            roles.Add(new Seer());
+            roles.Add(new Werewolf());
+            roles.Add(new Witch());
             for (int i = 2; i < totalPlayers; i++)
             {
                 roles.Add(new Villager());
@@ -572,6 +572,10 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
 
+
+
+
+        // Seer actions
         [ServerRpc(RequireOwnership = false)]
         public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
@@ -605,27 +609,150 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"Received refInt {refInt}");
             Role role = References.references()[refInt];
             logdebug.LogInfo("Reversed the refInt into a Role");
-            new Seer().DisplayCheckedRole(role, playerName);
+            ((Seer)myRole).NotifyMainActionSuccess(playerName,role);
+        }
+
+
+
+
+        // Werewolf actions
+        [ServerRpc(RequireOwnership = false)]
+        public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Received Werewolf kill command from {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername}, towards {GetPlayerById(targetId).playerUsername}");
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            WerewolfKillPlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void WerewolfKillPlayerClientRpc(ulong werewolfId, ClientRpcParams clientRpcParams = default)
+        {
+            logdebug.LogInfo($"Received a Werewolf kill command from the server. Werewolf: {GetPlayerById(werewolfId).playerUsername}");
+            // If player is immune, remove immunity and notify the werewolf
+            if (myRole.isImmune)
+            {
+                logdebug.LogInfo("I am immune, therefore I do not die and notify the server");
+                myRole.isImmune = false;
+                NotifyWerewolfOfImmunityServerRpc(werewolfId);
+                return;
+            }
+
+            logdebug.LogInfo("I am not immune, therefore I run the kill command");
+            string werewolfName = GetPlayerById(werewolfId).playerUsername;
+            PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
+            controller.KillPlayer(new Vector3(0, 0, 0));
+            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {werewolfName}");
+
+            NotifyWerewolfOfKillServerRpc(werewolfId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void NotifyWerewolfOfImmunityServerRpc(ulong werewolfId, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"I was notified that {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername} is immune, I therefore notify the werewolf {GetPlayerById(werewolfId).playerUsername}");
+            string targetPlayerName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(werewolfId);
+            NotifyWerewolfOfImmunityClientRpc(targetPlayerName, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void NotifyWerewolfOfImmunityClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
+        {
+            ((Werewolf)myRole).NotifyMainActionFailed(targetPlayerName);
+        }
+
+
+
+        [ServerRpc(RequireOwnership = false)]
+        public void NotifyMainActionSuccessServerRpc(ulong originId, ServerRpcParams serverRpcParams = default)
+        {
+            PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
+            PlayerControllerB originPlayer = GetPlayerById(originId);
+            logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) has been affected by the command by the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
+            string targetPlayerName = targettedPlayer.playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
+            NotifyMainActionSuccessClientRpc(targetPlayerName, clientRpcParams);
+
+        }
+
+        [ClientRpc]
+        public void NotifyMainActionSuccessClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
+        {
+            myRole.NotifyMainActionSuccess(targetPlayerName);
         }
 
 
         [ServerRpc(RequireOwnership = false)]
-        public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        private void NotifyWerewolfOfKillServerRpc(ulong werewolfId, ServerRpcParams serverRpcParams = default)
         {
-            string werewolfName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
-            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
-            WerewolfKillPlayerClientRpc(werewolfName, clientRpcParams);
+            logdebug.LogInfo($"I was notified that the Werewolf {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername} has run the kill command, I therefore notify the werewolf {GetPlayerById(werewolfId).playerUsername}");
+            string targetPlayerName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(werewolfId);
+            NotifyWerewolfOfKillClientRpc(targetPlayerName, clientRpcParams);
         }
 
         [ClientRpc]
-        private void WerewolfKillPlayerClientRpc(string werewolfName, ClientRpcParams clientRpcParams = default)
+        private void NotifyWerewolfOfKillClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
         {
-            PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
-            controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were mawled", $"You  died from a werewolf: {werewolfName}");
+            ((Werewolf)myRole).NotifyMainActionSuccess(targetPlayerName);
         }
 
 
+        // Witch actions
+        // Poison someone
+        [ServerRpc(RequireOwnership = false)]
+        public void WitchPoisonPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            string witchName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            WitchPoisonPlayerClientRpc(witchName, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void WitchPoisonPlayerClientRpc(string witchName, ClientRpcParams clientRpcParams = default)
+        {
+            PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
+            controller.KillPlayer(new Vector3(0, 0, 0));
+            HUDManager.Instance.DisplayTip("You were poisoned", $"You were poisoned by a witch: {witchName}");
+
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void NotifyWitchOfPoisonServerRpc(ulong witchId, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"I was notified that the Witch {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername} has run the kill command, I therefore notify the witch {GetPlayerById(witchId).playerUsername}");
+            string targetPlayerName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(witchId);
+            NotifyWitchOfPoisonClientRpc(targetPlayerName, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void NotifyWitchOfPoisonClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
+        {
+            ((Witch)myRole).NotifyMainActionSuccess(targetPlayerName);
+        }
+
+
+        //Immunize someone
+        [ServerRpc(RequireOwnership = false)]
+        public void WitchImmunizePlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            string witchName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            WitchImmunizePlayerClientRpc(witchName, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void WitchImmunizePlayerClientRpc(string witchName, ClientRpcParams clientRpcParams = default)
+        {
+            myRole.isImmune = true;
+        }
+
+
+
+
+
+        // Wild Boy actions
         [ServerRpc(RequireOwnership = false)]
         public void IdolizeServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
@@ -636,7 +763,8 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void IdolizeClientRpc(ulong targetId, ClientRpcParams clientRpcParams = default)
         {
-            ((WildBoy)myRole).ConfirmIdolization(targetId);
+
+            ((WildBoy)myRole).NotifyMainActionSuccess(targetId);
         }
 
         [ServerRpc(RequireOwnership =false)]
