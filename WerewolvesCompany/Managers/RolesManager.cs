@@ -286,8 +286,8 @@ namespace WerewolvesCompany.Managers
             List<Role> roles = new List<Role>();
 
             // Example logic: One Werewolf and the rest are Villagers
-            roles.Add(new Werewolf());
             roles.Add(new Witch());
+            roles.Add(new Seer());
             for (int i = 2; i < totalPlayers; i++)
             {
                 roles.Add(new Villager());
@@ -379,6 +379,7 @@ namespace WerewolvesCompany.Managers
         }
 
 
+
         [ClientRpc]
         public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
         {
@@ -420,10 +421,13 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
         }
 
-
-
-
-
+        
+        
+        // ---------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------------------
+        // ServerRpc and ClientRpc roles logic
 
         // ------------------------------------------------------------------------------------
         // Performing Main Action logic
@@ -497,6 +501,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Setting my main action on cooldown");
             myRole.SetMainActionOnCooldown();
         }
+
 
 
         // ------------------------------------------------------------------------------------
@@ -652,8 +657,6 @@ namespace WerewolvesCompany.Managers
 
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
-
-
 
 
         // Seer actions
