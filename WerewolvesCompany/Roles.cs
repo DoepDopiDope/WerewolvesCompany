@@ -56,9 +56,13 @@ namespace WerewolvesCompany
 
 
 #nullable disable
-        public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName} {targetInRangeName}";}  }
-        public virtual string roleActionKey { get { return "K"; } }
-        public virtual string roleActionName { get { return "Action Name"; } }
+        public virtual string mainActionText { get { return $"[{mainActionKey}] {mainActionName} {targetInRangeName}";}  }
+        public virtual string secondaryActionText { get { return $"[{secondaryActionKey}] {secondaryActionName} {targetInRangeName}"; } }
+        public virtual string roleActionText { get { return $"{mainActionText}\n{secondaryActionText}"; } }
+        public virtual string mainActionKey { get { return "K"; } }
+        public virtual string secondaryActionKey { get { return "L"; } }
+        public virtual string mainActionName { get { return "Main Action Name"; } }
+        public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
 
         public virtual NetworkVariable<float> interactRange => Utils.GetRolesManager().DefaultInteractRange;
         public virtual NetworkVariable<float> actionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
@@ -191,7 +195,7 @@ namespace WerewolvesCompany
         public override int refInt => 0;
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
-        public override string roleActionName => "Kill";
+        public override string mainActionName => "Kill";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WerewolfInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
 
@@ -242,8 +246,8 @@ namespace WerewolvesCompany
         public override string roleName => "Witch";
         public override int refInt => 2;
         public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
-        public override string roleActionName => "NotImplemented";
+        public override string roleDescription => "You have the ability to protect one player, and kill another one.";
+        public override string mainActionName => "NotImplemented";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WitchInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
 
@@ -254,6 +258,11 @@ namespace WerewolvesCompany
         {
             logger.LogInfo($"The {roleName} is making potions.");
         }
+
+        public override void PerformSecondaryAction()
+        {
+            base.PerformSecondaryAction();
+        }
     }
 
 
@@ -263,7 +272,7 @@ namespace WerewolvesCompany
         public override int refInt => 3;
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to see a player's role.";
-        public override string roleActionName => "Check role";
+        public override string mainActionName => "Check role";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().SeerActionCooldown;
 
@@ -305,7 +314,7 @@ namespace WerewolvesCompany
             set { _roleDescription = value; }
         }
         
-        public override string roleActionName => "Idolize";
+        public override string mainActionName => "Idolize";
         public ulong? idolizedId;
 
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WildBoyInteractRange;
