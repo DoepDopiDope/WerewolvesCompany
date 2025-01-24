@@ -196,7 +196,7 @@ namespace WerewolvesCompany
 
         public virtual void NotifySecondaryActionSuccess(string targetPlayerName)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Main action success");
+            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
         }
 
         public virtual void NotifyMainActionFailed(string targetPlayerName)
@@ -207,7 +207,7 @@ namespace WerewolvesCompany
 
         public virtual void NotifySecondaryActionFailed(string targetPlayerName)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Main action failed");
+            HUDManager.Instance.DisplayTip(roleName, "Secondary action failed");
         }
 
 
@@ -343,7 +343,7 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip($"{roleName}", $"You poisoned {targetPlayerName}.");
         }
 
-        public override void NotifySecondaryActionFailed(string targetPlayerName)
+        public override void NotifySecondaryActionSuccess(string targetPlayerName)
         {
             logger.LogInfo($"Successfully immunized {targetPlayerName}.");
             HUDManager.Instance.DisplayTip($"{roleName}", $"You immunized {targetPlayerName}.");
