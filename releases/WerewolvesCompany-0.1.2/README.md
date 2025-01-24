@@ -54,7 +54,7 @@ The Wild Boy can target a player who becomes his idol. If the idol dies, the Wil
 - **[K]** Perform main action (Kill, Poison, Seer, Idolize)
 - **[L]** Perform secondary action (Make Immune)
 - **[M]** Display my role ToolTip
-- **[P]** (hold for 5s) (currenly disabled) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
+- **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
 
 ## TODO List
 

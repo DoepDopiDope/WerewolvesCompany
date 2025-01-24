@@ -126,7 +126,7 @@ namespace WerewolvesCompany.Managers
             Plugin.InputActionsInstance.MainRoleActionKey.performed += OnRoleMainKeyPressed;
             Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += OnRoleSecondaryKeyPressed;
             Plugin.InputActionsInstance.PopUpRoleActionKey.performed += OnPopUpRoleActionKeyPressed;
-            Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
+            //Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
         }
 
         public void OnRoleMainKeyPressed(InputAction.CallbackContext keyContext)
