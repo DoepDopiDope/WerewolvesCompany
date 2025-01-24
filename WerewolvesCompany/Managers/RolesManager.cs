@@ -305,14 +305,25 @@ namespace WerewolvesCompany.Managers
         public List<Role> GenerateRoles(int totalPlayers)
         {
             List<Role> roles = new List<Role>();
-
+            List<Role> tempRoles = new List<Role>();
             // Example logic: One Werewolf and the rest are Villagers
-            roles.Add(new Witch());
-            roles.Add(new Seer());
+            tempRoles.Add(new Werewolf());
+            tempRoles.Add(new Witch());
+            tempRoles.Add(new Seer());
+            tempRoles.Add(new WildBoy());
             for (int i = 2; i < totalPlayers; i++)
             {
-                roles.Add(new Villager());
+                tempRoles.Add(new Villager());
             }
+
+            //for (int i = 0; i < totalPlayers; i++)
+            //{
+            //    roles.Add(tempRoles[i]);
+            //}
+
+            roles.Add(new Werewolf());
+            roles.Add(new Witch());
+
 
             return roles;
         }
@@ -392,11 +403,10 @@ namespace WerewolvesCompany.Managers
 
         public void DisplayMyRolePopUp()
         {
+            if (myRole == null) return;
             logger.LogInfo("Displaying my role tooltip");
             logdebug.LogInfo("Grabbing my Role");
-            Role role = myRole;
-
-            role.DisplayRolePopUp();
+            myRole.DisplayRolePopUp();
         }
 
 

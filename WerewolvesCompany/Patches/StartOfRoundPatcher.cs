@@ -35,7 +35,7 @@ namespace WerewolvesCompany.Patches
 
 
         [HarmonyPostfix]
-        [HarmonyPatch("SetShipDoorsClosed")]
+        [HarmonyPatch("StartGame")]
         static void SendPlayersTheirRole(StartOfRound __instance)
         {
             
@@ -44,7 +44,11 @@ namespace WerewolvesCompany.Patches
             {
                 return;
             }
+
+            logger.LogInfo("Providing roles");
             Utils.GetRolesManager().BuildAndSendRoles();
         }
+
+
     }
 }
