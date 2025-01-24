@@ -59,13 +59,16 @@ namespace WerewolvesCompany
 
 
         // ToolTip
-        public virtual string mainActionText { get { return $"[{mainActionKey}] {mainActionName} {targetInRangeName}";}  }
-        public virtual string secondaryActionText { get { return $"[{secondaryActionKey}] {secondaryActionName} {targetInRangeName}"; } }
-        public virtual string roleActionText { get { return $"{mainActionText}\n{secondaryActionText}"; } }
+        
         public virtual string mainActionKey { get { return "K"; } }
         public virtual string secondaryActionKey { get { return "L"; } }
         public virtual string mainActionName { get { return "Main Action Name"; } }
         public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
+
+        public virtual string mainActionText { get { return $"[{mainActionKey}] {mainActionName} {targetInRangeName}"; } }
+        public virtual string secondaryActionText { get { return $"[{secondaryActionKey}] {secondaryActionName} {targetInRangeName}"; } }
+        public virtual string roleActionText { get { return GetRoleActionText(); } }
+
 
 
         // Settings
@@ -82,6 +85,15 @@ namespace WerewolvesCompany
             
         }
         
+        public string GetRoleActionText()
+        {
+            if (secondaryActionText.Contains("Secondary Action Name"))
+            {
+                return mainActionText;
+            }
+            return $"{mainActionText}\n{secondaryActionText}";
+        }
+
         public void DisplayRolePopUp()
         {
             logdebug.LogInfo("Display the role PopUp");
@@ -357,7 +369,8 @@ namespace WerewolvesCompany
         public override int refInt => 3;
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to see a player's role.";
-        public override string mainActionName => "Check role";
+        public override string mainActionName => "Seer role";
+        public override string mainActionText { get { return $"[{mainActionKey}] Seer {targetInRangeName}'s role"; } }
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
         public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().SeerActionCooldown;
 
