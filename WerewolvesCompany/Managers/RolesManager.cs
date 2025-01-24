@@ -321,14 +321,10 @@ namespace WerewolvesCompany.Managers
                 tempRoles.Add(new Villager());
             }
 
-            //for (int i = 0; i < totalPlayers; i++)
-            //{
-            //    roles.Add(tempRoles[i]);
-            //}
-
-            roles.Add(new Werewolf());
-            roles.Add(new Witch());
-
+            for (int i = 0; i < totalPlayers; i++)
+            {
+                roles.Add(tempRoles[i]);
+            }
 
             return roles;
         }
