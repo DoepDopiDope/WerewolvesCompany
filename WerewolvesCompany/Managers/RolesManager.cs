@@ -100,7 +100,8 @@ namespace WerewolvesCompany.Managers
 
         }
 
-        public ulong? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
+#nullable enable
+        public PlayerControllerB? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
         {
 
             //ulong myId = NetworkObjectId;
@@ -122,21 +123,19 @@ namespace WerewolvesCompany.Managers
 
             mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
-            logdebug.LogInfo($"The interact range value is {InteractRange.Value}");
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
             foreach (RaycastHit hit in pushRay)
             {
                 if (hit.transform.gameObject != playerObject)
                 {
                     PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
-                    ulong hitPlayerId = hitPlayer.actualClientId;
-                    return hitPlayerId;
+                    return hitPlayer;
 
                 }
             }
             return null;
         }
-
+#nullable disable
 
         private static GameObject GetPlayerByNetworkId(ulong playerId)
         {

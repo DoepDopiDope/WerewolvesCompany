@@ -173,7 +173,7 @@ namespace WerewolvesCompany.UI
             RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
 
-            if (roleManagerObject.myRole.targetInRange == null)
+            if (roleManagerObject.myRole.targetInRangeId == null)
             {
                 localPlayer.cursorTip.text = "";
             }

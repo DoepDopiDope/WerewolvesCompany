@@ -44,8 +44,11 @@ namespace WerewolvesCompany
         public virtual string roleDescription { get; }
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        public ulong? targetInRange { get; set; }
-        public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName}";}  }
+        public ulong? targetInRangeId { get; set; }
+#nullable enable
+        public string? targetInRangeName { get; set; }
+#nullable disable
+        public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName} {targetInRangeName}";}  }
         public virtual string roleActionKey { get { return "K"; } }
         public virtual string roleActionName { get { return "Action Name"; } }
 
@@ -102,12 +105,12 @@ namespace WerewolvesCompany
 
         public ulong GrabTargetPlayer()
         {
-            if (targetInRange == null)
+            if (targetInRangeId == null)
             {
                 logger.LogError("targetInRange is null. It should have been caught earlier. Halting execution");
                 throw new Exception("targetInRange should not be null at this point");
             }
-            return targetInRange.Value;
+            return targetInRangeId.Value;
         }
     }
 
@@ -124,7 +127,7 @@ namespace WerewolvesCompany
 
         public override bool IsLocallyAllowedToPerformAction()
         {
-            if (targetInRange == null) return false;
+            if (targetInRangeId == null) return false;
             return true;
         }
 
@@ -188,7 +191,7 @@ namespace WerewolvesCompany
 
         public override bool IsLocallyAllowedToPerformAction()
         {
-            if (targetInRange == null) return false;
+            if (targetInRangeId == null) return false;
             return true;
         }
 

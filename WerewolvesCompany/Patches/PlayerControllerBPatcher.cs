@@ -40,9 +40,19 @@ namespace WerewolvesCompany.Patches
             if (!__instance.IsOwner) return;
 
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            ulong? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
-
-            roleManagerObject.myRole.targetInRange = hitPlayer;
+#nullable enable
+            PlayerControllerB? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
+#nullable disable
+            if (hitPlayer == null)
+            {
+                roleManagerObject.myRole.targetInRangeId = null;
+                roleManagerObject.myRole.targetInRangeName = null;
+            }
+            else
+            {
+                roleManagerObject.myRole.targetInRangeId = hitPlayer.actualClientId;
+                roleManagerObject.myRole.targetInRangeName = hitPlayer.playerUsername;
+            }
 
             //__instance.cursorTip.text = "Coucou";
             //Utils.GetLocalPlayerControllerB().cursorTip.text = "Coucou";

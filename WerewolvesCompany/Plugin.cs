@@ -101,7 +101,7 @@ namespace WerewolvesCompany
         }
 
         private void ConfigSetup()
-        
+        {
             config_InteractRange = Config.Bind("Interact Range", "Value", 1.0f, "How far the player can use his Action on another player");
             config_RoleActionCoolDown = Config.Bind("Role Action Cooldown", "Value", 60f, "How often can a player use his action.");
         }
