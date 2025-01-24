@@ -50,6 +50,7 @@ namespace WerewolvesCompany
         public virtual string rolePopUp  => $"{winCondition} {roleDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
+        
 
         // Who's in range
         public ulong? targetInRangeId { get; set; }
@@ -65,15 +66,29 @@ namespace WerewolvesCompany
         public virtual string mainActionName { get { return "Main Action Name"; } }
         public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
 
-        public virtual string mainActionText { get { return $"[{mainActionKey}] {mainActionName} {targetInRangeName}"; } }
-        public virtual string secondaryActionText { get { return $"[{secondaryActionKey}] {secondaryActionName} {targetInRangeName}"; } }
+        public virtual string mainActionText { get { return $"{mainActionName} {targetInRangeName}"; } }
+        public virtual string mainActionTooltip { get { return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim(); } }
+        public virtual string secondaryActionText { get { return $"{secondaryActionName} {targetInRangeName}"; } }
+        public virtual string secondaryActionTooltip { get { return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim(); } }
         public virtual string roleActionText { get { return GetRoleActionText(); } }
 
 
 
         // Settings
         public virtual NetworkVariable<float> interactRange => Utils.GetRolesManager().DefaultInteractRange;
-        public virtual NetworkVariable<float> actionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
+        public virtual NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
+        public virtual NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().DefaultStartOfRoundActionCoolDown;
+
+
+        // Cooldowns
+        public float currentMainActionCooldown;
+        public float currentSecondaryActionCooldown;
+
+        public float baseMainActionCooldown;
+        public float baseSecondaryActionCooldown;
+
+        public bool IsMainActionOnCooldown => (currentMainActionCooldown > 0);
+        public bool IsSecondaryActionOnCooldown => (currentSecondaryActionCooldown > 0);
 
 
         // Interactions with others roles
@@ -82,16 +97,22 @@ namespace WerewolvesCompany
 
         public Role()
         {
-            
+            baseMainActionCooldown = baseActionCooldown.Value;
+            baseSecondaryActionCooldown = baseActionCooldown.Value;
+
+            currentMainActionCooldown = startOfRoundActionCooldown.Value;
+            currentSecondaryActionCooldown = startOfRoundActionCooldown.Value;
         }
         
+        
+
         public string GetRoleActionText()
         {
             if (secondaryActionText.Contains("Secondary Action Name"))
             {
-                return mainActionText;
+                return mainActionTooltip;
             }
-            return $"{mainActionText}\n{secondaryActionText}";
+            return $"{mainActionTooltip}\n{secondaryActionTooltip}";
         }
 
         public void DisplayRolePopUp()
@@ -102,15 +123,15 @@ namespace WerewolvesCompany
 
         public virtual bool IsLocallyAllowedToPerformMainAction()
         {
-            return true;
-        }
-
-        public virtual bool IsAllowedToPerformMainAction()
-        {
-            return true;
+            return (!IsMainActionOnCooldown && !(targetInRangeId == null));
         }
 
         public virtual bool IsLocallyAllowedToPerformSecondaryAction()
+        {
+            return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null));
+        }
+
+        public virtual bool IsAllowedToPerformMainAction()
         {
             return true;
         }
@@ -162,8 +183,7 @@ namespace WerewolvesCompany
 
             if (flag)
             {
-                RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object}
-                roleManagerObject.SuccessFullyPerformedSecondaryActionServerRpc();
+                Utils.GetRolesManager().SuccessFullyPerformedSecondaryActionServerRpc();
             }
 
         }
@@ -186,17 +206,43 @@ namespace WerewolvesCompany
 
 
 
-        public virtual void SetMainActionOnCooldown()
+        public void SetMainActionOnCooldown()
         {
-            return;
+            currentMainActionCooldown = baseMainActionCooldown;
         }
 
-        public virtual void SetSecondaryActionOnCooldown()
+        public void SetSecondaryActionOnCooldown()
         {
-            return;
-
-
+            currentSecondaryActionCooldown = baseSecondaryActionCooldown;
         }
+
+
+        public void UpdateCooldowns(float deltaTime)
+        {
+            currentMainActionCooldown -= deltaTime;
+            currentSecondaryActionCooldown -= deltaTime;
+        }
+        
+
+        //
+        private string GetCurrentMainActionCooldownText()
+        {
+            if (currentMainActionCooldown <= 0)
+            {
+                return "";
+            }
+            return $"({(int)currentMainActionCooldown}s)";
+        }
+
+        private string GetCurrentSecondaryActionCooldownText()
+        {
+            if (currentSecondaryActionCooldown <= 0)
+            {
+                return "";
+            }
+            return $"({(int)currentSecondaryActionCooldown}s)";
+        }
+        //
 
 
         // Notifications of success and failed actions
@@ -247,7 +293,8 @@ namespace WerewolvesCompany
         }
     }
 
-
+    // ----------------------------------------
+    // Roles
     public class Werewolf : Role
     {
         public override string roleName => "Werewolf";
@@ -256,15 +303,11 @@ namespace WerewolvesCompany
         public override string roleDescription => "You have the ability to kill other players";
         public override string mainActionName => "Kill";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WerewolfInteractRange;
-        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
+        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WerewolfStartOfRoundActionCoolDown;
 
         public Werewolf() : base() { }
 
-        public override bool IsLocallyAllowedToPerformMainAction()
-        {
-            if (targetInRangeId == null) return false;
-            return true;
-        }
 
         public override void PerformMainAction()
         {
@@ -298,8 +341,9 @@ namespace WerewolvesCompany
         public override string roleDescription => "You do not have any special ability.";
         public override string roleActionText => "";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().VillagerInteractRange;
-        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().VillagerActionCoolDown;
-
+        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().VillagerActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().VillagerStartOfRoundActionCoolDown;
+        
         public Villager() : base() { }
 
         public override void PerformMainAction()
@@ -319,16 +363,10 @@ namespace WerewolvesCompany
         public override string mainActionName => "Poison";
         public override string secondaryActionName => "Protect";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WitchInteractRange;
-        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
-
+        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WitchStartOfRoundActionCoolDown;
 
         public Witch() : base() { }
-
-        public override bool IsLocallyAllowedToPerformMainAction()
-        {
-            if (targetInRangeId == null) return false;
-            return true;
-        }
 
 
         public override void PerformMainAction()
@@ -370,18 +408,12 @@ namespace WerewolvesCompany
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to see a player's role.";
         public override string mainActionName => "Seer role";
-        public override string mainActionText { get { return $"[{mainActionKey}] Seer {targetInRangeName}'s role"; } }
+        public override string mainActionText => $"Seer {targetInRangeName}'s role";
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
-        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().SeerActionCooldown;
-
+        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().SeerActionCooldown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().SeerStartOfRoundActionCoolDown;
 
         public Seer() : base() { }
-
-        public override bool IsLocallyAllowedToPerformMainAction()
-        {
-            if (targetInRangeId == null) return false;
-            return true;
-        }
 
         public override void PerformMainAction()
         {
@@ -418,16 +450,12 @@ namespace WerewolvesCompany
         public ulong? idolizedId;
 
         public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WildBoyInteractRange;
-        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WildBoyActionCoolDown;
+        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WildBoyActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WildBoyStartOfRoundActionCoolDown;
 
 
         public WildBoy() : base() { }
 
-        public override bool IsLocallyAllowedToPerformMainAction()
-        {
-            if (targetInRangeId == null) return false;
-            return true;
-        }
 
         public override void PerformMainAction()
         {
