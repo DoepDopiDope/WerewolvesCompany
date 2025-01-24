@@ -16,13 +16,14 @@ using LethalCompanyInputUtils.Api;
 
 namespace WerewolvesCompany
 {
+    
     [BepInPlugin(GUID, NAME, VERSION)]
-    [BepInDependency("Rune580-LethalCompany_InputUtils-0.7.7", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
     public class Plugin : BaseUnityPlugin
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.1.0";
+        const string VERSION = "0.1.1";
 
         internal static InputsClass InputActionsInstance;
 

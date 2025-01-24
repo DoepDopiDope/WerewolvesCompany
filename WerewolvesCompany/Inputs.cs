@@ -17,7 +17,7 @@ public class InputsClass : LcInputActions
     public InputAction PopUpRoleActionKey { get; set; }
 
 
-    [InputAction(KeyboardControl.P, Name = "DistributeRoles", KbmInteractions = "hold(duration = 5)")]
+    [InputAction(KeyboardControl.P, Name = "DistributeRoles")]
     public InputAction DistributeRolesKey { get; set; }
 
 }

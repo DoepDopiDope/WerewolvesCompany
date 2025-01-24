@@ -6,7 +6,7 @@
   </PropertyGroup>
 <PropertyGroup>
     <PostBuildEvent>echo Copying DLL
-copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(SolutionName).dll"
+copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\WerewolvesCompany\$(SolutionName).dll"
 </PostBuildEvent>
   </PropertyGroup>
   <Target Name="NetcodePatch" BeforeTargets="PostBuildEvent">
