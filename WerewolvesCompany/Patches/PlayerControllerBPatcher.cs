@@ -40,6 +40,8 @@ namespace WerewolvesCompany.Patches
             if (!__instance.IsOwner) return;
 
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+            if (roleManagerObject.myRole == null) return;
+
 #nullable enable
             PlayerControllerB? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
 #nullable disable

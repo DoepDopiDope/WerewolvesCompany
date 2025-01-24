@@ -32,8 +32,9 @@ namespace WerewolvesCompany.Managers
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;
 
-
-        public Role myRole { get; set; }
+#nullable enable
+        public Role? myRole { get; set; }
+#nullable disable
 
 
 
@@ -129,6 +130,7 @@ namespace WerewolvesCompany.Managers
 
         public void OnRoleMainKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (myRole == null) return; // Prevents NullReferenceException
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
             
             if (!keyContext.performed) return;
@@ -146,6 +148,7 @@ namespace WerewolvesCompany.Managers
 
         public void OnRoleSecondaryKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (myRole == null) return; // Prevents NullReferenceException
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
 
             if (!keyContext.performed) return;
@@ -188,6 +191,10 @@ namespace WerewolvesCompany.Managers
 #nullable enable
         public PlayerControllerB? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
         {
+            if (myRole == null)
+            {
+                throw new Exception("myRole is null in CheckForPlayerInRange. This should have been caught earlier.");
+            }
 
             //ulong myId = NetworkObjectId;
             mls.LogInfo($"My networkObjectId is {myId}");
