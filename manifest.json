@@ -1,0 +1,9 @@
+{
+    "name": "WerewolvesCompany",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/DoepDopiDope/WerewolvesCompany",
+    "description": "Brings the Werewolves game to Lethal Company.",
+    "dependencies": [
+        "Rune580-LethalCompany_InputUtils-0.7.7"
+    ]
+}
