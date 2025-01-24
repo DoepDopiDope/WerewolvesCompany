@@ -12,6 +12,8 @@ using BepInEx.Configuration;
 
 using LethalCompanyInputUtils.Api;
 
+
+
 namespace WerewolvesCompany
 {
     [BepInPlugin(GUID, NAME, VERSION)]
@@ -22,7 +24,7 @@ namespace WerewolvesCompany
         const string NAME = "WerewolvesCompany";
         const string VERSION = "0.0.1";
 
-        internal static MyExampleInputClass InputActionsInstance;
+        internal static InputsClass InputActionsInstance;
 
         private readonly Harmony harmony = new Harmony(GUID);
 
@@ -37,10 +39,59 @@ namespace WerewolvesCompany
         public System.Random rng;
 
 
-        public static ConfigEntry<float>
-            config_InteractRange,
-            config_RoleActionCoolDown;
 
+        public static ConfigEntry<float>
+            // Default parameters
+            config_DefaultInteractRange,
+            config_DefaultActionCoolDown,
+
+            // Werewolf parameters
+            config_WerewolfInteractRange,
+            config_WerewolfActionCoolDown,
+
+            // Villager parameters
+            config_VillagerInteractRange,
+            config_VillagerActionCoolDown,
+
+            // Witch parameters
+            config_WitchInteractRange,
+            config_WitchActionCoolDown,
+
+            // Seer parameters
+            config_SeerInteractRange,
+            config_SeerActionCoolDown,
+
+            // Wild Boy parameters
+            config_WildBoyInteractRange,
+            config_WildBoyActionCoolDown
+            ;
+
+        private void ConfigSetup()
+        {
+            // Default parameters
+            config_DefaultInteractRange = Config.Bind("Default Interact Range", "Value", 1.0f, "How far the player can use his Action on another player.");
+            config_DefaultActionCoolDown = Config.Bind("Default Role Action Cooldown", "Value", 60f, "How often can a player use his action (in seconds).");
+
+            // Werewolf parameters
+            config_WerewolfInteractRange = Config.Bind("Werewolf Kill Range", "Value", 1.0f, "How far a Werewolf can kill another player.");
+            config_WerewolfActionCoolDown = Config.Bind("Werewolf Kill Cooldown", "Value", 60f, "How often a Werewolf can kill another player (in seconds).");
+
+            // Villager parameters
+            config_VillagerInteractRange = Config.Bind("Villager Interact Range", "Value", 1.0f, "Unused -- How far the player can use his Action on another player");
+            config_VillagerActionCoolDown = Config.Bind("Villager Action Cooldown", "Value", 0f, "Unused -- How often can a Villager use his action (in seconds).");
+
+            // Witch parameters
+            config_WitchInteractRange = Config.Bind("Witch Interact Range", "Value", 1.0f, "How far a Witch can use a potion on another.");
+            config_WitchActionCoolDown = Config.Bind("Witch Potion Cooldown", "Value", 9999f, "How often a Witch can use each potion (in seconds).");
+
+            // Seer parameters
+            config_SeerInteractRange = Config.Bind("Seer Seer Range", "Value", 10f, "How far the Seer can seer another player role.");
+            config_SeerActionCoolDown = Config.Bind("Seer Seer Cooldown", "Value", 120f, "How often the Seer can seer another player role (in seconds).");
+
+            // Wild Boy parameters
+            config_WildBoyInteractRange = Config.Bind("Wild Boy Idolize Range", "Value", 30f, "How far the Wild Boy can idolize another player.");
+            config_WildBoyActionCoolDown = Config.Bind("Wild Boy Idolize Cooldown", "Value", 9999f, "How often the Wild Boy can idolize another player (in seconds).");
+        }
 
 
         void Awake()
@@ -78,7 +129,7 @@ namespace WerewolvesCompany
             ConfigSetup();
 
             // Initiate the Inputs class
-            InputActionsInstance = new MyExampleInputClass();
+            InputActionsInstance = new InputsClass();
             
             // Patch the game using Harmony
             harmony.PatchAll();
@@ -100,11 +151,7 @@ namespace WerewolvesCompany
             Plugin.Instance.logger.LogInfo("ModManager GameObject created.");   
         }
 
-        private void ConfigSetup()
-        {
-            config_InteractRange = Config.Bind("Interact Range", "Value", 1.0f, "How far the player can use his Action on another player");
-            config_RoleActionCoolDown = Config.Bind("Role Action Cooldown", "Value", 60f, "How often can a player use his action.");
-        }
+       
 
 
     }

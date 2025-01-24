@@ -17,6 +17,7 @@ using static UnityEngine.GraphicsBuffer;
 using System.Data;
 using JetBrains.Annotations;
 using Unity.IO.LowLevel.Unsafe;
+using Unity.Netcode;
 
 
 
@@ -52,11 +53,15 @@ namespace WerewolvesCompany
         public ulong? targetInRangeId { get; set; }
 #nullable enable
         public string? targetInRangeName { get; set; }
+
+
 #nullable disable
         public virtual string roleActionText { get { return $"[{roleActionKey}] {roleActionName} {targetInRangeName}";}  }
         public virtual string roleActionKey { get { return "K"; } }
         public virtual string roleActionName { get { return "Action Name"; } }
 
+        public virtual NetworkVariable<float> interactRange => Utils.GetRolesManager().DefaultInteractRange;
+        public virtual NetworkVariable<float> actionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
 
 
         public Role()
@@ -135,6 +140,8 @@ namespace WerewolvesCompany
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
         public override string roleActionName => "Kill";
+        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WerewolfInteractRange;
+        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
 
         public Werewolf() : base() { }
 
@@ -165,6 +172,8 @@ namespace WerewolvesCompany
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You do not have any special ability.";
         public override string roleActionText => "";
+        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().VillagerInteractRange;
+        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().VillagerActionCoolDown;
 
         public Villager() : base() { }
 
@@ -182,6 +191,9 @@ namespace WerewolvesCompany
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to revive one Villager, and kill one player.";
         public override string roleActionName => "NotImplemented";
+        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WitchInteractRange;
+        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
+
 
         public Witch() : base() { }
 
@@ -199,6 +211,9 @@ namespace WerewolvesCompany
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You have the ability to see a player's role.";
         public override string roleActionName => "Check role";
+        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
+        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().SeerActionCooldown;
+
 
         public Seer() : base() { }
 
@@ -239,6 +254,11 @@ namespace WerewolvesCompany
         
         public override string roleActionName => "Idolize";
         public ulong? idolizedId;
+
+        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WildBoyInteractRange;
+        public override NetworkVariable<float> actionCooldown => Utils.GetRolesManager().WildBoyActionCoolDown;
+
+
         public WildBoy() : base() { }
 
         public override bool IsLocallyAllowedToPerformAction()

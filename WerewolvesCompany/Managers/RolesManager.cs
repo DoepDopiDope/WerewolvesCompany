@@ -32,19 +32,62 @@ namespace WerewolvesCompany.Managers
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;
 
+
         public Role myRole { get; set; } = new Role();
 
 
 
-        private NetworkVariable<float> InteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private NetworkVariable<float> RoleActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        // Default parameters
+        public NetworkVariable<float> DefaultInteractRange   = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> DefaultActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        // Werewolf parameters
+        public NetworkVariable<float> WerewolfInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WerewolfActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        // Villager parameters
+        public NetworkVariable<float> VillagerInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> VillagerActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        // Witch parameters
+        public NetworkVariable<float> WitchInteractRange     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WitchActionCoolDown    = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        // Seer parameters
+        public NetworkVariable<float> SeerInteractRange      = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> SeerActionCooldown     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+        // Wild Boy parameters
+        public NetworkVariable<float> WildBoyInteractRange   = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WildBoyActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                InteractRange.Value = Plugin.config_InteractRange.Value;
-                RoleActionCoolDown.Value = Plugin.config_RoleActionCoolDown.Value;
+                // Default parameters
+                DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
+                DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
+
+                // Werewolf parameters
+                WerewolfInteractRange.Value = Plugin.config_WerewolfInteractRange.Value;
+                WerewolfActionCoolDown.Value = Plugin.config_WerewolfActionCoolDown.Value;
+
+                // Villager parameters
+                VillagerInteractRange.Value = Plugin.config_VillagerInteractRange.Value;
+                VillagerActionCoolDown.Value = Plugin.config_VillagerActionCoolDown.Value;
+
+                // Witch parameters
+                WitchInteractRange.Value = Plugin.config_WitchInteractRange.Value;
+                WitchActionCoolDown.Value = Plugin.config_WitchActionCoolDown.Value;
+
+                // Seer parameters
+                SeerInteractRange.Value = Plugin.config_SeerInteractRange.Value;
+                SeerActionCooldown.Value = Plugin.config_SeerActionCoolDown.Value;
+
+                // Wild Boy parameters
+                WildBoyInteractRange.Value = Plugin.config_WildBoyInteractRange.Value;
+                WildBoyActionCoolDown.Value = Plugin.config_WildBoyActionCoolDown.Value;
             }
         }
 
@@ -68,6 +111,7 @@ namespace WerewolvesCompany.Managers
         private void SetupKeybindCallbacks()
         {
             Plugin.InputActionsInstance.RoleActionKey.performed += OnRoleKeyPressed;
+            Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
         }
 
         public void OnRoleKeyPressed(InputAction.CallbackContext keyContext)
@@ -86,6 +130,14 @@ namespace WerewolvesCompany.Managers
 
             PerformRoleActionServerRpc();
         }
+
+        public void OnDistributeRolesKeyPressed(InputAction.CallbackContext keyContext)
+        {
+            if (!IsHost) return;
+            if (!keyContext.performed) return;
+            BuildAndSendRoles();
+        }
+
 
         public override void OnDestroy()
         {
@@ -123,7 +175,7 @@ namespace WerewolvesCompany.Managers
 
             mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
-            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, InteractRange.Value, playerLayerMask);
+            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value, playerLayerMask);
             foreach (RaycastHit hit in pushRay)
             {
                 if (hit.transform.gameObject != playerObject)
@@ -161,6 +213,48 @@ namespace WerewolvesCompany.Managers
             throw new Exception("Could not find the player");
 
         }
+
+
+        public void BuildAndSendRoles()
+        {
+            logger.LogInfo("Roles generation has started");
+
+
+            // Build roles
+            Dictionary<ulong, Role> finalRoles;
+            finalRoles = BuildFinalRolesFromScratch();
+            logger.LogInfo("Roles generation has finished");
+
+            logdebug.LogInfo($"{finalRoles}");
+            logger.LogInfo("Sending roles to each player");
+            // Send the role to each player
+            foreach (var item in finalRoles)
+            {
+                logdebug.LogInfo($"Trying to send role {item.Value} to player id {item.Key}");
+
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { item.Key }
+                    }
+                };
+                logdebug.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
+
+
+                Utils.PrintDictionary<ulong, Role>(finalRoles);
+                logdebug.LogInfo($"{item.Value.refInt}");
+
+                logdebug.LogInfo("Invoking the SendRoleClientRpc method");
+                SendRoleClientRpc(item.Value.refInt, clientRpcParams);
+            }
+
+            logger.LogInfo("Finished sending roles to each player");
+
+            allRoles = finalRoles;
+            logdebug.LogInfo("Stored all roles in RolesManager.");
+        }
+
 
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()

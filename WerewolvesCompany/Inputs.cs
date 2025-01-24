@@ -5,8 +5,12 @@ using LethalCompanyInputUtils.Api;
 using LethalCompanyInputUtils.BindingPathEnums;
 using UnityEngine.InputSystem;
 
-public class MyExampleInputClass : LcInputActions
+public class InputsClass : LcInputActions
 {
     [InputAction(KeyboardControl.K, Name = "RoleActionKey")]
     public InputAction RoleActionKey { get; set; }
+
+    [InputAction(KeyboardControl.P, Name = "DistributeRoles")]
+    public InputAction DistributeRolesKey { get; set; }
+
 }
