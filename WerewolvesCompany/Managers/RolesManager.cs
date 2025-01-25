@@ -70,8 +70,13 @@ namespace WerewolvesCompany.Managers
 
         public override void OnNetworkSpawn()
         {
+            logger.LogInfo("Setup Keybinds CallBacks");
+            SetupKeybindCallbacks();
+
             if (IsServer)
             {
+                
+
                 // Default parameters
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
@@ -117,8 +122,6 @@ namespace WerewolvesCompany.Managers
                 Destroy(gameObject); // Prevent duplicate instances
             }
 
-            SetupKeybindCallbacks();
-
         }
 
         private void SetupKeybindCallbacks()
@@ -126,7 +129,7 @@ namespace WerewolvesCompany.Managers
             Plugin.InputActionsInstance.MainRoleActionKey.performed += OnRoleMainKeyPressed;
             Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += OnRoleSecondaryKeyPressed;
             Plugin.InputActionsInstance.PopUpRoleActionKey.performed += OnPopUpRoleActionKeyPressed;
-            //Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
+            Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
         }
 
         public void OnRoleMainKeyPressed(InputAction.CallbackContext keyContext)

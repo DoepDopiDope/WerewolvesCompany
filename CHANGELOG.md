@@ -1,3 +1,7 @@
+### [0.1.4]
+
+Enabled the hold-P (5s) keybind to distribute roles. This is to be used in case the default roles distribution fails.
+
 ### [0.1.3]
 
 Added LICENSE

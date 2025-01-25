@@ -40,13 +40,5 @@ namespace WerewolvesCompany.Managers
             HUDManager.Instance.DisplayTip("Test Header", "Test Text");
             logdebug.LogInfo("Displayed a simple tip");
         }
-
-
-
-        
-
-
-
-
     }
 }

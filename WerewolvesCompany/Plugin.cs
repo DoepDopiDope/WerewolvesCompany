@@ -23,7 +23,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.1.3";
+        const string VERSION = "0.1.4";
 
         internal static InputsClass InputActionsInstance;
 
@@ -110,13 +110,15 @@ namespace WerewolvesCompany
         void Awake()
         {
             // Setup logging
-            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- main");
+            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID}");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
             logupdate = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- update");
             logger.LogInfo("Plugin is initializing...");
 
 
+            BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
+
 
 
             // Does stuff for the netcode stuff
@@ -142,8 +144,8 @@ namespace WerewolvesCompany
             ConfigSetup();
 
             // Initiate the Inputs class
-            logdebug.LogInfo("Create the inputs class");
-            InputActionsInstance = new InputsClass();
+            //logdebug.LogInfo("Create the inputs class");
+            //InitiateInputsSystem();
 
             // Patch the game using Harmony
             logdebug.LogInfo("Harmony patching");
@@ -166,6 +168,11 @@ namespace WerewolvesCompany
             modManagerObject.AddComponent<ModManager>();
             DontDestroyOnLoad(modManagerObject);
             Plugin.Instance.logger.LogInfo("ModManager GameObject created.");   
+        }
+
+        public void InitiateInputsSystem()
+        {
+            InputActionsInstance = new InputsClass();
         }
 
        
@@ -251,7 +258,7 @@ namespace WerewolvesCompany
             {
                 GameObject roleHUDObject = new GameObject("RoleHUD");
                 roleHUDObject.AddComponent<RoleHUD>();
-                logger.LogInfo("RoleHUD has been recreated.");
+                logdebug.LogInfo("RoleHUD has been recreated.");
             }
         }
 
@@ -261,7 +268,7 @@ namespace WerewolvesCompany
             {
                 GameObject roleHUDObject = new GameObject("CooldownManager");
                 roleHUDObject.AddComponent<CooldownManager>();
-                logger.LogInfo("CooldownManager has been recreated.");
+                logdebug.LogInfo("CooldownManager has been recreated.");
             }
         }
 
