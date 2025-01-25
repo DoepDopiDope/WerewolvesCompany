@@ -22,20 +22,17 @@ Your role is permanently displayed at the top of your screen. You can also bring
 
 ### Werewolf
 
-The Werewolf shall kill other players before ship departure.
-
-The Werefolf has the ability to kill another player (with cooldown).
+The Werewolf shall kill other players before ship departure
+The Werefolf has the ability to kill another player (once every 60s)
 
 ### Villager
 
-The Villager shall find and kill the Werewolves before ship departure.
-
-The Villager can *patpat* others players.
+The Villager shall find and kill the Werewolves before ship departure
+The Villager can *patpat* others players
 
 ### Witch
 
-The Witch shall find and kill the Werewolves before ship departure.
-
+The Witch shall find and kill the Werewolves before ship departure
 The Witch has two potions, and can do two things:
 - Poison another player and kill him (once per round)
 - Protect another player and make him immune **once** to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status
@@ -44,23 +41,13 @@ Note that unlike the original Werewolves game, the Witch here does not revive a 
 
 ### Seer
 
-The Witch shall find and kill the Werewolves before ship departure.
-
-The Seer can seer another player's role (once per round).
+The Witch shall find and kill the Werewolves before ship departure
+The Seer can seer another player's role (once per round)
 
 ### Wild Boy
 
-The Wild Boy wins either with the Villagers or the Werewolves, depending on its status.
-
+The Wild Boy wins either with the Villagers or the Werewolves, depending on its status
 The Wild Boy can target a player who becomes his idol. If the idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.
-
-## Setup
-
-You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.
-
-Once in the Werewolves menu, you can add or remove roles from the current setup by typing :
-- werewolves add Role_Name
-- werewolves del Role_Name
 
 ## KeyBinds
 
@@ -72,6 +59,8 @@ Once in the Werewolves menu, you can add or remove roles from the current setup 
 ## TODO List
 
 Theses features are not implemented yet, but are planned:
+
+- Roles Setup: Setup roles in the game from the terminal
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
 - More roles (planned: Cupid, Apprentice Seer)
