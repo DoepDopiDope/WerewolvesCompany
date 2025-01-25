@@ -109,6 +109,8 @@ namespace WerewolvesCompany
 
         void Awake()
         {
+            
+
             // Setup logging
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID}");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
@@ -116,7 +118,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Plugin is initializing...");
 
 
-            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
@@ -167,7 +169,17 @@ namespace WerewolvesCompany
             GameObject modManagerObject = new GameObject("ModManager");
             modManagerObject.AddComponent<ModManager>();
             DontDestroyOnLoad(modManagerObject);
-            Plugin.Instance.logger.LogInfo("ModManager GameObject created.");   
+            Plugin.Instance.logger.LogInfo("ModManager GameObject created.");
+
+            // Run checks
+            //RunChecks();
+
+        }
+
+        private void RunChecks()
+        {
+            References.CheckIndividualRefInt();
+
         }
 
         public void InitiateInputsSystem()

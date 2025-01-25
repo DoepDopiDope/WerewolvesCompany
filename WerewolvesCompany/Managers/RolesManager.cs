@@ -15,6 +15,9 @@ using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
 using static UnityEngine.InputSystem.Layouts.InputControlLayout;
 using System.ComponentModel;
+using WerewolvesCompany.Patches;
+using System.Runtime.CompilerServices;
+using UnityEngine.Windows;
 
 
 
@@ -31,6 +34,8 @@ namespace WerewolvesCompany.Managers
 
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;
+
+        public List<Role> currentRolesSetup = new List<Role>();
 
 #nullable enable
         public Role? myRole { get; set; }
@@ -68,10 +73,14 @@ namespace WerewolvesCompany.Managers
         public NetworkVariable<float> WildBoyActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> WildBoyStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+
+       
+
         public override void OnNetworkSpawn()
         {
             logger.LogInfo("Setup Keybinds CallBacks");
             SetupKeybindCallbacks();
+            MakeDefaultRoles();
 
             if (IsServer)
             {
@@ -302,6 +311,11 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        public List<Role> MakeDefaultRoles()
+        {
+            return References.GetAllRoles();
+        }
+
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
         {
@@ -313,20 +327,23 @@ namespace WerewolvesCompany.Managers
         public List<Role> GenerateRoles(int totalPlayers)
         {
             List<Role> roles = new List<Role>();
-            List<Role> tempRoles = new List<Role>();
-            // Example logic: One Werewolf and the rest are Villagers
-            tempRoles.Add(new Werewolf());
-            tempRoles.Add(new Witch());
-            tempRoles.Add(new Seer());
-            tempRoles.Add(new WildBoy());
-            for (int i = 2; i < totalPlayers; i++)
+
+            // Fill roles with the current setup
+            for (int i = 0; i < currentRolesSetup.Count; i++)
             {
-                tempRoles.Add(new Villager());
+                roles.Add(currentRolesSetup[i]);
             }
 
-            for (int i = 0; i < totalPlayers; i++)
+            // Fill remaining slots with Villagers
+            for (int i = currentRolesSetup.Count; i < totalPlayers; i++)
             {
-                roles.Add(tempRoles[i]);
+                roles.Add(new Villager());
+            }
+
+            // Remove the last roles in case there were more roles given than there are players
+            for (int i = roles.Count -1; i >= totalPlayers; i--)
+            {
+                roles.RemoveAt(roles.Count - 1);
             }
 
             return roles;
@@ -456,13 +473,77 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
         }
 
-        
-        
+
+
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
         // ServerRpc and ClientRpc roles logic
+
+
+
+
+        // ------------------------------------------------------------------------------------
+        // Terminal logic
+        [ServerRpc(RequireOwnership = false)]
+        public void QueryCurrentRolesServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            UpdateCurrentRolesSetupClientRpc(WrapRolesList(currentRolesSetup), clientRpcParams);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void UpdateCurrentRolesServerRpc(string newRolesSetup,ServerRpcParams serverRpcParams = default)
+        {
+            //ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            UpdateCurrentRolesSetupClientRpc(newRolesSetup);
+        }
+
+
+        [ClientRpc]
+        private void UpdateCurrentRolesSetupClientRpc(string upstreamRolesSetup, ClientRpcParams clientRpcParams = default)
+        {
+            logger.LogInfo("The roles setup was modified.");
+            currentRolesSetup = UnwrapRolesList(upstreamRolesSetup);
+        }
+
+
+        public string WrapRolesList(List<Role> roles)
+        {
+            string rolesRefInts = "";
+            foreach (Role role in roles)
+            {
+                rolesRefInts += $"{role.refInt}\n";
+            }
+            return rolesRefInts;
+
+        }
+
+
+        public List<Role> UnwrapRolesList(string rolesRefInts)
+        {
+            List<Role> newCurrentRolesSetup = new List<Role>();
+            logdebug.LogInfo("Trying to split the list into individual string-ints");
+            string[] refInts = rolesRefInts.Split('\n');
+            logdebug.LogInfo("Successfully splt the string");
+
+            foreach (string refInt in refInts)
+            {
+                if (refInt == "")
+                {
+                    continue;
+                }
+                newCurrentRolesSetup.Add(References.references()[Convert.ToInt32(refInt)]);
+            }
+            return newCurrentRolesSetup;
+        }
+
+
+
+
+
+
 
         // ------------------------------------------------------------------------------------
         // Performing Main Action logic

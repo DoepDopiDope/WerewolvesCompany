@@ -25,16 +25,75 @@ namespace WerewolvesCompany
 {
     public class References
     {
+        public static List<Role> GetAllRoles()
+        {
+            var roles = new List<Role>();
+
+            roles.Add(new Werewolf());
+            roles.Add(new Villager());
+            roles.Add(new Witch());
+            roles.Add(new Seer());
+            roles.Add(new WildBoy());
+
+            return roles;
+        }
+
+        // Checks whether I have duplicates in the refInts for each role.
+        public static void CheckIndividualRefInt()
+        {
+
+            bool flag = true;
+            List<Role> roles = GetAllRoles();
+            List<int> individualRefInts = new List<int>();
+            foreach (Role role in roles)
+            {
+                if (individualRefInts.Contains(role.refInt))
+                {
+                    flag = false;
+                    break;
+                }
+                individualRefInts.Add(role.refInt);
+            }
+            
+            if (!flag)
+            {
+                throw new Exception("There are duplicates RefInts within the roles");
+            }
+        }
+
         public static Dictionary<int, Role> references()
         {
+            List<Role> roles = GetAllRoles();
             Dictionary<int, Role> dic = new Dictionary<int, Role>();
-            dic.Add(0, new Werewolf());
-            dic.Add(1, new Villager());
-            dic.Add(2, new Witch());
-            dic.Add(3, new Seer());
-            dic.Add(4, new WildBoy());
-
+            foreach (Role role in roles)
+            {
+                dic.Add(role.refInt, role);
+            }
             return dic;
+        }
+
+        public static Role GetRoleByName(string roleName)
+        {
+            foreach (var entry in references())
+            {
+                Role role = entry.Value;
+                if (role.roleName.ToLower() == roleName.ToLower())
+                {
+                    return role;
+                }
+            }
+
+            foreach (var entry in references())
+            {
+                Role role = entry.Value;
+                if (role.terminalName.ToLower() == roleName.ToLower())
+                {
+                    return role;
+                }
+            }
+
+            throw new Exception("No corresponding role found. This should have been caught earlier.");
+            
         }
     }
 
@@ -44,6 +103,7 @@ namespace WerewolvesCompany
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         public virtual string roleName { get; }
+        public string terminalName => roleName.Replace(" ", "_");
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
         public virtual string roleDescription { get; set; }
