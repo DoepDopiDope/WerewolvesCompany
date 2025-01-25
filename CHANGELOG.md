@@ -1,5 +1,7 @@
 ### [0.1.5]
 
+Added 'wc' alias for 'werewolves' in the terminal.
+
 Fixed bugs with the terminal interface.
 
 ### [0.1.4]

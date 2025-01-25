@@ -62,6 +62,8 @@ Once in the Werewolves menu, you can add or remove roles from the current setup 
 - werewolves add Role_Name
 - werewolves del Role_Name
 
+You can also shorten 'werewolves' with its alias 'wc'.
+
 ## KeyBinds
 
 - **[K]** Perform main action (Kill, Poison, Seer, Idolize)

@@ -105,14 +105,14 @@ namespace WerewolvesCompany.Patches
             logdebug.LogInfo($"Parsing sentence {input}");
             logdebug.LogInfo($"Input: {input}, with args: {args.ToString()} of length {args.Length.ToString()}");
 
-            if (!input.StartsWith("werewolves"))
+            if (!(input.StartsWith("werewolves") || input.StartsWith("wc")))
             {
                 logdebug.LogInfo("Not a werewolves command");
                 return true;
             }
 
             // Enter the werewolves Menu
-            if (input.StartsWith("werewolves"))
+            if (input.StartsWith("werewolves") || input.StartsWith("wc"))
             {
                 logdebug.LogInfo("werewolves command was invoked");
                 // if werewolves command was invoked
@@ -225,7 +225,7 @@ namespace WerewolvesCompany.Patches
             {
                 displayText = "[Werewolves Company]\n\n" +
                     "------------------------------\n" +
-                    "[[[availableRoles]]]\n\n" +
+                    "[[[availableRoles]]]\n" +
                     "------------------------------\n" +
                     "[[[currentRolesSetup]]]\n\n",
                 clearPreviousText = true,
@@ -241,7 +241,7 @@ namespace WerewolvesCompany.Patches
             {
                 displayText = "[Werewolves Company]\n\n" +
                     "------------------------------\n" +
-                    $"The role '{roleName}' is not available",
+                    $"The role '{roleName}' is not available\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };
@@ -255,7 +255,7 @@ namespace WerewolvesCompany.Patches
             {
                 displayText = "[Werewolves Company]\n\n" +
                     "------------------------------\n" +
-                    $"The role '{roleName}' is not part of the current roles",
+                    $"The role '{roleName}' is not part of the current roles\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };
@@ -269,7 +269,7 @@ namespace WerewolvesCompany.Patches
             {
                 displayText = "[Werewolves Company]\n\n" +
                    "------------------------------\n" +
-                   $"Please remove roles one at a time",
+                   $"Please remove roles one at a time\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };
