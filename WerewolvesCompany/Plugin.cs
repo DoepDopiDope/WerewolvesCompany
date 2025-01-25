@@ -23,7 +23,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.1.4";
+        const string VERSION = "0.1.5";
 
         internal static InputsClass InputActionsInstance;
 
@@ -118,7 +118,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Plugin is initializing...");
 
 
-            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
@@ -248,7 +248,7 @@ namespace WerewolvesCompany
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            Plugin.Instance.logger.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
+            logdebug.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
             InitializeHUD();
             InitializeCooldownManager();
             //InitializeRolesManager();
@@ -260,7 +260,7 @@ namespace WerewolvesCompany
             {
                 GameObject rolesManagerObject = new GameObject("RolesManager");
                 rolesManagerObject.AddComponent<RolesManager>();
-                Plugin.Instance.logger.LogInfo("RolesManager has been recreated.");
+                logger.LogInfo("RolesManager has been recreated.");
             }
         }
 

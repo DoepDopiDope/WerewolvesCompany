@@ -80,12 +80,11 @@ namespace WerewolvesCompany.Managers
         {
             logger.LogInfo("Setup Keybinds CallBacks");
             SetupKeybindCallbacks();
-            MakeDefaultRoles();
+            
 
             if (IsServer)
             {
-                
-
+                MakeDefaultRoles();
                 // Default parameters
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
@@ -311,9 +310,9 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        public List<Role> MakeDefaultRoles()
+        public void MakeDefaultRoles()
         {
-            return References.GetAllRoles();
+            currentRolesSetup = References.GetAllRoles();
         }
 
         // Automatically gathers the number of players

@@ -145,9 +145,9 @@ namespace WerewolvesCompany.Patches
                 }
 
                 // if the delete keyword was provided, add a role to the list
-                else if ((args[1].ToLower() == "delete") || (args[0].ToLower() == "del"))
+                else if ((args[1].ToLower() == "delete") || (args[1].ToLower() == "del"))
                 {
-                    if (args.Length >2)
+                    if (args.Length >3)
                     {
                         logger.LogInfo($"Can only delete roles one at a time");
                         __result = BuilDeleteRolesOnceAtATimeNode();
@@ -199,11 +199,12 @@ namespace WerewolvesCompany.Patches
 
         private static void DeleteRole(string roleName)
         {
-            for (int i=1 ; i< Utils.GetRolesManager().currentRolesSetup.Count ; i++)
+            for (int i=0 ; i< Utils.GetRolesManager().currentRolesSetup.Count ; i++)
             {
-                if (Utils.GetRolesManager().currentRolesSetup[i].roleName.ToLower() == roleName.ToLower())
+                logdebug.LogInfo($"Checking {roleName} against {Utils.GetRolesManager().currentRolesSetup[i].terminalName}");
+                if (Utils.GetRolesManager().currentRolesSetup[i].terminalName.ToLower() == roleName.ToLower())
                 {
-                    logger.LogInfo($"Delete role {Utils.GetRolesManager().currentRolesSetup[i].roleName.ToLower()} from the list");
+                    logger.LogInfo($"Delete role {Utils.GetRolesManager().currentRolesSetup[i].terminalName.ToLower()} from the list");
                     Utils.GetRolesManager().currentRolesSetup.RemoveAt(i);
                     Utils.GetRolesManager().UpdateCurrentRolesServerRpc(Utils.GetRolesManager().WrapRolesList(Utils.GetRolesManager().currentRolesSetup));
                     return;

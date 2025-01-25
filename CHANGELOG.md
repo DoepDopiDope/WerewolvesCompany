@@ -1,3 +1,13 @@
+### [0.1.5]
+
+Fixed bugs with the terminal interface.
+
+### [0.1.4]
+
+Added a default roles setup list, including all roles.
+
+Also disabled the debug logs, which I forgot to do in 0.1.4.
+
 ### [0.1.4]
 
 Added the roles setup in the ship terminal
