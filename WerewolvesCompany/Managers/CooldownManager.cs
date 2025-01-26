@@ -15,6 +15,7 @@ namespace WerewolvesCompany.Managers
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
+        private RolesManager rolesManager = Utils.GetRolesManager();
 
         void Awake()
         {
@@ -32,9 +33,9 @@ namespace WerewolvesCompany.Managers
 
         public void Update()
         {
-            RolesManager rolesManagerObject = Utils.GetRolesManager();
-            if (rolesManagerObject.myRole == null) return;
-            rolesManagerObject.myRole.UpdateCooldowns(Time.deltaTime);
+            if (rolesManager == null) return;
+            if (rolesManager.myRole == null) return;
+            rolesManager.myRole.UpdateCooldowns(Time.deltaTime);
         }
 
     }

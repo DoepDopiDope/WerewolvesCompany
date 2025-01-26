@@ -15,6 +15,8 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
+        static private RolesManager rolesManager = Utils.GetRolesManager();
+        static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
 
         //[HarmonyPostfix]
         //[HarmonyPatch("Crouch")]
@@ -39,26 +41,24 @@ namespace WerewolvesCompany.Patches
         {
             if (!__instance.IsOwner) return;
 
-            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            if (roleManagerObject.myRole == null) return;
+            if (rolesManager.myRole == null) return;
 
 #nullable enable
-            PlayerControllerB? hitPlayer = roleManagerObject.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
+            PlayerControllerB? hitPlayer = rolesManager.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
 #nullable disable
             if (hitPlayer == null)
             {
-                roleManagerObject.myRole.targetInRangeId = null;
-                roleManagerObject.myRole.targetInRangeName = null;
+                rolesManager.myRole.targetInRangeId = null;
+                rolesManager.myRole.targetInRangeName = null;
             }
             else
             {
-                roleManagerObject.myRole.targetInRangeId = hitPlayer.playerClientId;
-                roleManagerObject.myRole.targetInRangeName = hitPlayer.playerUsername;
+                rolesManager.myRole.targetInRangeId = hitPlayer.playerClientId;
+                rolesManager.myRole.targetInRangeName = hitPlayer.playerUsername;
             }
 
             //__instance.cursorTip.text = "Coucou";
             //Utils.GetLocalPlayerControllerB().cursorTip.text = "Coucou";
-            RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
             roleHUD.UpdateToolTip();
         }
 
