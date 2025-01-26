@@ -1,2 +1,3 @@
 - Ability to know the cooldown without having to aim at someone, for example at the top of the screen, on the side of the name of your role
 - When dead, replace on HUD your previous role with the one of the person you're spectating
+- More roles: Cupid, Apprentice Seer

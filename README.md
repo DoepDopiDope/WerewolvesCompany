@@ -71,12 +71,21 @@ You can also shorten 'werewolves' with its alias 'wc'.
 - **[M]** Display my role ToolTip
 - **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
 
-## TODO List
+## Planned updates
 
 Theses features are not implemented yet, but are planned:
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
-- More roles (planned: Cupid, Apprentice Seer)
+- Cooldown of actions somewhere in the screen, to avoid having to hug someone to know your kill cooldown
+- More roles
+  - Cupid
+  - Apprentice Seer
+  - ...
+
+## Known issues
+
+- When dead, the console spams errors because it's trying to check if someone is in front of the dead player
+
 
 ## Contact
 
