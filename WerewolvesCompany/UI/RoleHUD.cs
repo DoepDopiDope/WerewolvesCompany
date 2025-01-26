@@ -26,7 +26,7 @@ namespace WerewolvesCompany.UI
 
         public Canvas canvas;
         public Text roleText;
-        public Image roleIcon;
+        //public Image roleIcon;
         //public Text toolTipText;
 
         void Awake()
@@ -78,7 +78,7 @@ namespace WerewolvesCompany.UI
 
             // Add Horizontal Layout Group to the container
             HorizontalLayoutGroup layoutGroup = container.AddComponent<HorizontalLayoutGroup>();
-            layoutGroup.childAlignment = TextAnchor.MiddleCenter;
+            layoutGroup.childAlignment = TextAnchor.UpperCenter;
             layoutGroup.spacing = 10; // Space between image and text
             layoutGroup.padding = new RectOffset(10, 10, 10, 10); // Add padding
 
@@ -87,25 +87,25 @@ namespace WerewolvesCompany.UI
             containerTransform.anchorMin = new Vector2(0.5f, 1f); // Center top
             containerTransform.anchorMax = new Vector2(0.5f, 1f); // Center top
             containerTransform.pivot = new Vector2(0.5f, 1f);      // Pivot around top-center
-            containerTransform.anchoredPosition = new Vector2(0, -50); // Offset 50 units down from the top
+            containerTransform.anchoredPosition = new Vector2(0,-5); // Offset 50 units down from the top
             containerTransform.sizeDelta = new Vector2(500, 200); // Offset 50 units down from the top
 
             // Create a GameObject for the role image
-            GameObject imageObject = new GameObject("RoleImage");
-            imageObject.transform.SetParent(container.transform);
-            roleIcon = imageObject.AddComponent<Image>();
-            roleIcon.color = Color.white; // Default color
+            //GameObject imageObject = new GameObject("RoleImage");
+            //imageObject.transform.SetParent(container.transform);
+            //roleIcon = imageObject.AddComponent<Image>();
+            //roleIcon.color = Color.white; // Default color
 
-            // Load a placeholder image (replace "your-image-path" with your actual image path or asset)
-            Sprite placeholderSprite = Resources.Load<Sprite>("placeholder-image");
-            if (placeholderSprite != null)
-            {
-                roleIcon.sprite = placeholderSprite;
-            }
+            //// Load a placeholder image (replace "your-image-path" with your actual image path or asset)
+            //Sprite placeholderSprite = Resources.Load<Sprite>("placeholder-image");
+            //if (placeholderSprite != null)
+            //{
+            //    roleIcon.sprite = placeholderSprite;
+            //}
 
             // Configure RectTransform of the image
-            RectTransform imageTransform = roleIcon.GetComponent<RectTransform>();
-            imageTransform.sizeDelta = new Vector2(50, 50); // Set image size (adjust as needed)
+            //RectTransform imageTransform = roleIcon.GetComponent<RectTransform>();
+            //imageTransform.sizeDelta = new Vector2(50, 50); // Set image size (adjust as needed)
 
             // Create a GameObject for the role text
             GameObject textObject = new GameObject("RoleText");
@@ -114,20 +114,21 @@ namespace WerewolvesCompany.UI
             roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
             roleText.text = "Role: Unknown";
             //roleText.alignment = TextAnchor.MiddleLeft;
-            roleText.alignment = TextAnchor.MiddleCenter;
+            roleText.alignment = TextAnchor.UpperCenter;
             roleText.fontSize = 24;
             roleText.color = Color.white;
 
             // Configure RectTransform of the text
             RectTransform textTransform = roleText.GetComponent<RectTransform>();
-            textTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
-            textTransform.anchorMin = new Vector2(0.5f, 0.5f); // Anchor to center-left of the parent
-            textTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            containerTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
-            textTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
+            textTransform.sizeDelta = new Vector2(500, 200); // Width = 200, Height = 50 (adjust as needed)
+            textTransform.anchorMin = new Vector2(0.5f, 1.0f); // Anchor to center-left of the parent
+            textTransform.anchorMax = new Vector2(0.5f, 1.0f);
+
+            textTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
+            textTransform.pivot = new Vector2(0.5f, 1f);    // Pivot around center-left
 
 
-
+            
 
             //// Create the tooltip in the middle  of the screen
             //GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
@@ -159,7 +160,7 @@ namespace WerewolvesCompany.UI
             if (rolesManager.myRole == null)
             {
                 roleText.text = "";
-                roleIcon.enabled = false;
+                //roleIcon.enabled = false;
                 return;
             }
 
@@ -175,15 +176,15 @@ namespace WerewolvesCompany.UI
                 roleText.text = text;
             }
 
-            if (roleIcon != null && myRole.roleIcon != null)
-            {
-                roleIcon.sprite = myRole.roleIcon;
-                roleIcon.enabled = true;
-            }
-            else
-            {
-                roleIcon.enabled = false;
-            }
+            //if (roleIcon != null && myRole.roleIcon != null)
+            //{
+            //    roleIcon.sprite = myRole.roleIcon;
+            //    roleIcon.enabled = true;
+            //}
+            //else
+            //{
+            //    roleIcon.enabled = false;
+            //}
 
             //toolTipText.text = myRole.roleActionText;
         }

@@ -104,7 +104,6 @@ Theses features are not implemented yet, but are planned:
 
 - When dead, the console may spam errors because it's trying to check if someone is in front of the dead player
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty
-- Non-hosts do not have tooltips when hovering items
 
 
 ## Contact

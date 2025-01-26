@@ -1,3 +1,9 @@
+### [0.2.1]
+
+Centered RoleHUD
+
+Fixed an issue where the mod would prevent interactions texts from displaying when facing interactable objects.
+
 ### [0.2.0]
 
 Huge performance improvements.
