@@ -88,7 +88,7 @@ namespace WerewolvesCompany.UI
             containerTransform.anchorMax = new Vector2(0.5f, 1f); // Center top
             containerTransform.pivot = new Vector2(0.5f, 1f);      // Pivot around top-center
             containerTransform.anchoredPosition = new Vector2(0, -50); // Offset 50 units down from the top
-            containerTransform.sizeDelta = new Vector2(500, 100); // Offset 50 units down from the top
+            containerTransform.sizeDelta = new Vector2(500, 200); // Offset 50 units down from the top
 
             // Create a GameObject for the role image
             GameObject imageObject = new GameObject("RoleImage");
@@ -113,7 +113,8 @@ namespace WerewolvesCompany.UI
             roleText = textObject.AddComponent<Text>();
             roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
             roleText.text = "Role: Unknown";
-            roleText.alignment = TextAnchor.MiddleLeft;
+            //roleText.alignment = TextAnchor.MiddleLeft;
+            roleText.alignment = TextAnchor.MiddleCenter;
             roleText.fontSize = 24;
             roleText.color = Color.white;
 
@@ -148,11 +149,18 @@ namespace WerewolvesCompany.UI
 
         }
 
-        public void UpdateRoleDisplay(Role role)
+        public void UpdateRoleDisplay()
         {
             if (canvas == null)
             {
                 CreateRoleHUD();
+            }
+
+            if (rolesManager.myRole == null)
+            {
+                roleText.text = "";
+                roleIcon.enabled = false;
+                return;
             }
 
             Role myRole = rolesManager.myRole;
@@ -160,7 +168,11 @@ namespace WerewolvesCompany.UI
             //logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
             if (roleText != null)
             {
-                roleText.text = myRole.roleName;
+                // Build the text to be displayed;
+                string text = $"{myRole.roleName}\n" + 
+                              $"{myRole.roleActionText.Replace("  ", " ")}";
+
+                roleText.text = text;
             }
 
             if (roleIcon != null && myRole.roleIcon != null)

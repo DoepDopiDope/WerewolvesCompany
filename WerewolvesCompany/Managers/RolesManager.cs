@@ -463,11 +463,11 @@ namespace WerewolvesCompany.Managers
             if (roleHUD != null)
             {
                 logger.LogInfo("Update the HUD with the role");
-                roleHUD.UpdateRoleDisplay(role);
+                roleHUD.UpdateRoleDisplay();
             }
             else
             {
-                logger.LogInfo("Did not find the HUD");
+                logger.LogError("Could not find the RoleHUD");
             }
 
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
@@ -861,13 +861,17 @@ namespace WerewolvesCompany.Managers
         private void WerewolfKillPlayerClientRpc(ulong werewolfId, ClientRpcParams clientRpcParams = default)
         {
             logdebug.LogInfo($"Received a Werewolf kill command from the server. Werewolf: {GetPlayerById(werewolfId).playerUsername}");
-            // If player is immune, remove immunity and notify the werewolf
-            if (myRole.isImmune)
+            // If I don't have a role, skip the check for immunity
+            if (myRole != null)
             {
-                logdebug.LogInfo("I am immune, therefore I do not die and notify the server");
-                myRole.isImmune = false;
-                NotifyMainActionFailedServerRpc(werewolfId);
-                return;
+                // If player is immune, remove immunity and notify the werewolf
+                if (myRole.isImmune)
+                {
+                    logdebug.LogInfo("I am immune, therefore I do not die and notify the server");
+                    myRole.isImmune = false;
+                    NotifyMainActionFailedServerRpc(werewolfId);
+                    return;
+                }
             }
 
             logdebug.LogInfo("I am not immune, therefore I run the kill command");

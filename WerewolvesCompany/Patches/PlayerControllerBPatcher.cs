@@ -59,6 +59,7 @@ namespace WerewolvesCompany.Patches
 
             //__instance.cursorTip.text = "Coucou";
             //Utils.GetLocalPlayerControllerB().cursorTip.text = "Coucou";
+            roleHUD.UpdateRoleDisplay();
             roleHUD.UpdateToolTip();
         }
 
