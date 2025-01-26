@@ -77,13 +77,13 @@ namespace WerewolvesCompany
         {
             // Default parameters
             config_DefaultInteractRange = Config.Bind("Default Interact Range", "Value", 1.0f, "How far the player can use his Action on another player.");
-            config_DefaultActionCoolDown = Config.Bind("Default Role Action Cooldown", "Value", 60f, "How often can a player use his action (in seconds).");
-            config_DefaultStartOfRoundActionCoolDown = Config.Bind("Default Start of Round Role Action Cooldown", "Value", 60f, "How soon after the start of a round has started a player can use his action (in seconds).");
+            config_DefaultActionCoolDown = Config.Bind("Default Role Action Cooldown", "Value", 120f, "How often can a player use his action (in seconds).");
+            config_DefaultStartOfRoundActionCoolDown = Config.Bind("Default Start of Round Role Action Cooldown", "Value", 120f, "How soon after the start of a round has started a player can use his action (in seconds).");
 
             // Werewolf parameters
             config_WerewolfInteractRange = Config.Bind("Werewolf Kill Range", "Value", 1.0f, "How far a Werewolf can kill another player.");
             config_WerewolfActionCoolDown = Config.Bind("Werewolf Kill Cooldown", "Value", 120f, "How often a Werewolf can kill another player (in seconds).");
-            config_WerewolfStartOfRoundActionCoolDown = Config.Bind("Werewolf Kill Cooldown at the start of a round", "Value", 60f, "How soon after the start of a round a Werewolf can Kill someone (in seconds).");
+            config_WerewolfStartOfRoundActionCoolDown = Config.Bind("Werewolf Kill Cooldown at the start of a round", "Value", 120f, "How soon after the start of a round a Werewolf can Kill someone (in seconds).");
 
             // Villager parameters
             config_VillagerInteractRange = Config.Bind("Villager Interact Range", "Value", 1.0f, "Unused -- How far the player can use his Action on another player");
@@ -93,12 +93,12 @@ namespace WerewolvesCompany
             // Witch parameters
             config_WitchInteractRange = Config.Bind("Witch Interact Range", "Value", 1.0f, "How far a Witch can use a potion on another.");
             config_WitchActionCoolDown = Config.Bind("Witch Potion Cooldown", "Value", 9999f, "How often a Witch can use each potion (in seconds).");
-            config_WitchStartOfRoundActionCoolDown = Config.Bind("Witch Potion Cooldown at the start of a round", "Value", 60f, "How soon after a round has started a Witch can use her potions (in seconds).");
+            config_WitchStartOfRoundActionCoolDown = Config.Bind("Witch Potion Cooldown at the start of a round", "Value", 120f, "How soon after a round has started a Witch can use her potions (in seconds).");
 
             // Seer parameters
             config_SeerInteractRange = Config.Bind("Seer Seer Range", "Value", 10f, "How far the Seer can seer another player role.");
             config_SeerActionCoolDown = Config.Bind("Seer Seer Cooldown", "Value", 120f, "How often the Seer can seer another player role (in seconds).");
-            config_SeerStartOfRoundActionCoolDown = Config.Bind("Seer Seer Cooldown at the start of a round", "Value", 60f, "How soon after a round has started a Seer can seer a player role (in seconds).");
+            config_SeerStartOfRoundActionCoolDown = Config.Bind("Seer Seer Cooldown at the start of a round", "Value", 120f, "How soon after a round has started a Seer can seer a player role (in seconds).");
 
             // Wild Boy parameters
             config_WildBoyInteractRange = Config.Bind("Wild Boy Idolize Range", "Value", 30f, "How far the Wild Boy can idolize another player.");
