@@ -32,7 +32,7 @@ namespace WerewolvesCompany.Patches
             Role role = new Werewolf();
         }
 
-        
+
         [HarmonyPostfix]
         [HarmonyPatch("LateUpdate")]
         static void LateUpdate(PlayerControllerB __instance)
@@ -52,7 +52,7 @@ namespace WerewolvesCompany.Patches
             }
             else
             {
-                roleManagerObject.myRole.targetInRangeId = hitPlayer.actualClientId;
+                roleManagerObject.myRole.targetInRangeId = hitPlayer.playerClientId;
                 roleManagerObject.myRole.targetInRangeName = hitPlayer.playerUsername;
             }
 
@@ -66,7 +66,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("KillPlayer")]
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
-            Utils.GetRolesManager().OnSomebodyDeathServerRpc(__instance.actualClientId);
+            Utils.GetRolesManager().OnSomebodyDeathServerRpc(__instance.playerClientId);
         }
 
     }

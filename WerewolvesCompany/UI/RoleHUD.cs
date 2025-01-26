@@ -18,6 +18,7 @@ namespace WerewolvesCompany.UI
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
+        public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         public Canvas canvas;
         public Text roleText;
@@ -49,7 +50,7 @@ namespace WerewolvesCompany.UI
 
         void Update()
         {
-            //logdebug.LogInfo("RoleHUD is updating");
+            
         }
 
         void OnDestroy()
@@ -175,7 +176,10 @@ namespace WerewolvesCompany.UI
 
             if (roleManagerObject.myRole.targetInRangeId == null)
             {
-                localPlayer.cursorTip.text = "";
+                if (localPlayer.cursorTip.text.Contains(roleManagerObject.myRole.roleActionText))
+                {
+                    localPlayer.cursorTip.text = "";
+                }
             }
             else
             {

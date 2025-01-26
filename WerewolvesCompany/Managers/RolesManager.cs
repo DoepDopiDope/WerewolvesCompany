@@ -213,12 +213,13 @@ namespace WerewolvesCompany.Managers
             }
 
             //ulong myId = NetworkObjectId;
-            mls.LogInfo($"My networkObjectId is {myId}");
+            //mls.LogInfo($"My networkObjectId is {myId}");
+            mls.LogInfo($"My clientId is {myId}");
 
-
-            mls.LogInfo("Grab the playerObject");
-            GameObject playerObject = GetPlayerByNetworkId(myId);
+            //mls.LogInfo("Grab the playerObject");
             mls.LogInfo("Grab the PlayerControllerB");
+            GameObject playerObject = GetPlayerByNetworkId(myId);
+            //mls.LogInfo("Grab the PlayerControllerB");
             PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
             //PlayerControllerB player = HUDManager.Instance.localPlayer;
             mls.LogInfo("Grab the Camera");
@@ -259,7 +260,7 @@ namespace WerewolvesCompany.Managers
             GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
             foreach (GameObject player in allPlayers)
             {
-                if (playerId == player.GetComponent<PlayerControllerB>().actualClientId)
+                if (playerId == player.GetComponent<PlayerControllerB>().playerClientId)
                 {
                     return player.GetComponent<PlayerControllerB>();
                 }
@@ -400,7 +401,7 @@ namespace WerewolvesCompany.Managers
             for (int i = 0; i<Nplayers;i++)
             {
                 GameObject player = allPlayers[i];
-                ulong playerId = player.GetComponent<PlayerControllerB>().actualClientId;
+                ulong playerId = player.GetComponent<PlayerControllerB>().playerClientId;
                 string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
                 logdebug.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
 
@@ -823,6 +824,8 @@ namespace WerewolvesCompany.Managers
             WerewolfKillPlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
         }
 
+
+
         [ClientRpc]
         private void WerewolfKillPlayerClientRpc(ulong werewolfId, ClientRpcParams clientRpcParams = default)
         {
@@ -837,10 +840,9 @@ namespace WerewolvesCompany.Managers
             }
 
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
-            string werewolfName = GetPlayerById(werewolfId).playerUsername;
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {werewolfName}");
+            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}");
 
             NotifyMainActionSuccessServerRpc(werewolfId);
         }
