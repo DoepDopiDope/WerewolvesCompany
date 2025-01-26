@@ -175,6 +175,28 @@ namespace WerewolvesCompany.Patches
                         }
                     }
                 }
+                // Debug inputs
+                else if (args[1].ToLower() == "debug")
+                {
+                    __result = BuildTerminalNodeHome();
+                    if (args[2].ToLower() == "cd")
+                    {
+                        rolesManager.ResetAllCooldownsServerRpc();
+                    }
+                    if ((args[2].ToLower() == "distrib") || args[2].ToLower() == "distribute")
+                    {
+                        rolesManager.BuildAndSendRoles();
+                    }
+
+                    if (args[2].ToLower() == "reset")
+                    {
+                        rolesManager.ResetRolesServerRpc();
+                    }
+
+                    return false;
+                }
+
+
                 else
                 {
                     return true;

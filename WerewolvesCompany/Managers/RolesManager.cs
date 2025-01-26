@@ -540,9 +540,40 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        // ------------------------------------------------------------------------------------
+        // Debug 
+        // Reset all cooldowns to everyone
+        [ServerRpc(RequireOwnership = false)]
+        public void ResetAllCooldownsServerRpc()
+        {
+            ResetAllCooldownsClientRpc();
+        }
 
+        [ClientRpc]
+        private void ResetAllCooldownsClientRpc()
+        {
+            if (myRole == null) return;
 
+            myRole.currentMainActionCooldown = 0f;
+            myRole.currentSecondaryActionCooldown = 0f;
+            HUDManager.Instance.DisplayTip("Admin", "Cooldowns set to 0");
+            logger.LogInfo("Cooldowns set to 0");
+        }
 
+        [ServerRpc(RequireOwnership =false)]
+        public void ResetRolesServerRpc()
+        {
+            ResetRolesClientRpc();
+        }
+
+        [ClientRpc]
+        public void ResetRolesClientRpc()
+        {
+            if (myRole == null) return;
+            logger.LogInfo("Resetting my role to its intial state");
+            myRole = References.GetRoleByName(myRole.roleName);
+            HUDManager.Instance.DisplayTip("Admin", "Role reset to its initial state");
+        }
 
 
         // ------------------------------------------------------------------------------------

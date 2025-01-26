@@ -1,6 +1,10 @@
-### [0.1.7]
+### [0.2.0]
+
+Huge performance improvements
 
 Changed default config values
+
+Added debug commands in the terminal
 
 ### [0.1.6]
 

@@ -71,6 +71,13 @@ You can also shorten 'werewolves' with its alias 'wc'.
 - **[M]** Display my role ToolTip
 - **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
 
+## Debug
+
+You use debug commands from the terminal:
+- wc debug cd      -> set all cooldowns to 0
+- wc debug distrib -> distribute roles. Alternative to the hold-P (5s) keybind
+- wc debug reset   -> reset state of every player current role to its initial state
+
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
