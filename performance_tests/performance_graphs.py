@@ -23,6 +23,8 @@ for dire in os.listdir():
         continue
     alldirs.append(dire)
 
+alldirs = ['0.1.6','0.1.6.2_no_objects_calls','0.2.0','0.2.0_big_bundle','vanilla']
+# alldirs = ["0.2.0", "0.2.0_big_bundle","vanilla"]
 
 
 def getCycler(axes=None):
@@ -54,6 +56,8 @@ for dire in alldirs:
     types = ('FPS', '99th% FPS')
     color = next_color = axes[0]._get_lines.get_next_color()
     lsts = ('-', '--')
+    if dire == 'vanilla':
+        color = 'k'
     for typ,lst in zip(types,lsts):
         fps = df[typ]
         axes[0].plot(time,fps, label = f'{dire} - {typ}',color=color,linestyle=lst)
@@ -67,7 +71,4 @@ for ax in axes:
     ax.legend(loc = 'upper right')
 plt.savefig(f'{basedir}/performance.png', dpi=300, bbox_inches = 'tight')
 plt.show()
-    
-
-
 
