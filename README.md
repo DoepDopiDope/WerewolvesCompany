@@ -84,7 +84,6 @@ You use debug commands from the terminal:
 Theses features are not implemented yet, but are planned:
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
-- Cooldown of actions somewhere in the screen, to avoid having to hug someone to know your kill cooldown
 - More roles
   - Cupid
   - Apprentice Seer
@@ -92,7 +91,7 @@ Theses features are not implemented yet, but are planned:
 
 ## Known issues
 
-- When dead, the console spams errors because it's trying to check if someone is in front of the dead player
+- When dead, the console may spam errors because it's trying to check if someone is in front of the dead player
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty
 - Non-hosts do not have tooltips when hovering items
 

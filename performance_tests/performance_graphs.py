@@ -30,7 +30,7 @@ def getCycler(axes=None):
         axes = plt.gca()
     return axes._get_lines.prop_cycler
 
-fig,axes = plt.subplots(1,1, figsize = (10,5))
+fig,axes = plt.subplots(1,1, figsize = (20,5))
 axes = [axes]
 
 for dire in alldirs:
