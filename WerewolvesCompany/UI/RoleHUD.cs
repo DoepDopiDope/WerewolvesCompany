@@ -193,14 +193,20 @@ namespace WerewolvesCompany.UI
             //RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
 
-            if (rolesManager.myRole.targetInRangeId == null)
+
+            if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.mainActionName))
             {
-                if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.roleActionText))
-                {
-                    localPlayer.cursorTip.text = "";
-                }
+                localPlayer.cursorTip.text = "";
             }
-            else
+
+            //if (rolesManager.myRole.targetInRangeId == null)
+            //{
+            //    if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.roleActionText))
+            //    {
+            //        localPlayer.cursorTip.text = "";
+            //    }
+            //}
+            if (!(rolesManager.myRole.targetInRangeId == null))
             {
                 localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
 
