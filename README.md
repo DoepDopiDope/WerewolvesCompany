@@ -102,8 +102,9 @@ Theses features are not implemented yet, but are planned:
 
 ## Known issues
 
-- When dead, the console may spam errors because it's trying to check if someone is in front of the dead player
-- The first time a non-host looks up the list of active roles on the terminal, it will appear empty
+- When dead, the console may spam errors because it's trying to check if someone is in front of the dead player.
+- The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
+- When dying to a Werewolf/Witch, the ToolTip saying that you were killed in such a manner does vanishes as soon as the alive-HUD disappears, therefore making it invisible.
 
 
 ## Contact
