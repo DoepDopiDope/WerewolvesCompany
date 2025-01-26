@@ -23,7 +23,7 @@ using Unity.Netcode;
 
 namespace WerewolvesCompany
 {
-    public class References
+    class References
     {
         public static List<Role> GetAllRoles()
         {
@@ -97,10 +97,12 @@ namespace WerewolvesCompany
         }
     }
 
-    public class Role
+    class Role
     {
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
+
+        public RolesManager rolesManager = Utils.GetRolesManager();
 
         public virtual string roleName { get; }
         public string terminalName => roleName.Replace(" ", "_");
@@ -135,9 +137,9 @@ namespace WerewolvesCompany
 
 
         // Settings
-        public virtual NetworkVariable<float> interactRange => Utils.GetRolesManager().DefaultInteractRange;
-        public virtual NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().DefaultActionCoolDown;
-        public virtual NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().DefaultStartOfRoundActionCoolDown;
+        public virtual NetworkVariable<float> interactRange => rolesManager.DefaultInteractRange;
+        public virtual NetworkVariable<float> baseActionCooldown => rolesManager.DefaultActionCoolDown;
+        public virtual NetworkVariable<float> startOfRoundActionCooldown => rolesManager.DefaultStartOfRoundActionCoolDown;
 
 
         // Cooldowns
@@ -154,7 +156,7 @@ namespace WerewolvesCompany
         // Interactions with others roles
         public bool isImmune = false;
 
-
+        
         public Role()
         {
             baseMainActionCooldown = baseActionCooldown.Value;
@@ -219,8 +221,7 @@ namespace WerewolvesCompany
 
             if (flag)
             {
-                RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object}
-                roleManagerObject.SuccessFullyPerformedMainActionServerRpc();
+                rolesManager.SuccessFullyPerformedMainActionServerRpc();
             }
 
         }
@@ -243,7 +244,7 @@ namespace WerewolvesCompany
 
             if (flag)
             {
-                Utils.GetRolesManager().SuccessFullyPerformedSecondaryActionServerRpc();
+                rolesManager.SuccessFullyPerformedSecondaryActionServerRpc();
             }
 
         }
@@ -355,16 +356,16 @@ namespace WerewolvesCompany
 
     // ----------------------------------------
     // Roles
-    public class Werewolf : Role
+    class Werewolf : Role
     {
         public override string roleName => "Werewolf";
         public override int refInt => 0;
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
         public override string mainActionName => "Kill";
-        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WerewolfInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WerewolfActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WerewolfStartOfRoundActionCoolDown;
+        public override NetworkVariable<float> interactRange => rolesManager.WerewolfInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.WerewolfActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCoolDown;
 
         public Werewolf() : base() { }
 
@@ -374,9 +375,8 @@ namespace WerewolvesCompany
             logger.LogInfo($"The {roleName} is hunting!");
             ulong targetId = GrabTargetPlayer();
             
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            logger.LogInfo($"Killing {roleManagerObject.GetPlayerById(targetId).playerUsername}.");
-            roleManagerObject.WerewolfKillPlayerServerRpc(targetId);
+            logger.LogInfo($"Killing {rolesManager.GetPlayerById(targetId).playerUsername}.");
+            rolesManager.WerewolfKillPlayerServerRpc(targetId);
         }
 
         public override void NotifyMainActionSuccess(string targetPlayerName)
@@ -393,16 +393,16 @@ namespace WerewolvesCompany
     }
 
 
-    public class Villager : Role
+    class Villager : Role
     {
         public override string roleName => "Villager";
         public override int refInt => 1;
         public override string winCondition => "You win by killing the Werewolves.";
         public override string roleDescription => "You do not have any special ability.";
         public override string roleActionText => "";
-        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().VillagerInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().VillagerActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().VillagerStartOfRoundActionCoolDown;
+        public override NetworkVariable<float> interactRange => rolesManager.VillagerInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.VillagerActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCoolDown;
         
         public Villager() : base() { }
 
@@ -414,7 +414,7 @@ namespace WerewolvesCompany
     }
 
 
-    public class Witch : Role
+    class Witch : Role
     {
         public override string roleName => "Witch";
         public override int refInt => 2;
@@ -422,9 +422,9 @@ namespace WerewolvesCompany
         public override string roleDescription => "You have the ability to protect one player, and kill another one.";
         public override string mainActionName => "Poison";
         public override string secondaryActionName => "Protect";
-        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WitchInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WitchActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WitchStartOfRoundActionCoolDown;
+        public override NetworkVariable<float> interactRange => rolesManager.WitchInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.WitchActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCoolDown;
 
         public Witch() : base() { }
 
@@ -434,8 +434,7 @@ namespace WerewolvesCompany
             logger.LogInfo($"The {roleName} is poisoning someone.");
             ulong targetId = GrabTargetPlayer();
 
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.WitchPoisonPlayerServerRpc(targetId);
+            rolesManager.WitchPoisonPlayerServerRpc(targetId);
 
         }
 
@@ -444,8 +443,8 @@ namespace WerewolvesCompany
         {
             logger.LogInfo($"The {roleName} is immunising someone.");
             ulong targetId = GrabTargetPlayer();
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.WitchImmunizePlayerServerRpc(targetId);
+
+            rolesManager.WitchImmunizePlayerServerRpc(targetId);
         }
 
         public override void NotifyMainActionSuccess(string targetPlayerName)
@@ -462,7 +461,7 @@ namespace WerewolvesCompany
     }
 
 
-    public class Seer : Role
+    class Seer : Role
     {
         public override string roleName => "Seer";
         public override int refInt => 3;
@@ -470,9 +469,9 @@ namespace WerewolvesCompany
         public override string roleDescription => "You have the ability to see a player's role.";
         public override string mainActionName => "Seer role";
         public override string mainActionText => $"Seer {targetInRangeName}'s role";
-        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().SeerInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().SeerActionCooldown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().SeerStartOfRoundActionCoolDown;
+        public override NetworkVariable<float> interactRange => rolesManager.SeerInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.SeerActionCooldown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCoolDown;
 
         public Seer() : base() { }
 
@@ -482,8 +481,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Looking the role of someone");
 
             ulong targetId = GrabTargetPlayer();
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.CheckRoleServerRpc(targetId);
+            rolesManager.CheckRoleServerRpc(targetId);
         }
 
 
@@ -495,7 +493,7 @@ namespace WerewolvesCompany
     }
 
 
-    public class WildBoy : Role
+    class WildBoy : Role
     {
         public override string roleName => "Wild Boy";
         public override int refInt => 4;
@@ -510,9 +508,9 @@ namespace WerewolvesCompany
         public override string mainActionName => "Idolize";
         public ulong? idolizedId;
 
-        public override NetworkVariable<float> interactRange => Utils.GetRolesManager().WildBoyInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => Utils.GetRolesManager().WildBoyActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => Utils.GetRolesManager().WildBoyStartOfRoundActionCoolDown;
+        public override NetworkVariable<float> interactRange => rolesManager.WildBoyInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.WildBoyActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCoolDown;
 
 
         public WildBoy() : base() { }
@@ -524,8 +522,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Idolizing someone");
 
             ulong targetId = GrabTargetPlayer();
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            roleManagerObject.IdolizeServerRpc(targetId);
+            rolesManager.IdolizeServerRpc(targetId);
         }
 
         public override void NotifyMainActionSuccess(ulong targetId)
@@ -534,8 +531,7 @@ namespace WerewolvesCompany
             idolizedId = targetId;
 
             logdebug.LogInfo("I have set my idolization mentor");
-            RolesManager roleManagerObject = Plugin.FindObjectOfType<RolesManager>(); // Load the RolesManager Object
-            string playerName = roleManagerObject.GetPlayerById(targetId).playerUsername;
+            string playerName = rolesManager.GetPlayerById(targetId).playerUsername;
 
             roleDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
             logdebug.LogInfo("Displaying Idolization on HUD");
@@ -545,8 +541,8 @@ namespace WerewolvesCompany
 
         public void BecomeWerewolf()
         {
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor {Utils.GetRolesManager().GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a werewolf.");
-            Utils.GetRolesManager().myRole = new Werewolf();
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor {rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a werewolf.");
+            rolesManager.myRole = new Werewolf();
         }
     }
 

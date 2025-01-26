@@ -19,7 +19,7 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         //static public RolesManager rolesManager = new RolesManager();
-
+        static private RolesManager rolesManager = Utils.GetRolesManager();
 
 
         [HarmonyPostfix]
@@ -45,7 +45,7 @@ namespace WerewolvesCompany.Patches
             }
 
             logger.LogInfo("Providing roles");
-            Utils.GetRolesManager().BuildAndSendRoles();
+            rolesManager.BuildAndSendRoles();
         }
 
 

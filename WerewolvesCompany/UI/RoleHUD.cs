@@ -16,9 +16,13 @@ namespace WerewolvesCompany.UI
     {
         public RoleHUD Instance;
 
+        public RolesManager rolesManager = Utils.GetRolesManager();
+
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
         public ManualLogSource logupdate = Plugin.Instance.logupdate;
+
+
 
         public Canvas canvas;
         public Text roleText;
@@ -50,7 +54,10 @@ namespace WerewolvesCompany.UI
 
         void Update()
         {
-            
+            if (rolesManager == null)
+            {
+                rolesManager = Utils.GetRolesManager();
+            }
         }
 
         void OnDestroy()
@@ -148,7 +155,7 @@ namespace WerewolvesCompany.UI
                 CreateRoleHUD();
             }
 
-            Role myRole = FindObjectOfType<RolesManager>().myRole;
+            Role myRole = rolesManager.myRole;
 
             //logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
             if (roleText != null)
@@ -171,19 +178,19 @@ namespace WerewolvesCompany.UI
 
         public void UpdateToolTip()
         {
-            RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
+            //RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
 
-            if (roleManagerObject.myRole.targetInRangeId == null)
+            if (rolesManager.myRole.targetInRangeId == null)
             {
-                if (localPlayer.cursorTip.text.Contains(roleManagerObject.myRole.roleActionText))
+                if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.roleActionText))
                 {
                     localPlayer.cursorTip.text = "";
                 }
             }
             else
             {
-                localPlayer.cursorTip.text = roleManagerObject.myRole.roleActionText;
+                localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
 
             }
 

@@ -16,8 +16,11 @@ namespace WerewolvesCompany.Patches
     {
         public static Terminal terminalInstance;
         public static bool initializedTerminalNodes = false;
+
+        static RolesManager rolesManager => Utils.GetRolesManager();
         public static List<Role> availableRoles => References.GetAllRoles();
         //public List<Role> currentRoles => Utils.GetRolesManager().currentRolesSetup;
+
 
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -192,21 +195,21 @@ namespace WerewolvesCompany.Patches
         {
             Role roleToAdd = References.GetRoleByName(roleName);
             logger.LogInfo($"Adding role {roleToAdd.roleName} to the list");
-            Utils.GetRolesManager().currentRolesSetup.Add(roleToAdd);
-            Utils.GetRolesManager().UpdateCurrentRolesServerRpc(Utils.GetRolesManager().WrapRolesList(Utils.GetRolesManager().currentRolesSetup));
+            rolesManager.currentRolesSetup.Add(roleToAdd);
+            rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
         }
 
 
         private static void DeleteRole(string roleName)
         {
-            for (int i=0 ; i< Utils.GetRolesManager().currentRolesSetup.Count ; i++)
+            for (int i=0 ; i< rolesManager.currentRolesSetup.Count ; i++)
             {
-                logdebug.LogInfo($"Checking {roleName} against {Utils.GetRolesManager().currentRolesSetup[i].terminalName}");
-                if (Utils.GetRolesManager().currentRolesSetup[i].terminalName.ToLower() == roleName.ToLower())
+                logdebug.LogInfo($"Checking {roleName} against {rolesManager.currentRolesSetup[i].terminalName}");
+                if (rolesManager.currentRolesSetup[i].terminalName.ToLower() == roleName.ToLower())
                 {
-                    logger.LogInfo($"Delete role {Utils.GetRolesManager().currentRolesSetup[i].terminalName.ToLower()} from the list");
-                    Utils.GetRolesManager().currentRolesSetup.RemoveAt(i);
-                    Utils.GetRolesManager().UpdateCurrentRolesServerRpc(Utils.GetRolesManager().WrapRolesList(Utils.GetRolesManager().currentRolesSetup));
+                    logger.LogInfo($"Delete role {rolesManager.currentRolesSetup[i].terminalName.ToLower()} from the list");
+                    rolesManager.currentRolesSetup.RemoveAt(i);
+                    rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
                     return;
                 }
             }
@@ -231,7 +234,7 @@ namespace WerewolvesCompany.Patches
                 clearPreviousText = true,
                 acceptAnything = false
             };
-            Utils.GetRolesManager().QueryCurrentRolesServerRpc();
+            rolesManager.QueryCurrentRolesServerRpc();
             return homeTerminalNode;
         }
 
@@ -313,7 +316,7 @@ namespace WerewolvesCompany.Patches
 
                 // Add the roles
                 replacementText += "Current Roles Setup:\n";
-                foreach (var role in Utils.GetRolesManager().currentRolesSetup)
+                foreach (var role in rolesManager.currentRolesSetup)
                 {
                     replacementText += role.terminalName + "\n";
                 }
@@ -335,7 +338,7 @@ namespace WerewolvesCompany.Patches
 
         private static bool RoleIsInPlay(string roleName)
         {
-            foreach (Role role in Utils.GetRolesManager().currentRolesSetup)
+            foreach (Role role in rolesManager.currentRolesSetup)
             {
                 if (role.terminalName.ToLower() == roleName.ToLower()) return true;
             }

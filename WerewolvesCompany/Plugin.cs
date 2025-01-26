@@ -118,7 +118,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Plugin is initializing...");
 
 
-            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
@@ -276,10 +276,10 @@ namespace WerewolvesCompany
 
         private void InitializeCooldownManager()
         {
-            if (FindObjectOfType<RoleHUD>() == null)
+            if (FindObjectOfType<CooldownManager>() == null)
             {
-                GameObject roleHUDObject = new GameObject("CooldownManager");
-                roleHUDObject.AddComponent<CooldownManager>();
+                GameObject cooldownManagerObject = new GameObject("CooldownManager");
+                cooldownManagerObject.AddComponent<CooldownManager>();
                 logdebug.LogInfo("CooldownManager has been recreated.");
             }
         }

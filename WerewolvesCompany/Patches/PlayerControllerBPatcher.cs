@@ -66,7 +66,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("KillPlayer")]
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
-            Utils.GetRolesManager().OnSomebodyDeathServerRpc(__instance.playerClientId);
+            rolesManager.OnSomebodyDeathServerRpc(__instance.playerClientId);
         }
 
     }

@@ -126,7 +126,7 @@ namespace WerewolvesCompany.Managers
             }
             else
             {
-                logger.LogInfo("Duplicate detected, delted the just-created RolesManager");
+                logdebug.LogInfo("Duplicate detected, delted the just-created RolesManager");
                 Destroy(gameObject); // Prevent duplicate instances
             }
 
@@ -968,7 +968,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void NotifyWildBoyOfDeathClientRpc(ulong deadId, ClientRpcParams clientRpcParams)
         {
-            if (deadId == ((WildBoy)Utils.GetRolesManager().myRole).idolizedId.Value)
+            if (deadId == ((WildBoy)myRole).idolizedId.Value)
             {
                 BecomeWerewolfServerRpc();
             }
