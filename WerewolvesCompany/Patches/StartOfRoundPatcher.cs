@@ -19,7 +19,7 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         //static public RolesManager rolesManager = new RolesManager();
-        static private RolesManager rolesManager = Utils.GetRolesManager();
+        static private RolesManager rolesManager => Utils.GetRolesManager();
 
 
         [HarmonyPostfix]
@@ -38,11 +38,16 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("StartGame")]
         static void SendPlayersTheirRole(StartOfRound __instance)
         {
+            logger.LogInfo("==================================================================");
+            logger.LogInfo("======================================== Sending players roles");
+
+
             // Verify that this is the host, so that it does not send roles multiple times
             if (!(__instance.IsHost || __instance.IsServer))
             {
                 return;
             }
+            
 
             logger.LogInfo("Providing roles");
             rolesManager.BuildAndSendRoles();

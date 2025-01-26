@@ -66,8 +66,8 @@ You can also shorten 'werewolves' with its alias 'wc'.
 
 ## KeyBinds
 
-- **[K]** Perform main action (Kill, Poison, Seer, Idolize)
-- **[L]** Perform secondary action (Make Immune)
+- **[W]** Perform main action (Kill, Poison, Seer, Idolize)
+- **[V]** Perform secondary action (Make Immune)
 - **[M]** Display my role ToolTip
 - **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
 

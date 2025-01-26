@@ -272,11 +272,10 @@ namespace WerewolvesCompany.Managers
 
         public void BuildAndSendRoles()
         {
-            logger.LogInfo("Roles generation has started");
-
-
+            
             // Build roles
             Dictionary<ulong, Role> finalRoles;
+            logger.LogInfo("Roles generation has started");
             finalRoles = BuildFinalRolesFromScratch();
             logger.LogInfo("Roles generation has finished");
 
@@ -286,14 +285,8 @@ namespace WerewolvesCompany.Managers
             foreach (var item in finalRoles)
             {
                 logdebug.LogInfo($"Trying to send role {item.Value} to player id {item.Key}");
-
-                ClientRpcParams clientRpcParams = new ClientRpcParams
-                {
-                    Send = new ClientRpcSendParams
-                    {
-                        TargetClientIds = new ulong[] { item.Key }
-                    }
-                };
+                
+                ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(item.Key);
                 logdebug.LogInfo($"Using ClientRpcParams: {clientRpcParams}");
 
 
@@ -301,6 +294,7 @@ namespace WerewolvesCompany.Managers
                 logdebug.LogInfo($"{item.Value.refInt}");
 
                 logdebug.LogInfo("Invoking the SendRoleClientRpc method");
+                logger.LogInfo($"Sent role to player: {GetPlayerById(item.Key).playerUsername} with id {item.Key}");
                 SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
 
@@ -436,9 +430,9 @@ namespace WerewolvesCompany.Managers
         public void SendRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams = default)
         {
             // Retrieve the role
-            logdebug.LogInfo($"Received roleInt {roleInt}");
+            logdebug.LogInfo($"Received my role");
             Role role = References.references()[roleInt];
-            logdebug.LogInfo($"I can see the role : {role} with name {role.roleName} and refInt {role.refInt}");
+            logdebug.LogInfo($"I was given the role {role} with name {role.roleName} and refInt {role.refInt}");
 
 
             // Assign the player's role
@@ -877,7 +871,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}");
+            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}",true);
 
             NotifyMainActionSuccessServerRpc(werewolfId);
         }
