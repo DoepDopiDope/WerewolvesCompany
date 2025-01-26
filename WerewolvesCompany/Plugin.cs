@@ -273,7 +273,7 @@ namespace WerewolvesCompany
                 logdebug.LogInfo("RoleHUD has been recreated.");
             }
         }
-
+        
         private void InitializeCooldownManager()
         {
             if (FindObjectOfType<CooldownManager>() == null)

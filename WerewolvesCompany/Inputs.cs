@@ -7,10 +7,10 @@ using UnityEngine.InputSystem;
 
 public class InputsClass : LcInputActions
 {
-    [InputAction(KeyboardControl.K, Name = "MainRoleActionKey")]
+    [InputAction(KeyboardControl.Z, Name = "MainRoleActionKey")]
     public InputAction MainRoleActionKey { get; set; }
 
-    [InputAction(KeyboardControl.L, Name = "SecondaryRoleActionKey")]
+    [InputAction(KeyboardControl.V, Name = "SecondaryRoleActionKey")]
     public InputAction SecondaryRoleActionKey { get; set; }
 
     [InputAction(KeyboardControl.M, Name = "PopUpRole")]

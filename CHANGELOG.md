@@ -6,6 +6,8 @@ Changed default config values
 
 Added debug commands in the terminal
 
+Changed default keybinds
+
 ### [0.1.6]
 
 Fixed a bug where all actions would target the host instead of the desired target. It worked in local tests, but I realized the bug when trying the mod online with friends... Sorry!

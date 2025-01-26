@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.IO.Pipes;
+using System.Numerics;
 using System.Text;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 using WerewolvesCompany.Managers;
+using static UnityEngine.EventSystems.EventTrigger;
 
 
 // Highly inspired from TooManyEmotes
@@ -178,7 +182,13 @@ namespace WerewolvesCompany.Patches
                 // Debug inputs
                 else if (args[1].ToLower() == "debug")
                 {
-                    __result = BuildTerminalNodeHome();
+                    __result = BuildTerminalNodeDebug();
+
+                    if (args.Length == 2)
+                    {
+                        return false;
+                    }
+
                     if (args[2].ToLower() == "cd")
                     {
                         rolesManager.ResetAllCooldownsServerRpc();
@@ -244,6 +254,23 @@ namespace WerewolvesCompany.Patches
 
         }
 
+        private static TerminalNode BuildTerminalNodeDebug()
+        {
+            TerminalNode homeTerminalNode = new TerminalNode
+            {
+                displayText = "[Werewolves Company]\n\n" +
+                              "------------------------------\n" +
+                              "Debug commands\n" +
+                              "------------------------------\n" +
+                              "wc debug         -> show this page\n" +
+                              "wc debug cd      -> set all players cooldowns to 0\n" +
+                              "wc debug distrib -> distribute roles\n" +
+                              "wc debug reset   -> reset all players roles to their initial state\n\n",
+                clearPreviousText = true,
+                acceptAnything = false
+            };
+            return homeTerminalNode;
+        }
         private static TerminalNode BuildTerminalNodeHome()
         {
             TerminalNode homeTerminalNode = new TerminalNode

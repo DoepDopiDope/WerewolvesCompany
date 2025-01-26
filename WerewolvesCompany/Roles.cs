@@ -123,8 +123,8 @@ namespace WerewolvesCompany
 
         // ToolTip
         
-        public virtual string mainActionKey { get { return "K"; } }
-        public virtual string secondaryActionKey { get { return "L"; } }
+        public virtual string mainActionKey { get { return "Z"; } }
+        public virtual string secondaryActionKey { get { return "V"; } }
         public virtual string mainActionName { get { return "Main Action Name"; } }
         public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
 
