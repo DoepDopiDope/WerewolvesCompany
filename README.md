@@ -38,7 +38,7 @@ The Witch shall find and kill the Werewolves before ship departure.
 
 The Witch has two potions, and can do two things:
 - Poison another player and kill him (once per round)
-- Protect another player and make him immune **once** to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status
+- Protect another player and make him immune **once** to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status. The Witch cannot protect herself.
 
 Note that unlike the original Werewolves game, the Witch here does not revive a dead player. This change was made so that a killed-player cannot instantly reveal the Werewolf(ves) identity.
 
@@ -54,7 +54,7 @@ The Wild Boy wins either with the Villagers or the Werewolves, depending on its 
 
 The Wild Boy can target a player who becomes his idol. If the idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.
 
-## Setup
+## Setup and parameters
 
 You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.
 
@@ -73,7 +73,7 @@ You can also shorten 'werewolves' with its alias 'wc'.
 
 ## Debug
 
-You use debug commands from the terminal:
+While they are mainly for my personal use during playtests, you can use debug commands from the terminal (mainly for my personal use when testing changes)
 - wc debug         -> show available debug commands
 - wc debug cd      -> set all cooldowns to 0
 - wc debug distrib -> distribute roles. Alternative to the hold-P (5s) keybind
@@ -82,12 +82,22 @@ You use debug commands from the terminal:
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
+- When spectating, displaying the role of the spectated player
+- Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
-- More roles
-  - Cupid
-  - Apprentice Seer
-  - ...
+- More roles, a few ideas below, they may not all be released:
+  - **Cupid** - Selects two players who become lovers. If one of them die, the other one also dies. They must win together, whether they initially were in the same team or not.
+  - **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
+  - **The Fake Seer** - She only has a 50% chance of guessing the target player's role. The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer. To be used simultaneously with the actual Seer.
+  - **The Hunter** - He can kill another player within a few seconds of his death
+  - **The Flute Player** - He can charm people. His goal is to charm all other players.
+  - **The Drunken Man** - He is immune to the Witch poison.
+  - **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:
+	- Once every cooldown-time, she gets a sets of letter, of which only a few are part of an actual Werewolf name
+	- Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
+  - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
+  - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
 
 ## Known issues
 

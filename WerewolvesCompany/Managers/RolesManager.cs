@@ -871,7 +871,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}",true);
+            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
 
             NotifyMainActionSuccessServerRpc(werewolfId);
         }
