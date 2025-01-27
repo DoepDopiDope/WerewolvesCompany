@@ -18,6 +18,11 @@ using System.ComponentModel;
 using WerewolvesCompany.Patches;
 using System.Runtime.CompilerServices;
 using UnityEngine.Windows;
+using static UnityEngine.InputSystem.InputRemoting;
+using TMPro;
+using BepInEx;
+using BepInEx.Configuration;
+using System.Collections;
 
 
 
@@ -867,14 +872,32 @@ namespace WerewolvesCompany.Managers
                     return;
                 }
             }
+            
+
 
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
             HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
 
+
+            //string message = "";
+            //message = "YOU WERE KILLED\nALMERIT WAS A WEREWOLF";
+            //GameObject val = GameObject.Find("Systems/UI/Canvas/DeathScreen/GameOverText");
+            
+            //TextMeshProUGUI component = val.GetComponent<TextMeshProUGUI>();
+            //if (message == "")
+            //{
+            //    ((TMP_Text)component).text = "[LIFE SUPPORT: OFFLINE]";
+            //}
+            //else
+            //{
+            //    ((TMP_Text)component).text = message;
+            //}
+
             NotifyMainActionSuccessServerRpc(werewolfId);
         }
+
 
         //[ServerRpc(RequireOwnership = false)]
         //public void NotifyWerewolfOfImmunityServerRpc(ulong werewolfId, ServerRpcParams serverRpcParams = default)
