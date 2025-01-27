@@ -42,6 +42,8 @@ namespace WerewolvesCompany.Managers
 
         public List<Role> currentRolesSetup = new List<Role>();
 
+        public Role spectatedPlayerRole;
+
 #nullable enable
         public Role? myRole { get; set; }
 #nullable disable
@@ -483,7 +485,21 @@ namespace WerewolvesCompany.Managers
         // ---------------------------------------------------------------------------------------------------------------
         // ServerRpc and ClientRpc roles logic
 
+        // Query Role
 
+        [ServerRpc(RequireOwnership = false)]
+        public void QueryPlayerRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            int roleInt = allRoles[targetId].refInt;
+            QueryPlayerRoleClientRpc(roleInt, clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void QueryPlayerRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams)
+        {
+            spectatedPlayerRole = References.references()[roleInt];
+        }
 
 
         // ------------------------------------------------------------------------------------

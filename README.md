@@ -106,6 +106,7 @@ Theses features are not implemented yet, but are planned:
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
 - When dying to a Werewolf/Witch, the ToolTip saying that you were killed in such a manner does vanishes as soon as the alive-HUD disappears, therefore making it invisible.
 - 'wc debug distrib' only works as a host, and will not do anything if performed as a client
+- Players can use their role action through walls.
 
 ## Contact
 

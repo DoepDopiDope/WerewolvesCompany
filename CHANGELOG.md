@@ -1,6 +1,10 @@
 ### [0.2.2]
 
-Custom death message when you die to a player.
+Custom death message when you die to a player's role.
+
+When spectating a player, now also displays its role next to his name.
+
+Increased Werewolf, Witch and Villager default range from 1.0 to 1.5.
 
 ### [0.2.1]
 
