@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
 using GameNetcodeStuff;
+using TMPro;
 using Unity.Netcode;
+using UnityEngine;
 using WerewolvesCompany.Managers;
 
 namespace WerewolvesCompany
@@ -45,6 +47,13 @@ namespace WerewolvesCompany
         {
             RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
             return roleManagerObject;
+        }
+
+        static public void EditDeathMessage(string message = "[LIFE SUPPORT: OFFLINE]")
+        {
+            GameObject val = GameObject.Find("Systems/UI/Canvas/DeathScreen/GameOverText");
+            TextMeshProUGUI component = val.GetComponent<TextMeshProUGUI>();
+            ((TMP_Text)component).text = message;
         }
     }
 }

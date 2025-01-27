@@ -1,3 +1,7 @@
+### [0.2.2]
+
+Custom death message when you die to a player.
+
 ### [0.2.1]
 
 Centered RoleHUD

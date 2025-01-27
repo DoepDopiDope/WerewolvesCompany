@@ -470,6 +470,9 @@ namespace WerewolvesCompany.Managers
             }
 
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
+
+            // Reset death message to default
+            Utils.EditDeathMessage();
         }
 
 
@@ -804,7 +807,6 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
 
-
         // Seer actions
         [ServerRpc(RequireOwnership = false)]
         public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -872,64 +874,23 @@ namespace WerewolvesCompany.Managers
                     return;
                 }
             }
-            
 
 
+            // Edit the death screen message
+            string message = $"{GetPlayerById(werewolfId).playerUsername.ToUpper()}\nWAS A WEREWOLF";
+            Utils.EditDeathMessage(message);
+
+            // Run the kill animation
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
+            //HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
 
-
-            //string message = "";
-            //message = "YOU WERE KILLED\nALMERIT WAS A WEREWOLF";
-            //GameObject val = GameObject.Find("Systems/UI/Canvas/DeathScreen/GameOverText");
             
-            //TextMeshProUGUI component = val.GetComponent<TextMeshProUGUI>();
-            //if (message == "")
-            //{
-            //    ((TMP_Text)component).text = "[LIFE SUPPORT: OFFLINE]";
-            //}
-            //else
-            //{
-            //    ((TMP_Text)component).text = message;
-            //}
 
             NotifyMainActionSuccessServerRpc(werewolfId);
+
         }
-
-
-        //[ServerRpc(RequireOwnership = false)]
-        //public void NotifyWerewolfOfImmunityServerRpc(ulong werewolfId, ServerRpcParams serverRpcParams = default)
-        //{
-        //    logdebug.LogInfo($"I was notified that {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername} is immune, I therefore notify the werewolf {GetPlayerById(werewolfId).playerUsername}");
-        //    string targetPlayerName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
-        //    ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(werewolfId);
-        //    NotifyWerewolfOfImmunityClientRpc(targetPlayerName, clientRpcParams);
-        //}
-
-        //[ClientRpc]
-        //private void NotifyWerewolfOfImmunityClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
-        //{
-        //    ((Werewolf)myRole).NotifyMainActionFailed(targetPlayerName);
-        //}
-
-        //[ServerRpc(RequireOwnership = false)]
-        //private void NotifyWerewolfOfKillServerRpc(ulong werewolfId, ServerRpcParams serverRpcParams = default)
-        //{
-        //    logdebug.LogInfo($"I was notified that the Werewolf {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername} has run the kill command, I therefore notify the werewolf {GetPlayerById(werewolfId).playerUsername}");
-        //    string targetPlayerName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
-        //    ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(werewolfId);
-        //    NotifyWerewolfOfKillClientRpc(targetPlayerName, clientRpcParams);
-        //}
-
-        //[ClientRpc]
-        //private void NotifyWerewolfOfKillClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
-        //{
-        //    ((Werewolf)myRole).NotifyMainActionSuccess(targetPlayerName);
-        //}
-
-
 
         // Witch actions
         // Poison someone
@@ -945,9 +906,14 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         private void WitchPoisonPlayerClientRpc(ulong witchId, ClientRpcParams clientRpcParams = default)
         {
+
+            // Edit the death screen message
+            string message = $"{GetPlayerById(witchId).playerUsername.ToUpper()}\nWAS A WITCH";
+            Utils.EditDeathMessage(message);
+
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new Vector3(0, 0, 0));
-            HUDManager.Instance.DisplayTip("You were poisoned", $"You were poisoned by a witch: {GetPlayerById(witchId).playerUsername}", true);
+            //HUDManager.Instance.DisplayTip("You were poisoned", $"You were poisoned by a witch: {GetPlayerById(witchId).playerUsername}", true);
             NotifyMainActionSuccessServerRpc(witchId);
         }
 
