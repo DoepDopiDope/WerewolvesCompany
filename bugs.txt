@@ -1,0 +1,63 @@
+ ===Avec le gros pack de mod (4 joueurs)
+
+- Bana a pas le tooltip quand il s'approche des gens et son timer en haut de l'écran est coincé à 120s (witch et loup)
+- Après une deco/reco, Cooky n'a pas de nouveau role lorsqu'on fait une tournée de roles
+
+==== nouvelle partie sanas avoir relancé le jeu (4 joueurs)
+
+-- Tournée de roles
+- Cooky a pas de roles (mais ca colle avec le fait qu'il avait re-rejoint en cours de partie)
+- On a 2 LG alors qu'il devrait y en avoir qu'un
+- Personne a le tooltip en s'approchant des gens
+
+
+
+
+==== nouvelle partie avec juste WerewolvesCompany (4 joueurs)
+
+Pas de problème a priori
+
+=== Puis on recréé une partie sans relancer le jeu
+-- Tournée de roles
+- 2 Witch alors qu'il devrait y en avoir qu'une
+- personne a le tooltip en visant les gens
+- ca se debug pas en relancant la partie
+
+
+
+==== je relance mon jeu, mais pas les autres
+-- tournée de roles
+- tout le monde a recu un role
+- j'ai le tooltip, mais les autres ont pas le tooltip
+
+
+
+==== je relance mon jeu, avec cooky, mais les 2 autres restent au menu, et je passe du fichier 1 au fichier 2
+
+-- tournée de roles
+
+- tout le monde a reçu un role
+- moi ca marche
+- cooky a un role, mais il a le tooltip que quand il regarde les pieds des gens
+- Synaeh et bana ont toujours pas de tooltip
+
+
+
+=== On redémarre tous notre jeu sauf bana qui a oublié de relancé
+- Tous sauf bana qui a oublié de relancé, il a rejoins la game sans avoir relancé
+- Du coup bana relance après avoir rejoins la game
+- Tout le monde va bien sauf Bana qui n'a pas reçu de role
+
+
+
+=== Ce coup ci on relance vraiment tous
+- ca marche bien
+
+
+=== On relance tous pour rejoindre la partie déjà créée
+- pas de problèmes
+
+
+
+
+

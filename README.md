@@ -81,7 +81,7 @@ While they are mainly for my personal use during playtests, you can use debug co
 
 ## Planned updates
 
-Theses features are not implemented yet, but are planned:
+Theses features are not implemented ye>t, but are planned:
 - Disable pop-up when a body is placed in the ship. During playtests, this led to many times where this would reveal the werewolf.
 - When spectating, displaying the role of the spectated player
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
@@ -102,11 +102,19 @@ Theses features are not implemented yet, but are planned:
 
 ## Known issues
 
+Major:
+- Players who join late will not be given a role
+- Some people cannot use their use their roles action. But I don't know if it's because of the mod itself or because of some interactions with the 90 mods we're using.
+- Sometimes, a player may not receive a role upon roles distribution. I'm not sure why. Possible explanations, to try:
+  - It might be when it's the first time a player uses the mod, maybe it requires restarting the game
+  - It mgiht be some other mods interferring with WC ?
+- Players can use their role action through walls.
+
+Minor:
+- Spectator does not display the correct roles. I think it's because it's because it displays the role before it has finished updating it.
 - When dead, the console may spam errors because it's trying to check if someone is in front of the dead player.
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
-- When dying to a Werewolf/Witch, the ToolTip saying that you were killed in such a manner does vanishes as soon as the alive-HUD disappears, therefore making it invisible.
 - 'wc debug distrib' only works as a host, and will not do anything if performed as a client
-- Players can use their role action through walls.
 
 ## Contact
 
