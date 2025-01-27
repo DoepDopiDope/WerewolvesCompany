@@ -1,1 +1,0 @@
-- When dead, spamming errors in the logs because it's trying to check if someone is in front of the dead player
