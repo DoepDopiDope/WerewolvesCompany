@@ -81,7 +81,8 @@ While they are mainly for my personal use during playtests, you can use debug co
 
 ## Planned updates
 
-Theses features are not implemented ye>t, but are planned:
+Theses features are not implemented yet, but are planned:
+- Permit adding/deleting a selected amount of roles: 'wc add werewolf 5' or 'wc del werewolf 5'
 - Disable pop-up when a body is placed in the ship. During playtests, this led to many times where this would reveal the werewolf.
 - When spectating, displaying the role of the spectated player
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
@@ -103,15 +104,10 @@ Theses features are not implemented ye>t, but are planned:
 ## Known issues
 
 Major:
-- If someone leaves the game, you can't just remake the game so that someone can join, even with LateCompany. Everyone needs to fully restart the game, or the mod will have major bugs:
-  - No role tooltip when hovering onto someone
-  - The cooldown may never go down
-  - No role obtained during role distribution
 - Players can use their role action through walls.
 
 Minor:
-- Spectator does not display the correct roles. I think it's because it's because it displays the role before it has finished updating it.
-- When dead, the console may spam errors because it's trying to check if someone is in front of the dead player.
+- Spectator does not display the correct roles. I think it's because it's because it displays the role before it has finished updating it.q
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
 - 'wc debug distrib' only works as a host, and will not do anything if performed as a client
 

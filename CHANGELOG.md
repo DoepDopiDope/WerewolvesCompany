@@ -1,7 +1,10 @@
 ### [0.2.3]
 
-Fixed multiples bugs with disconnecting and reconnecting:
-- Fixed a bug where a player would not be given a role if he disconnected and reconnected at the lobby
+Now fully compatible with LateCompany (I think). Fixed multiples bugs with disconnecting and reconnecting:
+- Fixed a bug where a player would not be given a role if he disconnected and reconnected during the lobby
+- Fixed a bug where a player could not interact with other players if he disconnected and reconnected during the lobby
+
+Probably also fully compatible with MoreCompany. Will require further testing with 5+ instances/players
 
 ### [0.2.2]
 
