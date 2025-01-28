@@ -25,7 +25,7 @@ namespace WerewolvesCompany.Patches
         {
             logdebug.LogInfo("Called SetSpectatingTextToPlayer");
             RolesManager rolesManager = Utils.GetRolesManager();
-            rolesManager.QueryPlayerRoleServerRpc(playerScript.playerClientId);
+            rolesManager.QueryPlayerRoleServerRpc(playerScript.OwnerClientId);
             string displayText = $"(Spectating: {playerScript.playerUsername} - {rolesManager.spectatedPlayerRole.roleName})";
             logdebug.LogInfo($"Displaying Spectating text: {displayText}");
             __instance.spectatingPlayerText.text = displayText;

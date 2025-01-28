@@ -15,7 +15,7 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
-        static private RolesManager rolesManager = Utils.GetRolesManager();
+        static RolesManager rolesManager => Utils.GetRolesManager();
         static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
 
         //[HarmonyPostfix]
@@ -39,10 +39,14 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("LateUpdate")]
         static void LateUpdate(PlayerControllerB __instance)
         {
+
+            if (!(__instance == Utils.GetLocalPlayerControllerB())) return;
+
+            
             if (!__instance.IsOwner) return;
 
-            if (rolesManager.myRole == null) return;
 
+            if (rolesManager.myRole == null) return;
 #nullable enable
             PlayerControllerB? hitPlayer = rolesManager.CheckForPlayerInRange(__instance.NetworkObjectId, logupdate);
 #nullable disable
@@ -53,7 +57,7 @@ namespace WerewolvesCompany.Patches
             }
             else
             {
-                rolesManager.myRole.targetInRangeId = hitPlayer.playerClientId;
+                rolesManager.myRole.targetInRangeId = hitPlayer.OwnerClientId;
                 rolesManager.myRole.targetInRangeName = hitPlayer.playerUsername;
             }
 
@@ -67,7 +71,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("KillPlayer")]
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
-            rolesManager.OnSomebodyDeathServerRpc(__instance.playerClientId);
+            rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
         }
 
     }

@@ -87,7 +87,8 @@ namespace WerewolvesCompany.Managers
         {
             logger.LogInfo("Setup Keybinds CallBacks");
             SetupKeybindCallbacks();
-            
+
+            logdebug.LogInfo("RolesManager NetworkSpawn");
 
             if (IsServer)
             {
@@ -267,9 +268,10 @@ namespace WerewolvesCompany.Managers
             GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
             foreach (GameObject player in allPlayers)
             {
-                if (playerId == player.GetComponent<PlayerControllerB>().playerClientId)
+                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
+                if (playerId == playerController.OwnerClientId)
                 {
-                    return player.GetComponent<PlayerControllerB>();
+                    return playerController;
                 }
             }
             logger.LogError("Could not find the desired player");
@@ -396,17 +398,24 @@ namespace WerewolvesCompany.Managers
             // Shuffle the roles
             ShuffleRoles(roles);
 
-            logdebug.LogInfo("Get the list of players client Ids");
+
+            logdebug.LogInfo("Show all playerControllers informations");
+            foreach (GameObject player in allPlayers)
+            {
+                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
+                logdebug.LogInfo($"playerName = {playerController.playerUsername}, playerClientId = {playerController.playerClientId}, actualClientId = {playerController.actualClientId}, OwnerClientId = {playerController.OwnerClientId}, NetworkObjectId = {playerController.NetworkObjectId}, NetworkBehaviourId = {playerController.NetworkBehaviourId}");
+            }
+
+            logdebug.LogInfo("Players added to the list for roles distribution");
             // Get the list of players Client Ids
             playersIds = new List<ulong>();
             for (int i = 0; i<Nplayers;i++)
             {
                 GameObject player = allPlayers[i];
-                ulong playerId = player.GetComponent<PlayerControllerB>().playerClientId;
-                string playerName = player.GetComponent<PlayerControllerB>().playerUsername;
-                logdebug.LogInfo($"Added playerName {playerName} with id {playerId.ToString()} to the list");
+                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
+                logdebug.LogInfo($"playerName = {playerController.playerUsername}, playerClientId = {playerController.playerClientId}, actualClientId = {playerController.actualClientId}, OwnerClientId = {playerController.OwnerClientId}, NetworkObjectId = {playerController.NetworkObjectId}, NetworkBehaviourId = {playerController.NetworkBehaviourId}");
 
-                playersIds.Add(playerId);
+                playersIds.Add(playerController.OwnerClientId);
             }
 
 
@@ -422,6 +431,7 @@ namespace WerewolvesCompany.Managers
 
             return finalRoles;
         }
+
 
         public void DisplayMyRolePopUp()
         {
@@ -514,6 +524,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void UpdateCurrentRolesServerRpc(string newRolesSetup,ServerRpcParams serverRpcParams = default)
         {
+            logger.LogInfo($"Roles setup was edited by PlayerSenderId = {serverRpcParams.Receive.SenderClientId}");
             //ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
             UpdateCurrentRolesSetupClientRpc(newRolesSetup);
         }

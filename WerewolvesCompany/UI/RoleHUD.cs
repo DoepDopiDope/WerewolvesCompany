@@ -166,7 +166,7 @@ namespace WerewolvesCompany.UI
 
             Role myRole = rolesManager.myRole;
 
-            //logdebug.LogInfo($"Updating display at layer = {canvas.sortingOrder}");
+
             if (roleText != null)
             {
                 // Build the text to be displayed;
@@ -191,9 +191,7 @@ namespace WerewolvesCompany.UI
 
         public void UpdateToolTip()
         {
-            //RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
-
 
             if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.mainActionName))
             {
@@ -207,6 +205,13 @@ namespace WerewolvesCompany.UI
             //        localPlayer.cursorTip.text = "";
             //    }
             //}
+
+            //logdebug.LogInfo("UpdateToolTip Grab my role");
+            Role myRole = rolesManager.myRole;
+
+
+
+            //logdebug.LogInfo("Check for targetInRangeId");
             if (!(rolesManager.myRole.targetInRangeId == null))
             {
                 localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
