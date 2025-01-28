@@ -103,11 +103,10 @@ Theses features are not implemented ye>t, but are planned:
 ## Known issues
 
 Major:
-- Players who join late will not be given a role
-- Some people cannot use their use their roles action. But I don't know if it's because of the mod itself or because of some interactions with the 90 mods we're using.
-- Sometimes, a player may not receive a role upon roles distribution. I'm not sure why. Possible explanations, to try:
-  - It might be when it's the first time a player uses the mod, maybe it requires restarting the game
-  - It mgiht be some other mods interferring with WC ?
+- If someone leaves the game, you can't just remake the game so that someone can join, even with LateCompany. Everyone needs to fully restart the game, or the mod will have major bugs:
+  - No role tooltip when hovering onto someone
+  - The cooldown may never go down
+  - No role obtained during role distribution
 - Players can use their role action through walls.
 
 Minor:
