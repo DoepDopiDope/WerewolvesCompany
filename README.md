@@ -24,7 +24,7 @@ Your role is permanently displayed at the top of your screen. You can also bring
 
 The Werewolf shall kill other players before ship departure.
 
-The Werefolf has the ability to kill another player (with cooldown).
+The Werewolf has the ability to kill another player (with cooldown).
 
 ### Villager
 
@@ -107,7 +107,6 @@ Major:
 - Players can use their role action through walls.
 
 Minor:
-- Spectator does not display the correct roles. I think it's because it's because it displays the role before it has finished updating it.q
 - The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
 - 'wc debug distrib' only works as a host, and will not do anything if performed as a client
 

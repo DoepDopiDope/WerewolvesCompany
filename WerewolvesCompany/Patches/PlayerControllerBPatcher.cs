@@ -63,6 +63,7 @@ namespace WerewolvesCompany.Patches
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
             Plugin.Instance.rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
+            Plugin.Instance.rolesManager.QueryAllRolesServerRpc();
         }
 
     }

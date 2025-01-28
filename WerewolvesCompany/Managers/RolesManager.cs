@@ -42,7 +42,7 @@ namespace WerewolvesCompany.Managers
 
         public List<Role> currentRolesSetup = new List<Role>();
 
-        public Role spectatedPlayerRole;
+        //public Role spectatedPlayerRole;
 
 #nullable enable
         public Role? myRole { get; set; }
@@ -491,18 +491,66 @@ namespace WerewolvesCompany.Managers
         // Query Role
 
         [ServerRpc(RequireOwnership = false)]
-        public void QueryPlayerRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        public void QueryAllRolesServerRpc(ServerRpcParams serverRpcParams = default)
         {
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
-            int roleInt = allRoles[targetId].refInt;
-            QueryPlayerRoleClientRpc(roleInt, clientRpcParams);
+            WrapAllPlayersRoles(out string playersRefsIds, out string rolesRefInts);
+            QueryAllRolesClientRpc(playersRefsIds, rolesRefInts, clientRpcParams);
         }
 
         [ClientRpc]
-        public void QueryPlayerRoleClientRpc(int roleInt, ClientRpcParams clientRpcParams)
+        public void QueryAllRolesClientRpc(string playersRefsIds, string rolesRefInts, ClientRpcParams clientRpcParams = default)
         {
-            spectatedPlayerRole = References.references()[roleInt];
+            allRoles = UnWrapAllPlayersRoles(playersRefsIds, rolesRefInts);
         }
+
+        public void WrapAllPlayersRoles(out string playersRefsIds, out string rolesRefInts)
+        {
+            List<ulong> playersIds = new List<ulong>();
+            List<Role> roles = new List<Role>();
+
+            foreach (var item in allRoles)
+            {
+                playersIds.Add(item.Key);
+                roles.Add(item.Value);
+            }
+
+            playersRefsIds = "";
+            foreach (ulong id in playersIds)
+            {
+                playersRefsIds += $"{id}\n";
+            }
+
+            rolesRefInts = "";
+            foreach (Role role in roles)
+            {
+                rolesRefInts += $"{role.refInt}\n";
+            }
+        }
+
+
+        public Dictionary<ulong, Role> UnWrapAllPlayersRoles(string playersRefsIds, string rolesRefInts)
+        {
+
+            Dictionary<ulong, Role> dic = new Dictionary<ulong, Role>();
+
+            string[] roles = rolesRefInts.Split("\n");
+            string[] ids   = playersRefsIds.Split("\n");
+
+            for (int i = 0; i < roles.Length; i++)
+            {
+                if ((roles[i] == "") || (ids[i] == ""))
+                {
+                    continue;
+                }
+                logdebug.LogInfo($"Trying to convert: {roles[i]} and {ids[i]}");
+                int refInt = Convert.ToInt32(roles[i]);
+                ulong playerid = Convert.ToUInt64(ids[i]);
+                dic.Add(playerid, References.references()[refInt]);
+            }
+            return dic;
+        }
+
 
 
         // ------------------------------------------------------------------------------------

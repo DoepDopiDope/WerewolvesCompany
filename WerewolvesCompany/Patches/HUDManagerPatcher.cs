@@ -16,7 +16,6 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
-        static private RolesManager rolesManager = Utils.GetRolesManager();
         static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
 
         [HarmonyPostfix]
@@ -25,8 +24,8 @@ namespace WerewolvesCompany.Patches
         {
             logdebug.LogInfo("Called SetSpectatingTextToPlayer");
             RolesManager rolesManager = Utils.GetRolesManager();
-            rolesManager.QueryPlayerRoleServerRpc(playerScript.OwnerClientId);
-            string displayText = $"(Spectating: {playerScript.playerUsername} - {rolesManager.spectatedPlayerRole.roleName})";
+            rolesManager.QueryAllRolesServerRpc();
+            string displayText = $"(Spectating: {playerScript.playerUsername} - {rolesManager.allRoles[playerScript.OwnerClientId].roleName})";
             logdebug.LogInfo($"Displaying Spectating text: {displayText}");
             __instance.spectatingPlayerText.text = displayText;
         }

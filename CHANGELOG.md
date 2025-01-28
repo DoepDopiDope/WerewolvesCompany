@@ -1,3 +1,9 @@
+### [0.3.0]
+
+Multiple bug fixes:
+- Fixed a bug where spectating a player would display the role of the previously spectated player rather than the currently spectated one
+
+
 ### [0.2.3]
 
 Now fully compatible with LateCompany (I think). Fixed multiples bugs with disconnecting and reconnecting:
