@@ -23,6 +23,9 @@ using TMPro;
 using BepInEx;
 using BepInEx.Configuration;
 using System.Collections;
+using UnityEngine.InputSystem.HID;
+using DunGen.Graph;
+using UnityEngine.UIElements;
 
 
 
@@ -91,6 +94,7 @@ namespace WerewolvesCompany.Managers
 
             if (IsServer)
             {
+                logdebug.LogInfo("Making default roles");
                 MakeDefaultRoles();
             }
             QueryCurrentRolesServerRpc();
@@ -239,15 +243,66 @@ namespace WerewolvesCompany.Managers
 
             Vector3 castDirection = playerCamera.transform.forward.normalized;
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value, playerLayerMask);
-            foreach (RaycastHit hit in pushRay)
-            {
-                if (hit.transform.gameObject != playerObject)
-                {
-                    PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
-                    return hitPlayer;
 
-                }
+            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value);
+            System.Array.Sort(allHits, (a, b) => (a.distance.CompareTo(b.distance)));
+
+            if (allHits.Length == 0) // No hits found
+            {
+                return null;
             }
+            
+            foreach (RaycastHit hit in allHits)
+            {
+                if (hit.transform.gameObject == playerObject)
+                {
+                    logdebug.LogInfo("I just saw my own player");
+                    //logdebug.LogInfo($"Skipped roles manager");
+                    continue;
+                }
+
+                //if (hit.transform.gameObject.name.ToLower().Contains("rolesmanager"))
+                //{   logdebug.LogInfo($"Skipped roles manager");
+                //    continue;
+                //}
+
+                if (hit.transform.GetComponent<Collider>() == null)
+                {
+                    logdebug.LogInfo($"The game object {transform.name} has no collider");
+                    continue;
+                }
+
+
+                if (hit.transform.gameObject.GetComponent<Collider>() == null)
+                {
+                    logdebug.LogInfo($"The game object {transform.gameObject.name} has no collider");
+                    continue;
+                }
+
+                Collider collider = hit.transform.gameObject.GetComponent<Collider>();
+                logdebug.LogInfo($"This is the collider {collider}");
+                if (hit.transform.gameObject.layer == playerObject.layer)
+                {
+                    logdebug.LogInfo($"I see an object : {hit.transform.gameObject.name}, that's probably a player");
+                    return hit.transform.gameObject.GetComponent<PlayerControllerB>();
+                }
+
+            }
+            return null;
+
+
+            //foreach (RaycastHit hit in pushRay)
+            //{
+            //    logdebug.LogInfo(hit.transform.gameObject.name);
+
+            //    if (hit.transform.gameObject != playerObject) // note: playerobject is the current player object. Therefore it's returning the PlayerComponentB of any player it's finding, which
+            //    {
+            //        logdebug.LogInfo($"Found player? {hit.transform.gameObject.name}");
+            //        PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
+            //        return hitPlayer;
+
+            //    }
+            //}
             //logdebug.LogInfo($"Did not find a player. My camera was in {playerCamera.transform.position.ToString()}, with direction {castDirection.ToString()}, range = {myRole.interactRange.Value} at layer mask {playerLayerMask.ToString()}");
             return null;
         }
