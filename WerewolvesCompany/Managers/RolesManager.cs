@@ -277,6 +277,11 @@ namespace WerewolvesCompany.Managers
             throw new Exception("Could not find the player");
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void BuildAndSendRolesServerRpc()
+        {
+            BuildAndSendRoles();
+        }
 
         public void BuildAndSendRoles()
         {

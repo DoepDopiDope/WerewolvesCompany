@@ -2,7 +2,8 @@
 
 Multiple bug fixes:
 - Fixed a bug where spectating a player would display the role of the previously spectated player rather than the currently spectated one
-
+- Fixed a bug where the first time a non-host would check the current roles list, it would appear empty.
+- Fixed a bug where clients were not able to run the 'wc debug distrib/distribute' command
 
 ### [0.2.3]
 

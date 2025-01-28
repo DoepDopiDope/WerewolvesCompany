@@ -107,8 +107,7 @@ Major:
 - Players can use their role action through walls.
 
 Minor:
-- The first time a non-host looks up the list of active roles on the terminal, it will appear empty.
-- 'wc debug distrib' only works as a host, and will not do anything if performed as a client
+- No minor bugs have currently been reported
 
 ## Contact
 

@@ -195,7 +195,7 @@ namespace WerewolvesCompany.Patches
                     }
                     if ((args[2].ToLower() == "distrib") || args[2].ToLower() == "distribute")
                     {
-                        rolesManager.BuildAndSendRoles();
+                        rolesManager.BuildAndSendRolesServerRpc();
                     }
 
                     if (args[2].ToLower() == "reset")
@@ -271,6 +271,7 @@ namespace WerewolvesCompany.Patches
             };
             return homeTerminalNode;
         }
+
         private static TerminalNode BuildTerminalNodeHome()
         {
             TerminalNode homeTerminalNode = new TerminalNode
