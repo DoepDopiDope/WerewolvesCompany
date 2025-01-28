@@ -28,7 +28,7 @@ using System.Collections;
 
 namespace WerewolvesCompany.Managers
 {
-    internal class RolesManager : NetworkBehaviour
+    class RolesManager : NetworkBehaviour
     {
         
         public RolesManager Instance;
@@ -93,7 +93,7 @@ namespace WerewolvesCompany.Managers
             if (IsServer)
             {
                 MakeDefaultRoles();
-                // Default parameters
+                // Default 
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
                 DefaultStartOfRoundActionCoolDown.Value = Plugin.config_DefaultStartOfRoundActionCoolDown.Value;
@@ -131,6 +131,7 @@ namespace WerewolvesCompany.Managers
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
+                Plugin.Instance.rolesManager = this;
             }
             else
             {
@@ -213,32 +214,23 @@ namespace WerewolvesCompany.Managers
         }
 
 #nullable enable
-        public PlayerControllerB? CheckForPlayerInRange(ulong myId, ManualLogSource mls)
+        public PlayerControllerB? CheckForPlayerInRange(ulong myId)
         {
             if (myRole == null)
             {
                 throw new Exception("myRole is null in CheckForPlayerInRange. This should have been caught earlier.");
             }
 
-            //ulong myId = NetworkObjectId;
-            //mls.LogInfo($"My networkObjectId is {myId}");
-            mls.LogInfo($"My clientId is {myId}");
-
-            //mls.LogInfo("Grab the playerObject");
-            mls.LogInfo("Grab the PlayerControllerB");
             GameObject playerObject = GetPlayerByNetworkId(myId);
             //mls.LogInfo("Grab the PlayerControllerB");
             PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
             //PlayerControllerB player = HUDManager.Instance.localPlayer;
-            mls.LogInfo("Grab the Camera");
             Camera playerCamera = player.gameplayCamera;
 
 
             // Cast rays to check whether another player is in range
-            mls.LogInfo("Grab the layer");
             int playerLayerMask = 1 << playerObject.layer;
 
-            mls.LogInfo("Cast rays");
             Vector3 castDirection = playerCamera.transform.forward.normalized;
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value, playerLayerMask);
             foreach (RaycastHit hit in pushRay)
@@ -250,6 +242,7 @@ namespace WerewolvesCompany.Managers
 
                 }
             }
+            //logdebug.LogInfo($"Did not find a player. My camera was in {playerCamera.transform.position.ToString()}, with direction {castDirection.ToString()}, range = {myRole.interactRange.Value} at layer mask {playerLayerMask.ToString()}");
             return null;
         }
 #nullable disable

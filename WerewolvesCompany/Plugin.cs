@@ -19,7 +19,7 @@ namespace WerewolvesCompany
     
     [BepInPlugin(GUID, NAME, VERSION)]
     [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
-    public class Plugin : BaseUnityPlugin
+    class Plugin : BaseUnityPlugin
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
@@ -39,7 +39,7 @@ namespace WerewolvesCompany
 
         public System.Random rng;
 
-
+        public RolesManager rolesManager;
 
         public static ConfigEntry<float>
             // Default parameters
@@ -169,8 +169,9 @@ namespace WerewolvesCompany
             GameObject modManagerObject = new GameObject("ModManager");
             modManagerObject.AddComponent<ModManager>();
             DontDestroyOnLoad(modManagerObject);
-            Plugin.Instance.logger.LogInfo("ModManager GameObject created.");
+            logger.LogInfo("ModManager GameObject created.");
 
+            this.rolesManager = modManagerObject.GetComponent<RolesManager>();
             // Run checks
             //RunChecks();
 
@@ -197,6 +198,7 @@ namespace WerewolvesCompany
         public static ModManager Instance { get; private set; }
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
+
 
         void Awake()
         {

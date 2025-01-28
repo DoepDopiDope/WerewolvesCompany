@@ -1,5 +1,7 @@
 ### [0.2.3]
 
+Fixed multiples bugs with disconnecting and reconnecting:
+- Fixed a bug where a player would not be given a role if he disconnected and reconnected at the lobby
 
 ### [0.2.2]
 
