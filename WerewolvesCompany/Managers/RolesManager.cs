@@ -88,11 +88,17 @@ namespace WerewolvesCompany.Managers
             logger.LogInfo("Setup Keybinds CallBacks");
             SetupKeybindCallbacks();
 
-            logdebug.LogInfo("RolesManager NetworkSpawn");
 
             if (IsServer)
             {
                 MakeDefaultRoles();
+            }
+            QueryCurrentRolesServerRpc();
+
+            logdebug.LogInfo("RolesManager NetworkSpawn");
+
+            if (IsServer)
+            {
                 // Default 
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
@@ -559,7 +565,7 @@ namespace WerewolvesCompany.Managers
         public void QueryCurrentRolesServerRpc(ServerRpcParams serverRpcParams = default)
         {
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
-            UpdateCurrentRolesSetupClientRpc(WrapRolesList(currentRolesSetup), clientRpcParams);
+            UpdateCurrentRolesSetupClientRpc(WrapRolesList(currentRolesSetup), false, clientRpcParams);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -567,14 +573,17 @@ namespace WerewolvesCompany.Managers
         {
             logger.LogInfo($"Roles setup was edited by PlayerSenderId = {serverRpcParams.Receive.SenderClientId}");
             //ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
-            UpdateCurrentRolesSetupClientRpc(newRolesSetup);
+            UpdateCurrentRolesSetupClientRpc(newRolesSetup, true);
         }
 
 
         [ClientRpc]
-        private void UpdateCurrentRolesSetupClientRpc(string upstreamRolesSetup, ClientRpcParams clientRpcParams = default)
+        private void UpdateCurrentRolesSetupClientRpc(string upstreamRolesSetup, bool isUpdate, ClientRpcParams clientRpcParams = default)
         {
-            logger.LogInfo("The roles setup was modified.");
+            if (isUpdate)
+            {
+                logger.LogInfo("The roles setup was modified.");
+            }
             currentRolesSetup = UnwrapRolesList(upstreamRolesSetup);
         }
 
