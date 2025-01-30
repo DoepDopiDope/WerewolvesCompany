@@ -161,6 +161,14 @@ namespace WerewolvesCompany.Patches
                         return false;
                     }
 
+                    if (args[2] == "*")
+                    {
+                        DeleteAllRoles();
+                        logger.LogInfo($"Deleted all roles");
+                        __result = BuildTerminalNodeHome();
+                        return false;
+
+                    }
                     for (int i = 2; i < args.Length; i++)
                     {
                         string roleName = args[i];
@@ -248,6 +256,12 @@ namespace WerewolvesCompany.Patches
             throw new Exception($"Role {roleName} not found in the list of current roles. This shoud have been caught earlier.");
         }
 
+
+        public static void DeleteAllRoles()
+        {
+            rolesManager.currentRolesSetup = new List<Role> ();
+            rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
+        }
 
         private static void RemoveRole(string roleName)
         {

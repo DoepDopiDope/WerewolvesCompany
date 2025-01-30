@@ -23,6 +23,9 @@ using TMPro;
 using BepInEx;
 using BepInEx.Configuration;
 using System.Collections;
+using UnityEngine.InputSystem.HID;
+using DunGen.Graph;
+using UnityEngine.UIElements;
 
 
 
@@ -91,6 +94,7 @@ namespace WerewolvesCompany.Managers
 
             if (IsServer)
             {
+                logdebug.LogInfo("Making default roles");
                 MakeDefaultRoles();
             }
             QueryCurrentRolesServerRpc();
@@ -239,16 +243,74 @@ namespace WerewolvesCompany.Managers
 
             Vector3 castDirection = playerCamera.transform.forward.normalized;
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value, playerLayerMask);
-            foreach (RaycastHit hit in pushRay)
-            {
-                if (hit.transform.gameObject != playerObject)
-                {
-                    PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
-                    return hitPlayer;
 
-                }
+            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value);
+            System.Array.Sort(allHits, (a, b) => (a.distance.CompareTo(b.distance)));
+
+            if (allHits.Length == 0) // No hits found
+            {
+                return null;
             }
-            //logdebug.LogInfo($"Did not find a player. My camera was in {playerCamera.transform.position.ToString()}, with direction {castDirection.ToString()}, range = {myRole.interactRange.Value} at layer mask {playerLayerMask.ToString()}");
+            
+
+            //logdebug.LogInfo($"============================");
+            foreach (RaycastHit hit in allHits)
+            {
+                // Skip own player object
+                if (hit.transform.gameObject == playerObject)
+                {
+                    continue;
+                }
+                
+                // Skip line of sight
+                string name = hit.collider.name.ToLower();
+                if (name.Contains("lineofsight"))
+                {
+                    continue;
+                }
+
+                
+                if (hit.transform.gameObject.layer == playerObject.layer)
+                {
+                    //logdebug.LogInfo($"+++ I saw what I think is a player +++");
+                    //logdebug.LogInfo($"I just saw {hit.transform.name}");
+                    //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
+                    //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
+                    //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
+                    //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
+                    //logdebug.LogInfo($"collider = {hit.collider}");
+                    //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
+                    //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
+                    return hit.transform.gameObject.GetComponent<PlayerControllerB>();
+                }
+
+                // Now skip for non-rendered objects.
+                // The playercontroller object was not rendered, so it was not possible to move this check above
+                Renderer renderer = hit.transform.gameObject.GetComponent<Renderer>();
+                if ( renderer == null )
+                {
+                    continue;
+                }
+
+                if (!renderer.enabled || !renderer.isVisible)
+                {
+                    continue;
+                }
+
+
+                //logdebug.LogInfo($"+++ First hit in line of sight is +++");
+                //logdebug.LogInfo($"I just saw {hit.transform.name}");
+                //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
+                //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
+                //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
+                //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
+                //logdebug.LogInfo($"collider = {hit.collider}");
+                //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
+                //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
+                //logdebug.LogInfo($"rigid body = {hit.transform.GetComponent<Rigidbody>()}");
+                return null;
+
+            }
             return null;
         }
 #nullable disable
