@@ -1,3 +1,7 @@
+### [0.3.1]
+
+Turned off the debugging entries
+
 ### [0.3.0]
 
 Added 'wc del *' command, to remove all current roles from the list
