@@ -252,58 +252,65 @@ namespace WerewolvesCompany.Managers
                 return null;
             }
             
+
+            //logdebug.LogInfo($"============================");
             foreach (RaycastHit hit in allHits)
             {
+                // Skip own player object
                 if (hit.transform.gameObject == playerObject)
                 {
-                    logdebug.LogInfo("I just saw my own player");
-                    //logdebug.LogInfo($"Skipped roles manager");
                     continue;
                 }
-
-                //if (hit.transform.gameObject.name.ToLower().Contains("rolesmanager"))
-                //{   logdebug.LogInfo($"Skipped roles manager");
-                //    continue;
-                //}
-
-                if (hit.transform.GetComponent<Collider>() == null)
+                
+                // Skip line of sight
+                string name = hit.collider.name.ToLower();
+                if (name.Contains("lineofsight"))
                 {
-                    logdebug.LogInfo($"The game object {transform.name} has no collider");
                     continue;
                 }
 
-
-                if (hit.transform.gameObject.GetComponent<Collider>() == null)
-                {
-                    logdebug.LogInfo($"The game object {transform.gameObject.name} has no collider");
-                    continue;
-                }
-
-                Collider collider = hit.transform.gameObject.GetComponent<Collider>();
-                logdebug.LogInfo($"This is the collider {collider}");
+                
                 if (hit.transform.gameObject.layer == playerObject.layer)
                 {
-                    logdebug.LogInfo($"I see an object : {hit.transform.gameObject.name}, that's probably a player");
+                    //logdebug.LogInfo($"+++ I saw what I think is a player +++");
+                    //logdebug.LogInfo($"I just saw {hit.transform.name}");
+                    //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
+                    //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
+                    //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
+                    //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
+                    //logdebug.LogInfo($"collider = {hit.collider}");
+                    //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
+                    //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
                     return hit.transform.gameObject.GetComponent<PlayerControllerB>();
                 }
 
+                // Now skip for non-rendered objects.
+                // The playercontroller object was not rendered, so it was not possible to move this check above
+                Renderer renderer = hit.transform.gameObject.GetComponent<Renderer>();
+                if ( renderer == null )
+                {
+                    continue;
+                }
+
+                if (!renderer.enabled || !renderer.isVisible)
+                {
+                    continue;
+                }
+
+
+                //logdebug.LogInfo($"+++ First hit in line of sight is +++");
+                //logdebug.LogInfo($"I just saw {hit.transform.name}");
+                //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
+                //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
+                //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
+                //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
+                //logdebug.LogInfo($"collider = {hit.collider}");
+                //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
+                //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
+                //logdebug.LogInfo($"rigid body = {hit.transform.GetComponent<Rigidbody>()}");
+                return null;
+
             }
-            return null;
-
-
-            //foreach (RaycastHit hit in pushRay)
-            //{
-            //    logdebug.LogInfo(hit.transform.gameObject.name);
-
-            //    if (hit.transform.gameObject != playerObject) // note: playerobject is the current player object. Therefore it's returning the PlayerComponentB of any player it's finding, which
-            //    {
-            //        logdebug.LogInfo($"Found player? {hit.transform.gameObject.name}");
-            //        PlayerControllerB hitPlayer = hit.transform.GetComponent<PlayerControllerB>();
-            //        return hitPlayer;
-
-            //    }
-            //}
-            //logdebug.LogInfo($"Did not find a player. My camera was in {playerCamera.transform.position.ToString()}, with direction {castDirection.ToString()}, range = {myRole.interactRange.Value} at layer mask {playerLayerMask.ToString()}");
             return null;
         }
 #nullable disable
