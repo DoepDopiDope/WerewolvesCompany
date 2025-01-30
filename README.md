@@ -82,9 +82,7 @@ While they are mainly for my personal use during playtests, you can use debug co
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
-- Permit adding/deleting a selected amount of roles: 'wc add werewolf 5' or 'wc del werewolf 5'
 - Disable pop-up when a body is placed in the ship. During playtests, this led to many times where this would reveal the werewolf.
-- When spectating, displaying the role of the spectated player
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won

@@ -132,6 +132,26 @@ namespace WerewolvesCompany.Patches
                 // if the add keyword was provided, add a role to the list
                 else if (args[1].ToLower() == "add")
                 {
+                    // If number of roles were provided
+                    if (args.Length == 4)
+                    {
+                        string roleName = args[2];
+                        if (!RoleIsAvailable(roleName))
+                        {
+                            logger.LogInfo($"Cannot add the role {roleName}, it is not part of the available roles");
+                            __result = BuildRoleNotAvailableNode(roleName);
+                        }
+
+                        int N;
+                        if (int.TryParse(args[3], out N))
+                        {
+                            AddNewRole(roleName,N);
+                            // Refresh the window
+                            __result = BuildTerminalNodeHome();
+                        }
+                        return false;
+                    }
+
                     for (int i = 2; i < args.Length; i++)
                     {
                         string roleName = args[i];
@@ -143,7 +163,6 @@ namespace WerewolvesCompany.Patches
                         else
                         {
                             AddNewRole(roleName);
-                            logger.LogInfo($"Added role {roleName} to the current roles");
                             // Refresh the window
                             __result = BuildTerminalNodeHome();
                         }
@@ -154,7 +173,7 @@ namespace WerewolvesCompany.Patches
                 // if the delete keyword was provided, add a role to the list
                 else if ((args[1].ToLower() == "delete") || (args[1].ToLower() == "del"))
                 {
-                    if (args.Length >3)
+                    if (args.Length > 3)
                     {
                         logger.LogInfo($"Can only delete roles one at a time");
                         __result = BuilDeleteRolesOnceAtATimeNode();
@@ -231,11 +250,14 @@ namespace WerewolvesCompany.Patches
         }
         
 
-        private static void AddNewRole(string roleName)
+        private static void AddNewRole(string roleName, int N = 1)
         {
             Role roleToAdd = References.GetRoleByName(roleName);
-            logger.LogInfo($"Adding role {roleToAdd.roleName} to the list");
-            rolesManager.currentRolesSetup.Add(roleToAdd);
+            logger.LogInfo($"Adding role x{N} {roleToAdd.roleName} to the list");
+            for (int i = 0; i < N; i++)
+            {
+                rolesManager.currentRolesSetup.Add(roleToAdd);
+            }
             rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
         }
 
@@ -247,7 +269,7 @@ namespace WerewolvesCompany.Patches
                 logdebug.LogInfo($"Checking {roleName} against {rolesManager.currentRolesSetup[i].terminalName}");
                 if (rolesManager.currentRolesSetup[i].terminalName.ToLower() == roleName.ToLower())
                 {
-                    logger.LogInfo($"Delete role {rolesManager.currentRolesSetup[i].terminalName.ToLower()} from the list");
+                    //logger.LogInfo($"Delete role {rolesManager.currentRolesSetup[i].terminalName.ToLower()} from the list");
                     rolesManager.currentRolesSetup.RemoveAt(i);
                     rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
                     return;

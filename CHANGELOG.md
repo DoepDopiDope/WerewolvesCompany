@@ -2,6 +2,8 @@
 
 Added 'wc del *' command, to remove all current roles from the list
 
+Added 'wc add RoleName N' command, to add N times the role RoleName
+
 Multiple bug fixes:
 - Fixed a bug where players were able to use their action through walls and objects
 - Fixed a bug where spectating a player would display the role of the previously spectated player rather than the currently spectated one
