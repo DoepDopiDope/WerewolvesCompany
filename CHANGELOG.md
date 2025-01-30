@@ -1,9 +1,13 @@
 ### [0.3.0]
 
+Added 'wc del *' command, to remove all current roles from the list
+
 Multiple bug fixes:
+- Fixed a bug where players were able to use their action through walls and objects
 - Fixed a bug where spectating a player would display the role of the previously spectated player rather than the currently spectated one
 - Fixed a bug where the first time a non-host would check the current roles list, it would appear empty.
-- Fixed a bug where clients were not able to run the 'wc debug distrib/distribute' command
+- Fixed a bug where clients were not able to use the 'wc debug distrib/distribute' terminal command
+
 
 ### [0.2.3]
 

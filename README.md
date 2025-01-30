@@ -104,10 +104,10 @@ Theses features are not implemented yet, but are planned:
 ## Known issues
 
 Major:
-- Players can use their role action through walls.
+- No major bugs have been reported.
 
 Minor:
-- No minor bugs have currently been reported
+- No minor bugs have been reported.
 
 ## Contact
 
