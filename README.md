@@ -14,8 +14,6 @@ WerewolvesCompany brings a variant of this game to Lethal Company. Each round, p
 
 The roles are currently filled as follows (Werewolf, Witch, Seer, Wild Boy, Villager, ...). Remaining slots are filled with Villagers. The roles are shuffled every round.
 
-It is not currently possible to setup which roles should be present in the game. This feature will be added in the next(s) update.
-
 Your role is permanently displayed at the top of your screen. You can also bring the tooltip for your role by pressing **[M]**
 
 ## Roles
