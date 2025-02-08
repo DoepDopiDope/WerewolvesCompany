@@ -105,6 +105,7 @@ namespace WerewolvesCompany
         public RolesManager rolesManager = Utils.GetRolesManager();
 
         public virtual string roleName { get; }
+        public virtual string roleNameColor => "white";
         public string terminalName => roleName.Replace(" ", "_");
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
@@ -360,6 +361,7 @@ namespace WerewolvesCompany
     {
         public override string roleName => "Werewolf";
         public override int refInt => 0;
+        public override string roleNameColor => "red";
         public override string winCondition => "You win by killing all Villagers";
         public override string roleDescription => "You have the ability to kill other players";
         public override string mainActionName => "Kill";
@@ -541,7 +543,7 @@ namespace WerewolvesCompany
 
         public void BecomeWerewolf()
         {
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor {rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a werewolf.");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor, {rolesManager.GetPlayerById(idolizedId.Value).playerUsername}, is dead. You have become a werewolf.");
             rolesManager.myRole = new Werewolf();
 
             // Update the roles list to all other clients

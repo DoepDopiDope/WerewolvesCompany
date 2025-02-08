@@ -166,13 +166,11 @@ namespace WerewolvesCompany.UI
 
             Role myRole = rolesManager.myRole;
 
-
             if (roleText != null)
             {
                 // Build the text to be displayed;
-                string text = $"{myRole.roleName}\n" + 
+                string text = $"<color = {myRole.roleNameColor}>{myRole.roleName}</color>\n" + 
                               $"{myRole.roleActionText.Replace("  ", " ")}";
-
                 roleText.text = text;
             }
 
