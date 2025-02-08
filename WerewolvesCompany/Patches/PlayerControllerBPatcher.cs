@@ -75,6 +75,7 @@ namespace WerewolvesCompany.Patches
             // Default color
             __instance.usernameBillboardText.color = UnityEngine.Color.white;
 
+            if (!rolesManager.CanWerewolvesSeeEachOther.Value) return;
             //RolesManager rolesManager = Plugin.Instance.rolesManager;
             if (rolesManager.myRole == null) return;
             if (!rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) return;
