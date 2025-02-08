@@ -1,7 +1,8 @@
 ### [0.4.0]
 
 Multiple additions
-- Werewolves can now see each others
+- Werewolves can now see each others (Can be disabled in configs)
+- Disabled the tooltip for when a player body is dropped in the ship (can be disabled in configs)
 - Werewolf role is now displayed in red at the top of the screen
 - The seer now see werewolves roles in red
 - Fixed a bug introduced in 0.3.0 that prevented adding multiple roles at once ('wc add role1 role2')
