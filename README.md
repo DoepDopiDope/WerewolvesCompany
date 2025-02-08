@@ -81,6 +81,8 @@ While they are mainly for my personal use during playtests, you can use debug co
 
 Theses features are not implemented yet, but are planned:
 - Disable pop-up when a body is placed in the ship. During playtests, this led to many times where this would reveal the werewolf.
+- Terminal command that gives details on a given role ("wc RoleName")
+- Make werewolves able to know each other names
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won

@@ -543,6 +543,9 @@ namespace WerewolvesCompany
         {
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor {rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a werewolf.");
             rolesManager.myRole = new Werewolf();
+
+            // Update the roles list to all other clients
+            rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
         }
     }
 
