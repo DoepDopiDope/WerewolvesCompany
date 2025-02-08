@@ -602,6 +602,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void QueryAllRolesClientRpc(string playersRefsIds, string rolesRefInts, ClientRpcParams clientRpcParams = default)
         {
+            logdebug.LogInfo($"I received all the roles. I am the role Manager of name: {Instance.name}");
             allRoles = UnWrapAllPlayersRoles(playersRefsIds, rolesRefInts);
         }
 

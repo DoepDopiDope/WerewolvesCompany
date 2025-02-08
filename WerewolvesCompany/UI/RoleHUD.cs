@@ -118,7 +118,7 @@ namespace WerewolvesCompany.UI
             //roleText.alignment = TextAnchor.MiddleLeft;
             roleText.alignment = TextAnchor.UpperCenter;
             roleText.fontSize = 24;
-            roleText.color = Color.white;
+            roleText.color = UnityEngine.Color.white;
 
             
 
