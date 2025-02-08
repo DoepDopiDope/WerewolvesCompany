@@ -171,7 +171,7 @@ namespace WerewolvesCompany.UI
             if (roleText != null)
             {
                 // Build the text to be displayed;
-                string text = $"<color={myRole.roleNameColor}>{myRole.roleName}</color>\n" + 
+                string text = $"{myRole.roleNameColored}\n" + 
                               $"{myRole.roleActionText.Replace("  ", " ")}";
                 roleText.text = text;
             }

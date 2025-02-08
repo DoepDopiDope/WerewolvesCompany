@@ -18,6 +18,7 @@ using System.Data;
 using JetBrains.Annotations;
 using Unity.IO.LowLevel.Unsafe;
 using Unity.Netcode;
+using System.Drawing;
 
 
 
@@ -105,7 +106,10 @@ namespace WerewolvesCompany
         public RolesManager rolesManager = Utils.GetRolesManager();
 
         public virtual string roleName { get; }
-        public virtual string roleNameColor => "white";
+#nullable enable
+        public virtual string? roleNameColor => null;
+#nullable disable
+        public string roleNameColored => GetRoleNameColored();
         public string terminalName => roleName.Replace(" ", "_");
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
@@ -178,10 +182,20 @@ namespace WerewolvesCompany
             return $"{mainActionTooltip}\n{secondaryActionTooltip}";
         }
 
+        public string GetRoleNameColored()
+        {
+            if (roleNameColor == null)
+            {
+                return roleName;
+            }
+            return $"<color={roleNameColor}>{roleName}</color>";
+        }
+
         public void DisplayRolePopUp()
         {
             logdebug.LogInfo("Display the role PopUp");
-            HUDManager.Instance.DisplayTip($"You are a {roleName}", rolePopUp);
+            HUDManager.Instance.DisplayTip($"You are a {roleName}", rolePopUp); 
+            //HUDManager.Instance.DisplayTip($"Test <color=red>red</color>", "Test <color=blue>blue</color>");
         }
 
         public virtual bool IsLocallyAllowedToPerformMainAction()
@@ -490,7 +504,7 @@ namespace WerewolvesCompany
         public override void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
             logdebug.LogInfo("Displaying Checked role on HUD");
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{targetPlayerName} is a {role.roleName}");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{targetPlayerName} is a {role.roleNameColored}");
         }
     }
 
