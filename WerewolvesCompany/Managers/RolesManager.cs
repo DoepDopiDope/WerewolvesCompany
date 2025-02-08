@@ -373,10 +373,19 @@ namespace WerewolvesCompany.Managers
                 SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
 
-            logger.LogInfo("Finished sending roles to each player");
-
             allRoles = finalRoles;
             logdebug.LogInfo("Stored all roles in RolesManager.");
+
+
+            // Send all roles list to all players
+            // I know that that the previous loop is redundant with this line, but I added this line later on, so whatever...
+            logdebug.LogInfo("Trying to send allRoles to all players");
+            QueryAllRolesFromServer(sendToAllPlayers: true);
+            logdebug.LogInfo("Sent allRoles to all players");
+
+            logger.LogInfo("Finished sending roles to each player");
+
+            
         }
 
 
@@ -564,16 +573,36 @@ namespace WerewolvesCompany.Managers
         // Query Role
 
         [ServerRpc(RequireOwnership = false)]
-        public void QueryAllRolesServerRpc(ServerRpcParams serverRpcParams = default)
+        public void QueryAllRolesServerRpc(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
         {
-            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+            QueryAllRolesFromServer(sendToAllPlayers, serverRpcParams);
+        }
+
+        // Conveniently wrapped this code snippet in its own method so I can call it from other places where only the Server should be.
+        public void QueryAllRolesFromServer(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
+        {
+            if (!IsServer)
+            {
+                throw new Exception("I am not the server, I should have never been allowed to run this method. Doep, check your code, you suck.");
+            }
+
             WrapAllPlayersRoles(out string playersRefsIds, out string rolesRefInts);
-            QueryAllRolesClientRpc(playersRefsIds, rolesRefInts, clientRpcParams);
+
+            if (sendToAllPlayers) // If command was invoked asking to update roles to everyone
+            {
+                QueryAllRolesClientRpc(playersRefsIds, rolesRefInts);
+            }
+            else // If command was called from a specific client
+            {
+                ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
+                QueryAllRolesClientRpc(playersRefsIds, rolesRefInts, clientRpcParams);
+            }
         }
 
         [ClientRpc]
         public void QueryAllRolesClientRpc(string playersRefsIds, string rolesRefInts, ClientRpcParams clientRpcParams = default)
         {
+            logdebug.LogInfo($"I received all the roles. I am the role Manager of name: {Instance.name}");
             allRoles = UnWrapAllPlayersRoles(playersRefsIds, rolesRefInts);
         }
 
@@ -1142,6 +1171,8 @@ namespace WerewolvesCompany.Managers
             allRoles[serverRpcParams.Receive.SenderClientId] = new Werewolf();
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
             BecomeWerewolfClientRpc(clientRpcParams);
+
+            // Update the roleslist for everyone
 
         }
 

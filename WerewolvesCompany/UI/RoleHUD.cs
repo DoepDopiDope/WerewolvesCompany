@@ -22,7 +22,7 @@ namespace WerewolvesCompany.UI
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
         public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
-
+        GUIStyle style = new GUIStyle();
 
         public Canvas canvas;
         public Text roleText;
@@ -110,13 +110,17 @@ namespace WerewolvesCompany.UI
             // Create a GameObject for the role text
             GameObject textObject = new GameObject("RoleText");
             textObject.transform.SetParent(container.transform);
+
             roleText = textObject.AddComponent<Text>();
             roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
             roleText.text = "Role: Unknown";
+            roleText.supportRichText = true;
             //roleText.alignment = TextAnchor.MiddleLeft;
             roleText.alignment = TextAnchor.UpperCenter;
             roleText.fontSize = 24;
-            roleText.color = Color.white;
+            roleText.color = UnityEngine.Color.white;
+
+            
 
             // Configure RectTransform of the text
             RectTransform textTransform = roleText.GetComponent<RectTransform>();
@@ -127,8 +131,6 @@ namespace WerewolvesCompany.UI
             textTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
             textTransform.pivot = new Vector2(0.5f, 1f);    // Pivot around center-left
 
-
-            
 
             //// Create the tooltip in the middle  of the screen
             //GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
@@ -166,13 +168,11 @@ namespace WerewolvesCompany.UI
 
             Role myRole = rolesManager.myRole;
 
-
             if (roleText != null)
             {
                 // Build the text to be displayed;
-                string text = $"{myRole.roleName}\n" + 
+                string text = $"{myRole.roleNameColored}\n" + 
                               $"{myRole.roleActionText.Replace("  ", " ")}";
-
                 roleText.text = text;
             }
 

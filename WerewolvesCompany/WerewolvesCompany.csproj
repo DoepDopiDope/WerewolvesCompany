@@ -53,6 +53,9 @@ copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\comm
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>

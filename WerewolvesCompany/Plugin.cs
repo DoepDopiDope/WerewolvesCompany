@@ -23,7 +23,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.3.1";
+        const string VERSION = "0.4.0";
 
         internal static InputsClass InputActionsInstance;
 
@@ -118,7 +118,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Plugin is initializing...");
 
 
-            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 

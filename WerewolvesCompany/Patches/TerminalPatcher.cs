@@ -148,8 +148,8 @@ namespace WerewolvesCompany.Patches
                             AddNewRole(roleName,N);
                             // Refresh the window
                             __result = BuildTerminalNodeHome();
+                            return false;
                         }
-                        return false;
                     }
 
                     for (int i = 2; i < args.Length; i++)

@@ -1,3 +1,9 @@
+### [0.4.0]
+
+Multiple additions
+- Werewolves can now see each others
+- Werewolf role is now displayed in red at the top of the screen
+
 ### [0.3.1]
 
 Turned off the debugging entries

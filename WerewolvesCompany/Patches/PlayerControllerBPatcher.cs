@@ -6,6 +6,8 @@ using WerewolvesCompany.Managers;
 using WerewolvesCompany;
 using WerewolvesCompany.UI;
 using System.Diagnostics;
+using System.Drawing;
+using UnityEngine.Rendering;
 
 namespace WerewolvesCompany.Patches
 {
@@ -18,7 +20,7 @@ namespace WerewolvesCompany.Patches
         
         //static RolesManager rolesManager = Utils.GetRolesManager();
         static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
-
+        static private RolesManager rolesManager => Plugin.Instance.rolesManager;
 
 
         [HarmonyPostfix]
@@ -64,6 +66,24 @@ namespace WerewolvesCompany.Patches
         {
             Plugin.Instance.rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
             Plugin.Instance.rolesManager.QueryAllRolesServerRpc();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("ShowNameBillboard")]
+        static void ShowRoleSpecificColor(PlayerControllerB __instance)
+        {
+            // Default color
+            __instance.usernameBillboardText.color = UnityEngine.Color.white;
+
+            //RolesManager rolesManager = Plugin.Instance.rolesManager;
+            if (rolesManager.myRole == null) return;
+            if (!rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) return;
+
+            // If I am a Werewolf, and target is also a werewolf, then I set his name red
+            if ((rolesManager.myRole.roleName == "Werewolf") && (rolesManager.allRoles[__instance.OwnerClientId].roleName == "Werewolf"))
+            {
+                __instance.usernameBillboardText.color = UnityEngine.Color.red;
+            }
         }
 
     }
