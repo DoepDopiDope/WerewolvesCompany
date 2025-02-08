@@ -29,5 +29,21 @@ namespace WerewolvesCompany.Patches
             logdebug.LogInfo($"Displaying Spectating text: {displayText}");
             __instance.spectatingPlayerText.text = displayText;
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
+        static bool PreventTooltipOnDropBodyInShip(GrabbableObject GObject)
+        {
+            if (Utils.GetRolesManager().DisableTooltipWhenBodyDroppedInShip.Value)
+            {
+                if (GObject.name.ToLower().Contains("ragdoll"))
+                {
+                    logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 }
