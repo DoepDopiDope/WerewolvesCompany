@@ -7,7 +7,6 @@ Multiple additions
 - The seer now see werewolves roles in red
 - Fixed a bug introduced in 0.3.0 that prevented adding multiple roles at once ('wc add role1 role2')
 
-
 ### [0.3.1]
 
 Turned off the debugging entries
