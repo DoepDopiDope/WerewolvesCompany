@@ -52,13 +52,10 @@ namespace WerewolvesCompany.Managers
 #nullable disable
 
 
-        // Global parameters
-        public NetworkVariable<bool> CanWerewolvesSeeEachOther = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<bool> DisableTooltipWhenBodyDroppedInShip = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Default parameters
-        public NetworkVariable<float> DefaultInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> DefaultActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> DefaultInteractRange   = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> DefaultActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> DefaultStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Werewolf parameters
@@ -106,10 +103,6 @@ namespace WerewolvesCompany.Managers
 
             if (IsServer)
             {
-                // Global parameters
-                CanWerewolvesSeeEachOther.Value = Plugin.config_CanWerewolvesSeeEachOther.Value;
-                DisableTooltipWhenBodyDroppedInShip.Value = Plugin.config_DisableTooltipWhenBodyDroppedInShip.Value;
-
                 // Default 
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
