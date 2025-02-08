@@ -373,6 +373,10 @@ namespace WerewolvesCompany.Managers
                 SendRoleClientRpc(item.Value.refInt, clientRpcParams);
             }
 
+            allRoles = finalRoles;
+            logdebug.LogInfo("Stored all roles in RolesManager.");
+
+
             // Send all roles list to all players
             // I know that that the previous loop is redundant with this line, but I added this line later on, so whatever...
             logdebug.LogInfo("Trying to send allRoles to all players");
@@ -381,8 +385,7 @@ namespace WerewolvesCompany.Managers
 
             logger.LogInfo("Finished sending roles to each player");
 
-            allRoles = finalRoles;
-            logdebug.LogInfo("Stored all roles in RolesManager.");
+            
         }
 
 
@@ -570,13 +573,13 @@ namespace WerewolvesCompany.Managers
         // Query Role
 
         [ServerRpc(RequireOwnership = false)]
-        public void QueryAllRolesServerRpc(ServerRpcParams serverRpcParams = default, bool sendToAllPlayers = false)
+        public void QueryAllRolesServerRpc(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
         {
-            QueryAllRolesFromServer(serverRpcParams, sendToAllPlayers);
+            QueryAllRolesFromServer(sendToAllPlayers, serverRpcParams);
         }
 
         // Conveniently wrapped this code snippet in its own method so I can call it from other places where only the Server should be.
-        public void QueryAllRolesFromServer(ServerRpcParams serverRpcParams = default, bool sendToAllPlayers = false)
+        public void QueryAllRolesFromServer(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
         {
             if (!IsServer)
             {
