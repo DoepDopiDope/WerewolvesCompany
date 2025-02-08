@@ -34,10 +34,13 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
         static bool PreventTooltipOnDropBodyInShip(GrabbableObject GObject)
         {
-            if (GObject.name.ToLower().Contains("ragdoll"))
+            if (Utils.GetRolesManager().DisableTooltipWhenBodyDroppedInShip.Value)
             {
-                logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
-                return false;
+                if (GObject.name.ToLower().Contains("ragdoll"))
+                {
+                    logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
+                    return false;
+                }
             }
             return true;
         }
