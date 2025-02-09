@@ -113,8 +113,9 @@ namespace WerewolvesCompany
         public string terminalName => roleName.Replace(" ", "_");
         public virtual int refInt { get; }
         public virtual string winCondition { get; }
+        public virtual string roleShortDescription { get; set; }
         public virtual string roleDescription { get; set; }
-        public virtual string rolePopUp  => $"{winCondition} {roleDescription}";
+        public virtual string rolePopUp  => $"{winCondition} {roleShortDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
         
@@ -377,11 +378,16 @@ namespace WerewolvesCompany
         public override int refInt => 0;
         public override string roleNameColor => "red";
         public override string winCondition => "You win by killing all Villagers";
-        public override string roleDescription => "You have the ability to kill other players";
+        public override string roleShortDescription => "You have the ability to kill other players";
         public override string mainActionName => "Kill";
+        public override string roleDescription => "The Werewolves shall kill other players before ship departure.\nThe Werewolf has the ability to kill another player.";
+
+        // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WerewolfInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.WerewolfActionCoolDown;
         public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCoolDown;
+
+
 
         public Werewolf() : base() { }
 
@@ -414,8 +420,11 @@ namespace WerewolvesCompany
         public override string roleName => "Villager";
         public override int refInt => 1;
         public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleDescription => "You do not have any special ability.";
+        public override string roleShortDescription => "You do not have any special ability.";
         public override string roleActionText => "";
+        public override string roleDescription => "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
+
+        // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.VillagerInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.VillagerActionCoolDown;
         public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCoolDown;
@@ -435,9 +444,12 @@ namespace WerewolvesCompany
         public override string roleName => "Witch";
         public override int refInt => 2;
         public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleDescription => "You have the ability to protect one player, and kill another one.";
+        public override string roleShortDescription => "You have the ability to protect one player, and kill another one.";
         public override string mainActionName => "Poison";
         public override string secondaryActionName => "Protect";
+        public override string roleDescription => "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status. The Witch cannot protect herself.";
+
+        // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WitchInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.WitchActionCoolDown;
         public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCoolDown;
@@ -482,9 +494,12 @@ namespace WerewolvesCompany
         public override string roleName => "Seer";
         public override int refInt => 3;
         public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleDescription => "You have the ability to see a player's role.";
+        public override string roleShortDescription => "You have the ability to see a player's role.";
         public override string mainActionName => "Seer role";
         public override string mainActionText => $"Seer {targetInRangeName}'s role";
+        public override string roleDescription => "The Seer is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Seer can seer another player's role.";
+
+        // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.SeerInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.SeerActionCooldown;
         public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCoolDown;
@@ -514,16 +529,17 @@ namespace WerewolvesCompany
         public override string roleName => "Wild Boy";
         public override int refInt => 4;
         public override string winCondition => "For now, you win with the village.";
-        public string _roleDescription = "You can idolize a player. If he dies, you become a werewolf.";
-        public override string roleDescription
+        public string _roleShortDescription = "You can idolize a player. If he dies, you become a werewolf.";
+        public override string roleShortDescription
         {
-            get { return _roleDescription; }
-            set { _roleDescription = value; }
+            get { return _roleShortDescription; }
+            set { _roleShortDescription = value; }
         }
-        
+        public override string roleDescription => "The Wild Boy wins either with the Villagers or the Werewolves, depending on his status.\nThe Wild Boy can target a player who becomes his idol. If his idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.";
         public override string mainActionName => "Idolize";
         public ulong? idolizedId;
 
+        // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WildBoyInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.WildBoyActionCoolDown;
         public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCoolDown;
@@ -549,7 +565,7 @@ namespace WerewolvesCompany
             logdebug.LogInfo("I have set my idolization mentor");
             string playerName = rolesManager.GetPlayerById(targetId).playerUsername;
 
-            roleDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
+            roleShortDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
             logdebug.LogInfo("Displaying Idolization on HUD");
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If he dies, you will become a werewolf.");
         }
