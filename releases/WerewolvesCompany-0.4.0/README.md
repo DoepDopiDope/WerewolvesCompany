@@ -16,6 +16,10 @@ The roles are currently filled as follows (Werewolf, Witch, Seer, Wild Boy, Vill
 
 Your role is permanently displayed at the top of your screen. You can also bring the tooltip for your role by pressing **[M]**
 
+### IMPORTANT NOTE
+
+By default, the mod disables the tooltip for dropping a player body in the ship. You can enable it if you wish by setting the config parameter "Disable Body in Ship tooltip" to false.
+
 ## Roles
 
 ### Werewolf
@@ -23,6 +27,8 @@ Your role is permanently displayed at the top of your screen. You can also bring
 The Werewolf shall kill other players before ship departure.
 
 The Werewolf has the ability to kill another player (with cooldown).
+
+The Werewolves can see each other if the option is enabled (on by default). See the "Werewolves Know Each Other" config parameter.
 
 ### Villager
 
@@ -42,13 +48,13 @@ Note that unlike the original Werewolves game, the Witch here does not revive a 
 
 ### Seer
 
-The Witch shall find and kill the Werewolves before ship departure.
+The Seer shall find and kill the Werewolves before ship departure.
 
-The Seer can seer another player's role (once per round).
+The Seer can seer another player's role.
 
 ### Wild Boy
 
-The Wild Boy wins either with the Villagers or the Werewolves, depending on its status.
+The Wild Boy wins either with the Villagers or the Werewolves, depending on his status.
 
 The Wild Boy can target a player who becomes his idol. If the idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.
 
@@ -59,6 +65,9 @@ You can edit the roles configuration from the Ship's terminal. You can access th
 Once in the Werewolves menu, you can add or remove roles from the current setup by typing :
 - werewolves add Role_Name
 - werewolves del Role_Name
+
+You can get informations on a role by typing:
+- werewolves Role_Name
 
 You can also shorten 'werewolves' with its alias 'wc'.
 
@@ -80,7 +89,6 @@ While they are mainly for my personal use during playtests, you can use debug co
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
-- Terminal command that gives details on a given role ("wc RoleName")
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Icon for the roles to be displayed at the top of the screen
 - End of game screen displaying which team won
