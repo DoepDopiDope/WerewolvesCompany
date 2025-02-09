@@ -1,6 +1,7 @@
 ### [0.4.0]
 
 Additions
+- New role: Cupid. He can make two players fall in love. If one of them dies, his lover also dies.
 - Werewolves can now see each others (Can be disabled in configs)
 - Disabled the tooltip for when a player body is dropped in the ship (can be disabled in configs)
 - Werewolf role is now displayed in red at the top of the screen
