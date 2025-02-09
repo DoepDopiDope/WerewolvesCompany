@@ -86,8 +86,13 @@ namespace WerewolvesCompany.Managers
         public NetworkVariable<float> WildBoyActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> WildBoyStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+        // Wild Boy parameters
+        public NetworkVariable<float> CupidInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-       
+
+
 
         public override void OnNetworkSpawn()
         {
@@ -138,7 +143,12 @@ namespace WerewolvesCompany.Managers
                 // Wild Boy parameters
                 WildBoyInteractRange.Value = Plugin.config_WildBoyInteractRange.Value;
                 WildBoyActionCoolDown.Value = Plugin.config_WildBoyActionCoolDown.Value;
-                WildBoyStartOfRoundActionCoolDown.Value = Plugin.config_WildboyStartOfRoundActionCoolDown.Value;
+                WildBoyStartOfRoundActionCoolDown.Value = Plugin.config_WildBoyStartOfRoundActionCoolDown.Value;
+
+                // Cupid parameters
+                CupidInteractRange.Value = Plugin.config_CupidInteractRange.Value;
+                CupidActionCoolDown.Value = Plugin.config_CupidActionCoolDown.Value;
+                CupidStartOfRoundActionCoolDown.Value = Plugin.config_CupidStartOfRoundActionCoolDown.Value;
             }
         }
 
@@ -879,7 +889,7 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} secondary action on cooldown");
             ulong senderId = serverRpcParams.Receive.SenderClientId;
-            allRoles[senderId].SetMainActionOnCooldown();
+            allRoles[senderId].SetSecondaryActionOnCooldown();
 
             // Build the ClientRpcParams to answer to the caller
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -897,7 +907,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void SuccessFullyPerformedSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            logdebug.LogInfo("Setting my secondary action on cooldown");
+            
             myRole.SetSecondaryActionOnCooldown();
         }
 

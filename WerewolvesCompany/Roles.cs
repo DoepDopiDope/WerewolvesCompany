@@ -35,6 +35,7 @@ namespace WerewolvesCompany
             roles.Add(new Witch());
             roles.Add(new Seer());
             roles.Add(new WildBoy());
+            roles.Add(new Cupid());
 
             return roles;
         }
@@ -135,9 +136,12 @@ namespace WerewolvesCompany
         public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
 
         public virtual string mainActionText { get { return $"{mainActionName} {targetInRangeName}"; } }
-        public virtual string mainActionTooltip { get { return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim(); } }
-        public virtual string secondaryActionText { get { return $"{secondaryActionName} {targetInRangeName}"; } }
-        public virtual string secondaryActionTooltip { get { return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim(); } }
+        //public virtual string mainActionTooltip { get { return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim(); } }
+        public virtual string mainActionTooltip => GetMainActionTooltip();
+
+        public virtual string secondaryActionText => $"{secondaryActionName} {targetInRangeName}";
+        //public virtual string secondaryActionTooltip { get { return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim(); } }
+        public virtual string secondaryActionTooltip => GetSecondaryActionTooltip();
         public virtual string roleActionText { get { return GetRoleActionText(); } }
 
 
@@ -195,19 +199,30 @@ namespace WerewolvesCompany
         public void DisplayRolePopUp()
         {
             logdebug.LogInfo("Display the role PopUp");
-            HUDManager.Instance.DisplayTip($"You are a {roleName}", rolePopUp); 
+            HUDManager.Instance.DisplayTip($"{roleName}", rolePopUp); 
             //HUDManager.Instance.DisplayTip($"Test <color=red>red</color>", "Test <color=blue>blue</color>");
         }
 
-        public virtual bool IsLocallyAllowedToPerformMainAction()
+        public bool IsLocallyAllowedToPerformMainAction()
         {
-            return (!IsMainActionOnCooldown && !(targetInRangeId == null));
+            return (!IsMainActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformMainActionRoleSpecific());
         }
 
-        public virtual bool IsLocallyAllowedToPerformSecondaryAction()
+        public bool IsLocallyAllowedToPerformSecondaryAction()
         {
-            return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null));
+            return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformMainActionRoleSpecific());
         }
+
+        public virtual bool IsLocallyAllowedToPerformMainActionRoleSpecific()
+        {
+            return true;
+        }
+
+        public virtual bool IsLocallyAllowedToPerformSecondaryActionRoleSpecific()
+        {
+            return true;
+        }
+
 
         public virtual bool IsAllowedToPerformMainAction()
         {
@@ -283,13 +298,14 @@ namespace WerewolvesCompany
 
 
 
-        public void SetMainActionOnCooldown()
+        public virtual void SetMainActionOnCooldown()
         {
             currentMainActionCooldown = baseMainActionCooldown;
         }
 
-        public void SetSecondaryActionOnCooldown()
+        public virtual void SetSecondaryActionOnCooldown()
         {
+            logdebug.LogInfo("Setting my secondary action on cooldown");
             currentSecondaryActionCooldown = baseSecondaryActionCooldown;
         }
 
@@ -321,42 +337,73 @@ namespace WerewolvesCompany
         }
         //
 
+        private string GetMainActionTooltip()
+        {
+            if (currentMainActionCooldown < 5000)
+            {
+                return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim();
+            }
+            else
+            {
+                return "";
+            }
+        }
 
-        // Notifications of success and failed actions
+        private string GetSecondaryActionTooltip()
+        {
+            if (currentSecondaryActionCooldown < 5000)
+            {
+                return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+
+
+        // ------ Main action success
         public virtual void NotifyMainActionSuccess(string targetPlayerName)
         {
             HUDManager.Instance.DisplayTip(roleName, "Main action success");
         }
+        // Alternative parameters inputs for the Seer
+        public virtual void NotifyMainActionSuccess(string targetPlayerName, Role role)
+        {
+            return;
+        }
+        // Alternative parameters inputs for the Wild Boy
+        public virtual void NotifyMainActionSuccess(ulong targetId)
+        {
+            return;
+        }
 
 
+        // ------ Secondary action success
         public virtual void NotifySecondaryActionSuccess(string targetPlayerName)
         {
             HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
         }
+        public virtual void NotifySecondaryActionSuccess(ulong targetId)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
+        }
 
+
+        // ------ Main action failed
         public virtual void NotifyMainActionFailed(string targetPlayerName)
         {
             HUDManager.Instance.DisplayTip(roleName, "Main action failed");
         }
 
 
+        // ------ Secondary action failed
         public virtual void NotifySecondaryActionFailed(string targetPlayerName)
         {
             HUDManager.Instance.DisplayTip(roleName, "Secondary action failed");
         }
 
-
-        // Alternative parameters inputs for the Seer
-        public virtual void NotifyMainActionSuccess(string targetPlayerName, Role role)
-        {
-            return;
-        }
-
-        // Alternative parameters inputs for the Wild Boy
-        public virtual void NotifyMainActionSuccess(ulong targetId)
-        {
-            return;
-        }
 
 
         public ulong GrabTargetPlayer()
@@ -372,6 +419,9 @@ namespace WerewolvesCompany
 
     // ----------------------------------------
     // Roles
+
+
+    // Role: Werewolf
     class Werewolf : Role
     {
         public override string roleName => "Werewolf";
@@ -415,6 +465,8 @@ namespace WerewolvesCompany
     }
 
 
+
+    // Role: Villager
     class Villager : Role
     {
         public override string roleName => "Villager";
@@ -439,6 +491,8 @@ namespace WerewolvesCompany
     }
 
 
+
+    // Role: Witch
     class Witch : Role
     {
         public override string roleName => "Witch";
@@ -489,6 +543,8 @@ namespace WerewolvesCompany
     }
 
 
+
+    // Role: Seer
     class Seer : Role
     {
         public override string roleName => "Seer";
@@ -524,6 +580,8 @@ namespace WerewolvesCompany
     }
 
 
+
+    // Role: Wild Boy
     class WildBoy : Role
     {
         public override string roleName => "Wild Boy";
@@ -580,5 +638,120 @@ namespace WerewolvesCompany
             rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
         }
     }
+
+
+
+    // Role: Cupid
+    class Cupid : Role
+    {
+        public override string roleName => "Cupid";
+        public override int refInt => 5;
+        public override string winCondition => "You win with the village.";
+        public override string roleShortDescription => "You can make two players fall in love. They must win together. They also die together.";
+        public override string roleDescription => "Cupid is able to make two players fall deeply in love.\nWhen one lover die, the other one also dies.\nThe lovers win together. If they're part of the same team, they win with their team. If they're part of different teams, they must be the only two survivors.";
+
+        public override string mainActionName => "Romance";
+        public override string secondaryActionName => "Romance Myself";
+        public override string secondaryActionText => secondaryActionName;
+
+        new float currentSecondaryActionCooldown => currentMainActionCooldown;
+
+        public List<ulong> lovers = new List<ulong>();
+        //public ulong? firstRomancedId;
+        //public ulong? secondRomancedId;
+
+        public bool TargetIsAlreadyRomanced => lovers.Contains(targetInRangeId.Value);
+        public bool AmIAlreadyRomanced => lovers.Contains(Utils.GetLocalPlayerControllerB().OwnerClientId);
+        public bool AreBothTargetsRomanced => (lovers.Count == 2);
+
+        // Parameters
+        public override NetworkVariable<float> interactRange => rolesManager.CupidInteractRange;
+        public override NetworkVariable<float> baseActionCooldown => rolesManager.CupidActionCoolDown;
+        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCoolDown;
+        
+        
+        public Cupid() : base() { }
+
+
+        // Cupid really only has one action: romancing someone. The "secondary" action only serves as the main action targetting himself
+        public override void SetSecondaryActionOnCooldown()
+        {
+            SetMainActionOnCooldown();
+        }
+
+        public override void SetMainActionOnCooldown()
+        {
+            // Only set action on cooldown if two targets have been romanced
+            if (lovers.Count == 2)
+            {
+                currentMainActionCooldown = baseMainActionCooldown;
+            }
+        }
+
+
+        public override void PerformMainAction()
+        {
+            logger.LogInfo($"{roleName} is romancing a target: {targetInRangeName}.");
+        }
+
+        public override void PerformSecondaryAction()
+        {
+            logger.LogInfo($"{roleName} is romancing himself.");
+        }
+        
+
+        public override void NotifyMainActionSuccess(ulong targetId)
+        {
+            logdebug.LogInfo("I am running the Romancing confirmation Confirmation");
+            lovers.Add(targetId);
+            NotifyRomancingSuccess(targetId);
+        }
+
+        public override void NotifySecondaryActionSuccess(ulong targetId)
+        {
+            logdebug.LogInfo("I am running the Romancing confirmation Confirmation");
+            lovers.Add(Utils.GetLocalPlayerControllerB().OwnerClientId);
+            NotifyRomancingSuccess(targetId);
+        }
+
+        private void NotifyRomancingSuccess(ulong targetId)
+        {
+            logdebug.LogInfo("Displaying romancing status on HUD");
+            if (AreBothTargetsRomanced)
+            {
+                roleShortDescription = $"{rolesManager.GetPlayerById(lovers[0])} and {rolesManager.GetPlayerById(lovers[1])} are deeply in love. They die together. They must win together.";
+                DisplayRolePopUp();
+            }
+            else
+            {
+                HUDManager.Instance.DisplayTip($"{roleName}", $"You targetted {rolesManager.GetPlayerById(targetId)} to be romanced.");
+            }
+        }
+
+        public override bool IsLocallyAllowedToPerformMainActionRoleSpecific()
+        {
+            if (TargetIsAlreadyRomanced)
+            {
+                HUDManager.Instance.DisplayTip($"{roleName}", $"{targetInRangeName} is already romanced.");
+                return false;
+            }
+            return true;
+        }
+
+        public override bool IsLocallyAllowedToPerformSecondaryActionRoleSpecific()
+        {
+            if (AmIAlreadyRomanced)
+            {
+                HUDManager.Instance.DisplayTip($"{roleName}", $"You are already romanced.");
+                return false;
+            }
+            return true;
+        }
+
+
+
+
+    }
+
 
 }

@@ -9,7 +9,8 @@ Additions
 
 Bug fixes:
 - Fixed a bug introduced in 0.3.0 that prevented adding multiple roles at once ('wc add role1 role2')
-
+- Re-organized the config file sections
+ 
 ### [0.3.1]
 
 Turned off the debugging entries
