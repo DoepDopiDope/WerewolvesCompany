@@ -106,20 +106,21 @@ namespace WerewolvesCompany
 
         public RolesManager rolesManager = Utils.GetRolesManager();
 
-        public virtual string roleName { get; }
+        public virtual string roleName { get; set; } = "Default Role Name";
 #nullable enable
-        public virtual string? roleNameColor => null;
+        public virtual string? roleNameColor { get; set; }  = null;
 #nullable disable
         public string roleNameColored => GetRoleNameColored();
         public string terminalName => roleName.Replace(" ", "_");
-        public virtual int refInt { get; }
-        public virtual string winCondition { get; }
-        public virtual string roleShortDescription { get; set; }
-        public virtual string roleDescription { get; set; }
+        public virtual int refInt { get; set; } = -1;
+        public virtual string winCondition { get; set; } = "Role Win Condition";
+        public virtual string roleShortDescription { get; set; } = "Role Short Description";
+        public virtual string roleDescription { get; set; } = "Role Description";
         public virtual string rolePopUp  => $"{winCondition} {roleShortDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-        
+
+
 
         // Who's in range
         public ulong? targetInRangeId { get; set; }
@@ -129,20 +130,26 @@ namespace WerewolvesCompany
 
 
         // ToolTip
-        
-        public virtual string mainActionKey { get { return "Z"; } }
-        public virtual string secondaryActionKey { get { return "V"; } }
-        public virtual string mainActionName { get { return "Main Action Name"; } }
-        public virtual string secondaryActionName { get { return "Secondary Action Name"; } }
 
-        public virtual string mainActionText { get { return $"{mainActionName} {targetInRangeName}"; } }
+        public virtual string mainActionKey { get; set; } = "Z";
+        public virtual string secondaryActionKey { get; set; } = "V";
+        public virtual string mainActionName { get; set; } = "Main Action Name";
+        public virtual string secondaryActionName { get; set; } = "Secondary Action Name";
+
+        public virtual string mainActionText => $"{mainActionName} {targetInRangeName}";
         //public virtual string mainActionTooltip { get { return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim(); } }
         public virtual string mainActionTooltip => GetMainActionTooltip();
 
         public virtual string secondaryActionText => $"{secondaryActionName} {targetInRangeName}";
         //public virtual string secondaryActionTooltip { get { return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim(); } }
         public virtual string secondaryActionTooltip => GetSecondaryActionTooltip();
-        public virtual string roleActionText { get { return GetRoleActionText(); } }
+        public virtual string roleActionText
+{
+            get { return GetRoleActionText(); } 
+            set { roleActionText = value; }
+        }
+
+
 
 
 
@@ -153,11 +160,11 @@ namespace WerewolvesCompany
 
 
         // Cooldowns
-        public float currentMainActionCooldown;
-        public float currentSecondaryActionCooldown;
+        public virtual float currentMainActionCooldown { get; set; }
+        public virtual float currentSecondaryActionCooldown { get; set; }
 
-        public float baseMainActionCooldown;
-        public float baseSecondaryActionCooldown;
+        public virtual float baseMainActionCooldown { get; set; }
+        public virtual float baseSecondaryActionCooldown { get; set; }
 
         public bool IsMainActionOnCooldown => (currentMainActionCooldown > 0);
         public bool IsSecondaryActionOnCooldown => (currentSecondaryActionCooldown > 0);
@@ -170,14 +177,17 @@ namespace WerewolvesCompany
 
         public Role()
         {
+            InitiateCooldowns();
+        }
+        
+        public virtual void InitiateCooldowns()
+        {
             baseMainActionCooldown = baseActionCooldown.Value;
             baseSecondaryActionCooldown = baseActionCooldown.Value;
 
             currentMainActionCooldown = startOfRoundActionCooldown.Value;
             currentSecondaryActionCooldown = startOfRoundActionCooldown.Value;
         }
-        
-        
 
         public string GetRoleActionText()
         {
@@ -429,13 +439,13 @@ namespace WerewolvesCompany
     // Role: Werewolf
     class Werewolf : Role
     {
-        public override string roleName => "Werewolf";
-        public override int refInt => 0;
-        public override string roleNameColor => "red";
-        public override string winCondition => "You win by killing all Villagers";
-        public override string roleShortDescription => "You have the ability to kill other players";
-        public override string mainActionName => "Kill";
-        public override string roleDescription => "The Werewolves shall kill other players before ship departure.\nThe Werewolf has the ability to kill another player.";
+        public override string roleName { get; set; } = "Werewolf";
+        public override int refInt { get; set; }  = 0;
+        public override string roleNameColor { get; set; } = "red";
+        public override string winCondition { get; set; } = "You win by killing all Villagers";
+        public override string roleShortDescription { get; set; } = "You have the ability to kill other players";
+        public override string mainActionName { get; set; } = "Kill";
+        public override string roleDescription { get; set; } = "The Werewolves shall kill other players before ship departure.\nThe Werewolf has the ability to kill another player.";
 
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WerewolfInteractRange;
@@ -476,12 +486,12 @@ namespace WerewolvesCompany
     // Role: Villager
     class Villager : Role
     {
-        public override string roleName => "Villager";
-        public override int refInt => 1;
-        public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleShortDescription => "You do not have any special ability.";
-        public override string roleActionText => "";
-        public override string roleDescription => "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
+        public override string roleName { get; set; } = "Villager";
+        public override int refInt { get; set; } = 1;
+        public override string winCondition { get; set; } = "You win by killing the Werewolves.";
+        public override string roleShortDescription { get; set; } = "You do not have any special ability.";
+        public override string roleActionText { get; set; } = "";
+        public override string roleDescription { get; set; } = "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
 
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.VillagerInteractRange;
@@ -502,13 +512,13 @@ namespace WerewolvesCompany
     // Role: Witch
     class Witch : Role
     {
-        public override string roleName => "Witch";
-        public override int refInt => 2;
-        public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleShortDescription => "You have the ability to protect one player, and kill another one.";
-        public override string mainActionName => "Poison";
-        public override string secondaryActionName => "Protect";
-        public override string roleDescription => "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status. The Witch cannot protect herself.";
+        public override string roleName { get; set; } = "Witch";
+        public override int refInt { get; set; } = 2;
+        public override string winCondition { get; set; } = "You win by killing the Werewolves.";
+        public override string roleShortDescription { get; set; } = "You have the ability to protect one player, and kill another one.";
+        public override string mainActionName { get; set; } = "Poison";
+        public override string secondaryActionName { get; set; } = "Protect";
+        public override string roleDescription { get; set; } = "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status. The Witch cannot protect herself.";
 
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WitchInteractRange;
@@ -556,13 +566,13 @@ namespace WerewolvesCompany
     // Role: Seer
     class Seer : Role
     {
-        public override string roleName => "Seer";
-        public override int refInt => 3;
-        public override string winCondition => "You win by killing the Werewolves.";
-        public override string roleShortDescription => "You have the ability to see a player's role.";
-        public override string mainActionName => "Seer role";
+        public override string roleName { get; set; } = "Seer";
+        public override int refInt { get; set; } = 3;
+        public override string winCondition { get; set; } = "You win by killing the Werewolves.";
+        public override string roleShortDescription { get; set; } = "You have the ability to see a player's role.";
+        public override string mainActionName { get; set; } = "Seer role";
         public override string mainActionText => $"Seer {targetInRangeName}'s role";
-        public override string roleDescription => "The Seer is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Seer can seer another player's role.";
+        public override string roleDescription { get; set; } = "The Seer is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Seer can seer another player's role.";
 
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.SeerInteractRange;
@@ -593,17 +603,17 @@ namespace WerewolvesCompany
     // Role: Wild Boy
     class WildBoy : Role
     {
-        public override string roleName => "Wild Boy";
-        public override int refInt => 4;
-        public override string winCondition => "For now, you win with the village.";
+        public override string roleName { get; set; } = "Wild Boy";
+        public override int refInt { get; set; } = 4;
+        public override string winCondition { get; set; } = "For now, you win with the village.";
         public string _roleShortDescription = "You can idolize a player. If he dies, you become a werewolf.";
         public override string roleShortDescription
         {
             get { return _roleShortDescription; }
             set { _roleShortDescription = value; }
         }
-        public override string roleDescription => "The Wild Boy wins either with the Villagers or the Werewolves, depending on his status.\nThe Wild Boy can target a player who becomes his idol. If his idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.";
-        public override string mainActionName => "Idolize";
+        public override string roleDescription { get; set; } = "The Wild Boy wins either with the Villagers or the Werewolves, depending on his status.\nThe Wild Boy can target a player who becomes his idol. If his idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.";
+        public override string mainActionName { get; set; } = "Idolize";
         public ulong? idolizedId;
 
         // Parameters
@@ -653,17 +663,19 @@ namespace WerewolvesCompany
     // Role: Cupid
     class Cupid : Role
     {
-        public override string roleName => "Cupid";
-        public override int refInt => 5;
-        public override string winCondition => "You win with the village.";
-        public override string roleShortDescription => "You can make two players fall in love. They must win together. They also die together.";
-        public override string roleDescription => "Cupid is able to make two players fall deeply in love.\nWhen one lover die, the other one also dies.\nThe lovers win together. If they're part of the same team, they win with their team. If they're part of different teams, they must be the only two survivors.";
+        public override string roleName { get; set; } = "Cupid";
+        public override int refInt { get; set; } = 5;
+        public override string winCondition { get; set; }  = "You win with the village.";
+        public override string roleShortDescription { get; set; }  = "You can make two players fall in love. They must win together. They also die together.";
+        public override string roleDescription { get; set; } = "Cupid is able to make two players fall deeply in love.\nWhen one lover die, the other one also dies.\nThe lovers win together. If they're part of the same team, they win with their team. If they're part of different teams, they must be the only two survivors.";
 
-        public override string mainActionName => "Romance";
-        public override string secondaryActionName => "Romance Myself";
+        public override string mainActionName { get; set; } = "Romance";
+        public override string secondaryActionName { get; set; } = "Romance Myself";
         public override string secondaryActionText => secondaryActionName;
 
-        new float currentSecondaryActionCooldown => currentMainActionCooldown;
+        public override float currentSecondaryActionCooldown => currentMainActionCooldown;
+        public override float baseSecondaryActionCooldown => baseMainActionCooldown;
+
 
         public List<ulong> lovers = new List<ulong>();
         //public ulong? firstRomancedId;
@@ -683,6 +695,14 @@ namespace WerewolvesCompany
         
         public Cupid() : base() { }
 
+        public override void InitiateCooldowns()
+        {
+            baseMainActionCooldown = baseActionCooldown.Value;
+            //baseSecondaryActionCooldown = baseActionCooldown.Value;
+
+            currentMainActionCooldown = startOfRoundActionCooldown.Value;
+            //currentSecondaryActionCooldown = startOfRoundActionCooldown.Value;
+        }
 
         // Cupid really only has one action: romancing someone. The "secondary" action only serves as the main action targetting himself
         public override void SetSecondaryActionOnCooldown()
@@ -732,7 +752,7 @@ namespace WerewolvesCompany
             if (!AreBothTargetsRomanced)
             {
                 logdebug.LogInfo("Only one target is romanced. Notifying Cupid");
-                HUDManager.Instance.DisplayTip($"{roleName}", $"{rolesManager.GetPlayerById(targetId).playerUsername} will be romanced.");
+                HUDManager.Instance.DisplayTip($"{roleName}", $"<color=#ff00ffff>{rolesManager.GetPlayerById(targetId).playerUsername}</color> will be romanced.");
                 
             }
             else // If both targets are now romanced, we have a couple. Send them that they are now romanced.
@@ -750,8 +770,11 @@ namespace WerewolvesCompany
             if (romancedPlayersCallbackAmount == 2)
             {
                 logdebug.LogInfo("Received 2 callbacks from lovers, notifying to Cupid.");
-                roleShortDescription = $"{rolesManager.GetPlayerById(lovers[0])} and {rolesManager.GetPlayerById(lovers[1])} are deeply in love. They will die together. They must win together.";
-                DisplayRolePopUp();
+                roleShortDescription = $"<color=#ff00ffff>{rolesManager.GetPlayerById(lovers[0]).playerUsername}</color> and <color=#ff00ffff>{rolesManager.GetPlayerById(lovers[1]).playerUsername}</color> are deeply in love. They will die together. They must win together.";
+                if (!lovers.Contains(Utils.GetLocalPlayerControllerB().OwnerClientId))
+                {
+                    DisplayRolePopUp();
+                }
             }
         }
 
@@ -769,6 +792,13 @@ namespace WerewolvesCompany
 
         public override bool IsLocallyAllowedToPerformSecondaryActionRoleSpecific()
         {
+            if (AreBothTargetsRomanced)
+            {
+                return false;
+            }
+            {
+                
+            }
             if (AmIAlreadyRomanced)
             {
                 HUDManager.Instance.DisplayTip($"{roleName}", $"You are already romanced.");
@@ -783,3 +813,6 @@ namespace WerewolvesCompany
         }
     }
 }
+
+
+

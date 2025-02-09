@@ -1245,7 +1245,7 @@ namespace WerewolvesCompany.Managers
         public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
         {
             myRole.isInLoveWith = myLoverId;
-            HUDManager.Instance.DisplayTip("Cupid put a fate upon you", $"You fell deeply in love with {GetPlayerById(myLoverId)}. You must win together");
+            HUDManager.Instance.DisplayTip("Cupid put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
             AnswerToCupidServerRpc(cupidId);
         }
 

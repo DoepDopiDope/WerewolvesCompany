@@ -74,7 +74,11 @@ namespace WerewolvesCompany.Patches
         {
             // Default color
             __instance.usernameBillboardText.color = UnityEngine.Color.white;
-            __instance.usernameBillboardText.text = __instance.usernameBillboardText.text.Replace(" <color=pink><3</color>", "");
+
+            //"<color=pink>lover</color>"
+            string loverLine = " <color=#ff00ffff><3</color>";
+            __instance.usernameBillboardText.text = __instance.usernameBillboardText.text.Replace(loverLine, "");
+            
 
             // Check if the player is a Werewolf, and should be displayed in red in case I'm also a Werewolf
             if (rolesManager.CanWerewolvesSeeEachOther.Value)
@@ -98,7 +102,7 @@ namespace WerewolvesCompany.Patches
                 {
                     if (__instance.OwnerClientId == rolesManager.myRole.isInLoveWith.Value)
                     {
-                        __instance.usernameBillboardText.text += " <color=pink><3</color>";
+                        __instance.usernameBillboardText.text += loverLine;
                     }
                 }
                 
