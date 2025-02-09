@@ -62,7 +62,7 @@ The Wild Boy can target a player who becomes his idol. If the idol dies, the Wil
 
 Cupid wins with the village.
 
-Cupid can make two players fall in love. Their fate is linked: if one of them dies, the other one also dies. If they were both originally in the same team, they must win with that team. If they were originally in different teams, they now must be the only two survivors.
+Cupid can make two players fall in love. Their fate is linked: if one of them dies, their lover also dies. If they were both originally in the same team, they must win with that team. If they were originally in different teams, they now must be the only two survivors.
 
 ## Setup and parameters
 

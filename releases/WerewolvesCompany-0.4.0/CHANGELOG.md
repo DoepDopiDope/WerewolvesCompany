@@ -1,15 +1,20 @@
 ### [0.4.0]
 
-Additions
+Main additions
+- New role: Cupid. He can make two players fall in love. If one of them dies, their lover also dies.
 - Werewolves can now see each others (Can be disabled in configs)
 - Disabled the tooltip for when a player body is dropped in the ship (can be disabled in configs)
+
+Other additions
 - Werewolf role is now displayed in red at the top of the screen
 - The seer now see werewolves roles in red
 - Added terminal command to get informations on a specific role : 'wc RoleName'
-
+- For roles that can use their action only once per round, disable the tooltip on aiming at a player after using the action
+ 
 Bug fixes:
 - Fixed a bug introduced in 0.3.0 that prevented adding multiple roles at once ('wc add role1 role2')
-
+- Re-organized the config file sections
+ 
 ### [0.3.1]
 
 Turned off the debugging entries
