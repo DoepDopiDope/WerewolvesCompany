@@ -1067,7 +1067,7 @@ namespace WerewolvesCompany.Managers
 
 
             // Edit the death screen message
-            string message = $"{GetPlayerById(werewolfId).playerUsername.ToUpper()}\nWAS A WEREWOLF";
+            string message = $"<color=red>{GetPlayerById(werewolfId).playerUsername.ToUpper()}</color>\nWAS A WEREWOLF";
             Utils.EditDeathMessage(message);
 
             // Run the kill animation
@@ -1165,26 +1165,35 @@ namespace WerewolvesCompany.Managers
         public void OnSomebodyDeathServerRpc(ulong deadId)
         {
             logdebug.LogInfo("Someone just died");
-            // Somebody just died, go through all players and check for Wild Boys.
-            // If there are wild boys, provide them with the dead ID, and eventually trigger their transformation
-            foreach (var item in allRoles)
-            {
-                if (!(item.Value.GetType() == typeof(WildBoy))) continue;
-
-                ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(item.Key);
-                NotifyWildBoyOfDeathClientRpc(deadId, clientRpcParams);
-            }
+            // Somebody just died, notify everyone so they can do their stuff
+            OnSomebodyDeathClientRpc(deadId);
         }
-
 
         [ClientRpc]
-        public void NotifyWildBoyOfDeathClientRpc(ulong deadId, ClientRpcParams clientRpcParams)
+        public void OnSomebodyDeathClientRpc(ulong deadId)
         {
-            if (deadId == ((WildBoy)myRole).idolizedId.Value)
+            logdebug.LogInfo("I was notified that somebody died");
+            // Check for Wild Boy
+            if (myRole.GetType() == typeof(WildBoy))
             {
-                BecomeWerewolfServerRpc();
+                if (deadId == ((WildBoy)myRole).idolizedId.Value)
+                {
+                    BecomeWerewolfServerRpc();
+                }
+            }
+
+            // Check for lovers
+            if (myRole.isInLoveWith.Value == deadId)
+            {
+                // Edit the death screen message
+                string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
+                Utils.EditDeathMessage(message);
+
+                
+                Utils.GetLocalPlayerControllerB().KillPlayer(new Vector3(0, 0, 0));
             }
         }
+
 
         [ServerRpc(RequireOwnership = false)]
         public void BecomeWerewolfServerRpc(ServerRpcParams serverRpcParams = default)

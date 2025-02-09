@@ -64,6 +64,9 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("KillPlayer")]
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
+            // Reset role to its initial state
+            Plugin.Instance.rolesManager.myRole = References.GetRoleByName(Plugin.Instance.rolesManager.myRole.roleName);
+
             Plugin.Instance.rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
             Plugin.Instance.rolesManager.QueryAllRolesServerRpc();
         }
