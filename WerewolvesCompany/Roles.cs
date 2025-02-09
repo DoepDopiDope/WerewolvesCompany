@@ -165,8 +165,9 @@ namespace WerewolvesCompany
 
         // Interactions with others roles
         public bool isImmune = false;
+        public bool amIRomanced = false;
+        public ulong? isInLoveWith = null;
 
-        
         public Role()
         {
             baseMainActionCooldown = baseActionCooldown.Value;
@@ -203,12 +204,12 @@ namespace WerewolvesCompany
             //HUDManager.Instance.DisplayTip($"Test <color=red>red</color>", "Test <color=blue>blue</color>");
         }
 
-        public bool IsLocallyAllowedToPerformMainAction()
+        public virtual bool IsLocallyAllowedToPerformMainAction()
         {
             return (!IsMainActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformMainActionRoleSpecific());
         }
 
-        public bool IsLocallyAllowedToPerformSecondaryAction()
+        public virtual bool IsLocallyAllowedToPerformSecondaryAction()
         {
             return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformMainActionRoleSpecific());
         }
@@ -364,10 +365,10 @@ namespace WerewolvesCompany
 
 
         // ------ Main action success
-        public virtual void NotifyMainActionSuccess(string targetPlayerName)
-        {
-            HUDManager.Instance.DisplayTip(roleName, "Main action success");
-        }
+        //public virtual void NotifyMainActionSuccess(string targetPlayerName)
+        //{
+        //    HUDManager.Instance.DisplayTip(roleName, "Main action success");
+        //}
         // Alternative parameters inputs for the Seer
         public virtual void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
@@ -386,6 +387,10 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
         }
         public virtual void NotifySecondaryActionSuccess(ulong targetId)
+        {
+            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
+        }
+        public virtual void NotifySecondaryActionSuccess()
         {
             HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
         }
@@ -451,8 +456,10 @@ namespace WerewolvesCompany
             rolesManager.WerewolfKillPlayerServerRpc(targetId);
         }
 
-        public override void NotifyMainActionSuccess(string targetPlayerName)
+        public override void NotifyMainActionSuccess(ulong targetId)
         {
+            string targetPlayerName = rolesManager.GetPlayerById(targetId).playerUsername;
+
             logger.LogInfo($"Successfully killed {targetPlayerName}.");
             HUDManager.Instance.DisplayTip($"{roleName}", $"You killed {targetPlayerName}.");
         }
@@ -529,8 +536,10 @@ namespace WerewolvesCompany
             rolesManager.WitchImmunizePlayerServerRpc(targetId);
         }
 
-        public override void NotifyMainActionSuccess(string targetPlayerName)
+        public override void NotifyMainActionSuccess(ulong targetId)
         {
+            string targetPlayerName = rolesManager.GetPlayerById(targetId).playerUsername;
+
             logger.LogInfo($"Successfully poisoned {targetPlayerName}.");
             HUDManager.Instance.DisplayTip($"{roleName}", $"You poisoned {targetPlayerName}.");
         }
@@ -664,6 +673,8 @@ namespace WerewolvesCompany
         public bool AmIAlreadyRomanced => lovers.Contains(Utils.GetLocalPlayerControllerB().OwnerClientId);
         public bool AreBothTargetsRomanced => (lovers.Count == 2);
 
+        public int romancedPlayersCallbackAmount = 0;
+
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.CupidInteractRange;
         public override NetworkVariable<float> baseActionCooldown => rolesManager.CupidActionCoolDown;
@@ -692,41 +703,59 @@ namespace WerewolvesCompany
         public override void PerformMainAction()
         {
             logger.LogInfo($"{roleName} is romancing a target: {targetInRangeName}.");
+            rolesManager.CupidRomancePlayerServerRpc(targetInRangeId.Value);
         }
 
         public override void PerformSecondaryAction()
         {
             logger.LogInfo($"{roleName} is romancing himself.");
+            rolesManager.CupidRomancePlayerServerRpc(Utils.GetLocalPlayerControllerB().OwnerClientId);
         }
         
 
         public override void NotifyMainActionSuccess(ulong targetId)
         {
-            logdebug.LogInfo("I am running the Romancing confirmation Confirmation");
-            lovers.Add(targetId);
             NotifyRomancingSuccess(targetId);
         }
 
         public override void NotifySecondaryActionSuccess(ulong targetId)
         {
-            logdebug.LogInfo("I am running the Romancing confirmation Confirmation");
-            lovers.Add(Utils.GetLocalPlayerControllerB().OwnerClientId);
             NotifyRomancingSuccess(targetId);
         }
 
         private void NotifyRomancingSuccess(ulong targetId)
         {
+            logdebug.LogInfo("I am running the Romancing confirmation Confirmation");
+            lovers.Add(targetId);
+
             logdebug.LogInfo("Displaying romancing status on HUD");
-            if (AreBothTargetsRomanced)
+            if (!AreBothTargetsRomanced)
             {
-                roleShortDescription = $"{rolesManager.GetPlayerById(lovers[0])} and {rolesManager.GetPlayerById(lovers[1])} are deeply in love. They die together. They must win together.";
-                DisplayRolePopUp();
+                logdebug.LogInfo("Only one target is romanced. Notifying Cupid");
+                HUDManager.Instance.DisplayTip($"{roleName}", $"{rolesManager.GetPlayerById(targetId).playerUsername} will be romanced.");
+                
             }
-            else
+            else // If both targets are now romanced, we have a couple. Send them that they are now romanced.
             {
-                HUDManager.Instance.DisplayTip($"{roleName}", $"You targetted {rolesManager.GetPlayerById(targetId)} to be romanced.");
+                logdebug.LogInfo("Both targets are romanced. Sending the lovers their respective lover.");
+                romancedPlayersCallbackAmount = 0;
+                rolesManager.CupidSendLoversTheirLoverServerRpc(lovers[0], lovers[1]);
             }
         }
+
+        public void CheckForCallBackOfLover()
+        {
+            logdebug.LogInfo($"Received a callback from a lover. Current value: {romancedPlayersCallbackAmount}");
+            romancedPlayersCallbackAmount += 1;
+            if (romancedPlayersCallbackAmount == 2)
+            {
+                logdebug.LogInfo("Received 2 callbacks from lovers, notifying to Cupid.");
+                roleShortDescription = $"{rolesManager.GetPlayerById(lovers[0])} and {rolesManager.GetPlayerById(lovers[1])} are deeply in love. They will die together. They must win together.";
+                DisplayRolePopUp();
+            }
+        }
+
+        
 
         public override bool IsLocallyAllowedToPerformMainActionRoleSpecific()
         {
@@ -748,10 +777,9 @@ namespace WerewolvesCompany
             return true;
         }
 
-
-
-
+        public override bool IsLocallyAllowedToPerformSecondaryAction()
+        {
+            return (!IsSecondaryActionOnCooldown && IsLocallyAllowedToPerformSecondaryActionRoleSpecific());
+        }
     }
-
-
 }

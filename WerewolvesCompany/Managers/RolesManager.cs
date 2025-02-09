@@ -920,16 +920,16 @@ namespace WerewolvesCompany.Managers
             PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
             PlayerControllerB originPlayer = GetPlayerById(originId);
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) has been affected by the main action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
-            string targetPlayerName = targettedPlayer.playerUsername;
+            ulong targetPlayerId = targettedPlayer.OwnerClientId;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
-            NotifyMainActionSuccessClientRpc(targetPlayerName, clientRpcParams);
+            NotifyMainActionSuccessClientRpc(targetPlayerId, clientRpcParams);
 
         }
 
         [ClientRpc]
-        public void NotifyMainActionSuccessClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
+        public void NotifyMainActionSuccessClientRpc(ulong targetPlayerId, ClientRpcParams clientRpcParams = default)
         {
-            myRole.NotifyMainActionSuccess(targetPlayerName);
+            myRole.NotifyMainActionSuccess(targetPlayerId);
         }
 
         // Generalized Notification of Main action fail
@@ -997,6 +997,8 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
 
+
+        // -------------
         // Seer actions
         [ServerRpc(RequireOwnership = false)]
         public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1036,7 +1038,7 @@ namespace WerewolvesCompany.Managers
 
 
 
-
+        // -------------
         // Werewolf actions
         [ServerRpc(RequireOwnership = false)]
         public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1045,8 +1047,6 @@ namespace WerewolvesCompany.Managers
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             WerewolfKillPlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
         }
-
-
 
         [ClientRpc]
         private void WerewolfKillPlayerClientRpc(ulong werewolfId, ClientRpcParams clientRpcParams = default)
@@ -1082,6 +1082,8 @@ namespace WerewolvesCompany.Managers
 
         }
 
+
+        // -------------
         // Witch actions
         // Poison someone
         [ServerRpc(RequireOwnership = false)]
@@ -1142,6 +1144,8 @@ namespace WerewolvesCompany.Managers
 
 
 
+
+        // -------------
         // Wild Boy actions
         [ServerRpc(RequireOwnership = false)]
         public void IdolizeServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1198,6 +1202,66 @@ namespace WerewolvesCompany.Managers
         {
             ((WildBoy)myRole).BecomeWerewolf();
         }
+
+
+
+        // -------------
+        // Cupid actions
+        [ServerRpc(RequireOwnership = false)]
+        public void CupidRomancePlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Received Cupid romance command from {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername}, towards {GetPlayerById(targetId).playerUsername}");
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            CupidRomancePlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
+        }
+
+
+
+        [ClientRpc]
+        private void CupidRomancePlayerClientRpc(ulong cupidId, ClientRpcParams clientRpcParams = default)
+        {
+            logdebug.LogInfo($"Received a Cupid Romance command from the server. Cupid: {GetPlayerById(cupidId).playerUsername}");
+
+            myRole.amIRomanced = true;
+
+            NotifyMainActionSuccessServerRpc(cupidId);
+
+        }
+
+        [ServerRpc(RequireOwnership =false)]
+        public void CupidSendLoversTheirLoverServerRpc(ulong firstLoverId, ulong secondLoverId,  ServerRpcParams serverRpcParams = default)
+        {
+            ulong cupidId = serverRpcParams.Receive.SenderClientId;
+            // Send to first lover
+            ClientRpcParams firstLoverclientRpcParams = Utils.BuildClientRpcParams(firstLoverId);
+            CupidSendLoversTheirLoverClientRpc(cupidId, secondLoverId, firstLoverclientRpcParams);
+
+            // Send to second lover
+            ClientRpcParams secondLoverclientRpcParams = Utils.BuildClientRpcParams(secondLoverId);
+            CupidSendLoversTheirLoverClientRpc(cupidId, firstLoverId, secondLoverclientRpcParams);
+        }
+
+        [ClientRpc]
+        public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
+        {
+            myRole.isInLoveWith = myLoverId;
+            HUDManager.Instance.DisplayTip("Cupid put a fate upon you", $"You fell deeply in love with {GetPlayerById(myLoverId)}. You must win together");
+            AnswerToCupidServerRpc(cupidId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void AnswerToCupidServerRpc(ulong cupidId, ServerRpcParams serverRpcParams = default)
+        {
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(cupidId);
+            AnswerToCupidClientRpc(clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void AnswerToCupidClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            ((Cupid)myRole).CheckForCallBackOfLover();
+        }
+
     }
        
 }
