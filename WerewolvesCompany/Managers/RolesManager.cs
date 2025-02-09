@@ -1183,14 +1183,17 @@ namespace WerewolvesCompany.Managers
             }
 
             // Check for lovers
-            if (myRole.isInLoveWith.Value == deadId)
+            if (myRole.isInLoveWith != null)
             {
-                // Edit the death screen message
-                string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
-                Utils.EditDeathMessage(message);
+                if (myRole.isInLoveWith.Value == deadId)
+                {
+                    // Edit the death screen message
+                    string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
+                    Utils.EditDeathMessage(message);
 
-                
-                Utils.GetLocalPlayerControllerB().KillPlayer(new Vector3(0, 0, 0));
+
+                    Utils.GetLocalPlayerControllerB().KillPlayer(new Vector3(0, 0, 0));
+                }
             }
         }
 

@@ -712,9 +712,11 @@ namespace WerewolvesCompany
 
         public override void SetMainActionOnCooldown()
         {
+            logdebug.LogInfo("Trying to set main action on cooldown");
             // Only set action on cooldown if two targets have been romanced
             if (lovers.Count == 2)
             {
+                logdebug.LogInfo("Success");
                 currentMainActionCooldown = baseMainActionCooldown;
             }
         }
@@ -770,11 +772,17 @@ namespace WerewolvesCompany
             if (romancedPlayersCallbackAmount == 2)
             {
                 logdebug.LogInfo("Received 2 callbacks from lovers, notifying to Cupid.");
-                roleShortDescription = $"<color=#ff00ffff>{rolesManager.GetPlayerById(lovers[0]).playerUsername}</color> and <color=#ff00ffff>{rolesManager.GetPlayerById(lovers[1]).playerUsername}</color> are deeply in love. They will die together. They must win together.";
+                string player1Name = rolesManager.GetPlayerById(lovers[0]).playerUsername;
+                string player2Name = rolesManager.GetPlayerById(lovers[0]).playerUsername;
+                roleShortDescription = $"<color=#ff00ffff>{player1Name}</color> and <color=#ff00ffff>{player2Name}</color> are deeply in love. They will die together. They must win together.";
                 if (!lovers.Contains(Utils.GetLocalPlayerControllerB().OwnerClientId))
                 {
                     DisplayRolePopUp();
                 }
+
+                logger.LogInfo($"Successfully romanced {player1Name} and {player2Name}");
+
+                SetMainActionOnCooldown();
             }
         }
 
