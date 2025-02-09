@@ -233,6 +233,11 @@ namespace WerewolvesCompany.Patches
                     return false;
                 }
 
+                else if (RoleIsAvailable(args[1]))
+                {
+                    logger.LogInfo($"Displaying terminal information for role {args[1]}");
+                    __result = BuildRoleInformationNode(args[1]);
+                }
 
                 else
                 {
@@ -324,6 +329,19 @@ namespace WerewolvesCompany.Patches
             return homeTerminalNode;
         }
 
+        private static TerminalNode BuildRoleInformationNode(string roleName)
+        {
+            TerminalNode homeTerminalNode = new TerminalNode
+            {
+                displayText = "[Werewolves Company]\n\n" +
+                              "------------------------------\n" +
+                              $"[[[{roleName.ToLower()}]]]\n\n",
+                clearPreviousText = true,
+                acceptAnything = false
+            };
+            return homeTerminalNode;
+        }
+
         private static TerminalNode BuildRoleNotAvailableNode(string roleName)
         {
             TerminalNode homeTerminalNode = new TerminalNode
@@ -408,9 +426,23 @@ namespace WerewolvesCompany.Patches
                 }
                 replacementText += "\nRemaining slots will be filled with Villagers\n\n";
                 replacementText += "Add roles    -> werewolves add role_name\n";
-                replacementText += "Delete roles -> werewolves del role_name\n\n";
+                replacementText += "Delete roles -> werewolves del role_name\n";
+                replacementText += "Check  roles -> werewolves role_name\n\n";
                 modifiedDisplayText = modifiedDisplayText.Replace(textToReplace, replacementText);
             }
+
+            // add informations for roles
+            foreach (Role role in availableRoles)
+            {
+                string thisRoleInformationPlaceHolder = $"[[[{role.terminalName.ToLower()}]]]";
+                
+                if (modifiedDisplayText.Contains(thisRoleInformationPlaceHolder))
+                {
+                    modifiedDisplayText = modifiedDisplayText.Replace(thisRoleInformationPlaceHolder, role.roleDescription);
+                }
+                
+            }
+
         }
 
         private static bool RoleIsAvailable(string roleName)
