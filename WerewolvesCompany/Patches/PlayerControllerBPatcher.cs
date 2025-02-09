@@ -64,6 +64,9 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("KillPlayer")]
         static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
         {
+            // Reset role to its initial state
+            Plugin.Instance.rolesManager.myRole = References.GetRoleByName(Plugin.Instance.rolesManager.myRole.roleName);
+
             Plugin.Instance.rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
             Plugin.Instance.rolesManager.QueryAllRolesServerRpc();
         }
@@ -75,17 +78,38 @@ namespace WerewolvesCompany.Patches
             // Default color
             __instance.usernameBillboardText.color = UnityEngine.Color.white;
 
-            if (!rolesManager.CanWerewolvesSeeEachOther.Value) return;
-            //RolesManager rolesManager = Plugin.Instance.rolesManager;
-            if (rolesManager.myRole == null) return;
-            if (!rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) return;
+            //"<color=pink>lover</color>"
+            string loverLine = " <color=#ff00ffff><3</color>";
+            __instance.usernameBillboardText.text = __instance.usernameBillboardText.text.Replace(loverLine, "");
+            
 
-            // If I am a Werewolf, and target is also a werewolf, then I set his name red
-            if ((rolesManager.myRole.roleName == "Werewolf") && (rolesManager.allRoles[__instance.OwnerClientId].roleName == "Werewolf"))
+            // Check if the player is a Werewolf, and should be displayed in red in case I'm also a Werewolf
+            if (rolesManager.CanWerewolvesSeeEachOther.Value)
             {
-                __instance.usernameBillboardText.color = UnityEngine.Color.red;
+                if (!(rolesManager.myRole == null))
+                {
+                    if (rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) 
+                    {
+                        if ((rolesManager.myRole.roleName == "Werewolf") && (rolesManager.allRoles[__instance.OwnerClientId].roleName == "Werewolf"))
+                        {
+                            __instance.usernameBillboardText.color = UnityEngine.Color.red;
+                        }
+                    }
+                }
+            }
+
+            // Check if the player is the one I am in love with
+            if (!(rolesManager.myRole == null))
+            {
+                if (rolesManager.myRole.isInLoveWith != null)
+                {
+                    if (__instance.OwnerClientId == rolesManager.myRole.isInLoveWith.Value)
+                    {
+                        __instance.usernameBillboardText.text += loverLine;
+                    }
+                }
+                
             }
         }
-
     }
 }

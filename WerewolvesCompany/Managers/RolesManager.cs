@@ -86,8 +86,13 @@ namespace WerewolvesCompany.Managers
         public NetworkVariable<float> WildBoyActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> WildBoyStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+        // Wild Boy parameters
+        public NetworkVariable<float> CupidInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-       
+
+
 
         public override void OnNetworkSpawn()
         {
@@ -138,7 +143,12 @@ namespace WerewolvesCompany.Managers
                 // Wild Boy parameters
                 WildBoyInteractRange.Value = Plugin.config_WildBoyInteractRange.Value;
                 WildBoyActionCoolDown.Value = Plugin.config_WildBoyActionCoolDown.Value;
-                WildBoyStartOfRoundActionCoolDown.Value = Plugin.config_WildboyStartOfRoundActionCoolDown.Value;
+                WildBoyStartOfRoundActionCoolDown.Value = Plugin.config_WildBoyStartOfRoundActionCoolDown.Value;
+
+                // Cupid parameters
+                CupidInteractRange.Value = Plugin.config_CupidInteractRange.Value;
+                CupidActionCoolDown.Value = Plugin.config_CupidActionCoolDown.Value;
+                CupidStartOfRoundActionCoolDown.Value = Plugin.config_CupidStartOfRoundActionCoolDown.Value;
             }
         }
 
@@ -879,7 +889,7 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} secondary action on cooldown");
             ulong senderId = serverRpcParams.Receive.SenderClientId;
-            allRoles[senderId].SetMainActionOnCooldown();
+            allRoles[senderId].SetSecondaryActionOnCooldown();
 
             // Build the ClientRpcParams to answer to the caller
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -897,7 +907,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void SuccessFullyPerformedSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            logdebug.LogInfo("Setting my secondary action on cooldown");
+            
             myRole.SetSecondaryActionOnCooldown();
         }
 
@@ -910,16 +920,16 @@ namespace WerewolvesCompany.Managers
             PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
             PlayerControllerB originPlayer = GetPlayerById(originId);
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) has been affected by the main action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
-            string targetPlayerName = targettedPlayer.playerUsername;
+            ulong targetPlayerId = targettedPlayer.OwnerClientId;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
-            NotifyMainActionSuccessClientRpc(targetPlayerName, clientRpcParams);
+            NotifyMainActionSuccessClientRpc(targetPlayerId, clientRpcParams);
 
         }
 
         [ClientRpc]
-        public void NotifyMainActionSuccessClientRpc(string targetPlayerName, ClientRpcParams clientRpcParams = default)
+        public void NotifyMainActionSuccessClientRpc(ulong targetPlayerId, ClientRpcParams clientRpcParams = default)
         {
-            myRole.NotifyMainActionSuccess(targetPlayerName);
+            myRole.NotifyMainActionSuccess(targetPlayerId);
         }
 
         // Generalized Notification of Main action fail
@@ -987,6 +997,8 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
 
+
+        // -------------
         // Seer actions
         [ServerRpc(RequireOwnership = false)]
         public void CheckRoleServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1026,7 +1038,7 @@ namespace WerewolvesCompany.Managers
 
 
 
-
+        // -------------
         // Werewolf actions
         [ServerRpc(RequireOwnership = false)]
         public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1035,8 +1047,6 @@ namespace WerewolvesCompany.Managers
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             WerewolfKillPlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
         }
-
-
 
         [ClientRpc]
         private void WerewolfKillPlayerClientRpc(ulong werewolfId, ClientRpcParams clientRpcParams = default)
@@ -1057,7 +1067,7 @@ namespace WerewolvesCompany.Managers
 
 
             // Edit the death screen message
-            string message = $"{GetPlayerById(werewolfId).playerUsername.ToUpper()}\nWAS A WEREWOLF";
+            string message = $"<color=red>{GetPlayerById(werewolfId).playerUsername.ToUpper()}</color>\nWAS A WEREWOLF";
             Utils.EditDeathMessage(message);
 
             // Run the kill animation
@@ -1072,6 +1082,8 @@ namespace WerewolvesCompany.Managers
 
         }
 
+
+        // -------------
         // Witch actions
         // Poison someone
         [ServerRpc(RequireOwnership = false)]
@@ -1132,6 +1144,8 @@ namespace WerewolvesCompany.Managers
 
 
 
+
+        // -------------
         // Wild Boy actions
         [ServerRpc(RequireOwnership = false)]
         public void IdolizeServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
@@ -1151,26 +1165,38 @@ namespace WerewolvesCompany.Managers
         public void OnSomebodyDeathServerRpc(ulong deadId)
         {
             logdebug.LogInfo("Someone just died");
-            // Somebody just died, go through all players and check for Wild Boys.
-            // If there are wild boys, provide them with the dead ID, and eventually trigger their transformation
-            foreach (var item in allRoles)
-            {
-                if (!(item.Value.GetType() == typeof(WildBoy))) continue;
-
-                ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(item.Key);
-                NotifyWildBoyOfDeathClientRpc(deadId, clientRpcParams);
-            }
+            // Somebody just died, notify everyone so they can do their stuff
+            OnSomebodyDeathClientRpc(deadId);
         }
-
 
         [ClientRpc]
-        public void NotifyWildBoyOfDeathClientRpc(ulong deadId, ClientRpcParams clientRpcParams)
+        public void OnSomebodyDeathClientRpc(ulong deadId)
         {
-            if (deadId == ((WildBoy)myRole).idolizedId.Value)
+            logdebug.LogInfo("I was notified that somebody died");
+            // Check for Wild Boy
+            if (myRole.GetType() == typeof(WildBoy))
             {
-                BecomeWerewolfServerRpc();
+                if (deadId == ((WildBoy)myRole).idolizedId.Value)
+                {
+                    BecomeWerewolfServerRpc();
+                }
+            }
+
+            // Check for lovers
+            if (myRole.isInLoveWith != null)
+            {
+                if (myRole.isInLoveWith.Value == deadId)
+                {
+                    // Edit the death screen message
+                    string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
+                    Utils.EditDeathMessage(message);
+
+
+                    Utils.GetLocalPlayerControllerB().KillPlayer(new Vector3(0, 0, 0));
+                }
             }
         }
+
 
         [ServerRpc(RequireOwnership = false)]
         public void BecomeWerewolfServerRpc(ServerRpcParams serverRpcParams = default)
@@ -1188,6 +1214,66 @@ namespace WerewolvesCompany.Managers
         {
             ((WildBoy)myRole).BecomeWerewolf();
         }
+
+
+
+        // -------------
+        // Cupid actions
+        [ServerRpc(RequireOwnership = false)]
+        public void CupidRomancePlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            logdebug.LogInfo($"Received Cupid romance command from {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername}, towards {GetPlayerById(targetId).playerUsername}");
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            CupidRomancePlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
+        }
+
+
+
+        [ClientRpc]
+        private void CupidRomancePlayerClientRpc(ulong cupidId, ClientRpcParams clientRpcParams = default)
+        {
+            logdebug.LogInfo($"Received a Cupid Romance command from the server. Cupid: {GetPlayerById(cupidId).playerUsername}");
+
+            myRole.amIRomanced = true;
+
+            NotifyMainActionSuccessServerRpc(cupidId);
+
+        }
+
+        [ServerRpc(RequireOwnership =false)]
+        public void CupidSendLoversTheirLoverServerRpc(ulong firstLoverId, ulong secondLoverId,  ServerRpcParams serverRpcParams = default)
+        {
+            ulong cupidId = serverRpcParams.Receive.SenderClientId;
+            // Send to first lover
+            ClientRpcParams firstLoverclientRpcParams = Utils.BuildClientRpcParams(firstLoverId);
+            CupidSendLoversTheirLoverClientRpc(cupidId, secondLoverId, firstLoverclientRpcParams);
+
+            // Send to second lover
+            ClientRpcParams secondLoverclientRpcParams = Utils.BuildClientRpcParams(secondLoverId);
+            CupidSendLoversTheirLoverClientRpc(cupidId, firstLoverId, secondLoverclientRpcParams);
+        }
+
+        [ClientRpc]
+        public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
+        {
+            myRole.isInLoveWith = myLoverId;
+            HUDManager.Instance.DisplayTip("Cupid put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
+            AnswerToCupidServerRpc(cupidId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void AnswerToCupidServerRpc(ulong cupidId, ServerRpcParams serverRpcParams = default)
+        {
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(cupidId);
+            AnswerToCupidClientRpc(clientRpcParams);
+        }
+
+        [ClientRpc]
+        public void AnswerToCupidClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            ((Cupid)myRole).CheckForCallBackOfLover();
+        }
+
     }
        
 }

@@ -75,13 +75,18 @@ namespace WerewolvesCompany
             // Wild Boy parameters
             config_WildBoyInteractRange,
             config_WildBoyActionCoolDown,
-            config_WildboyStartOfRoundActionCoolDown
+            config_WildBoyStartOfRoundActionCoolDown,
+
+            // Cupid parameters
+            config_CupidInteractRange,
+            config_CupidActionCoolDown,
+            config_CupidStartOfRoundActionCoolDown
             ;
 
         private void ConfigSetup()
         {
             // Global parameters
-            config_CanWerewolvesSeeEachOther           = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other.");
+            config_CanWerewolvesSeeEachOther           = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other?");
             config_DisableTooltipWhenBodyDroppedInShip = Config.Bind("Global Parameters", "Disable Body in Ship tooltip", true, "Prevents the display of the tooltip to all players when a body is dropped in the ship.");
 
             // Default parameters
@@ -112,7 +117,12 @@ namespace WerewolvesCompany
             // Wild Boy parameters
             config_WildBoyInteractRange              = Config.Bind("Role: Wild Boy", "Idolize Range", 30f, "How far the Wild Boy can idolize another player.");
             config_WildBoyActionCoolDown             = Config.Bind("Role: Wild Boy", "Idolize Cooldown", 9999f, "How often the Wild Boy can idolize another player (in seconds).");
-            config_WildboyStartOfRoundActionCoolDown = Config.Bind("Role: Wild Boy", "Idolize Cooldown at start of round", 0f, "How soon after a round has started a WildBoy can idolize another player (in seconds).");
+            config_WildBoyStartOfRoundActionCoolDown = Config.Bind("Role: Wild Boy", "Idolize Cooldown at start of round", 0f, "How soon after a round has started a WildBoy can idolize another player (in seconds).");
+
+            // Cupid parameters
+            config_CupidInteractRange              = Config.Bind("Role: Cupid", "Romance Range", 30f, "How far Cupid can make someone fall in love.");
+            config_CupidActionCoolDown             = Config.Bind("Role: Cupid", "Romance Cooldown", 9999f, "How often Cupid can create lovers (in seconds).");
+            config_CupidStartOfRoundActionCoolDown = Config.Bind("Role: Cupid", "Romance Cooldown at start of round", 0f, "How soon after a round has started Cupid can create lovers (in seconds).");
         }
 
 
