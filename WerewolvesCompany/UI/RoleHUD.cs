@@ -42,7 +42,7 @@ namespace WerewolvesCompany.UI
                 Destroy(gameObject); // Prevent duplicate instances
             }
 
-            logger.LogInfo("Manually Starting the RoleHUD");
+            //logger.LogInfo("Manually Starting the RoleHUD");
             Start();
         }
         void Start()

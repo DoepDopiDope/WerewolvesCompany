@@ -64,6 +64,12 @@ Cupid wins with the village.
 
 Cupid can make two players fall in love. Their fate is linked: if one of them dies, their lover also dies. If they were both originally in the same team, they must win with that team. If they were originally in different teams, they now must be the only two survivors.
 
+### Minion
+
+The Minion wins with the werewolves.
+
+The Minion can see other Werewolves, but the Werewolves cannot see him.
+
 ## Setup and parameters
 
 You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.

@@ -1,3 +1,9 @@
+### [0.5.0]
+
+Main additions
+- New role: the Minion. He wins with the Werewolves. He can see the werewolves, but the werewolves cannot see him.
+- 
+
 ### [0.4.0]
 
 Main additions

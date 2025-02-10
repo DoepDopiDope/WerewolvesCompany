@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 using BepInEx.Configuration;
 
 using LethalCompanyInputUtils.Api;
+using WerewolvesCompany.Inputs;
 
 
 
@@ -23,9 +24,9 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.4.0";
+        const string VERSION = "0.5.0";
 
-        internal static InputsClass InputActionsInstance;
+        internal static InputsKeybinds InputActionsInstance;
 
         private readonly Harmony harmony = new Harmony(GUID);
 
@@ -39,7 +40,10 @@ namespace WerewolvesCompany
 
         public System.Random rng;
 
+        public ModManager modManager;
         public RolesManager rolesManager;
+        public RoleHUD roleHUD;
+        public CooldownManager cooldownManager;
 
         public static ConfigEntry<bool>
             // Global parameters
@@ -47,7 +51,10 @@ namespace WerewolvesCompany
             config_DisableTooltipWhenBodyDroppedInShip;
 
         public static ConfigEntry<float>
-            // Default parameters
+            // Global parameters
+            config_VoteCooldown,
+            
+            // Default Role Parameters
             config_DefaultInteractRange,
             config_DefaultActionCoolDown,
             config_DefaultStartOfRoundActionCoolDown,
@@ -88,6 +95,7 @@ namespace WerewolvesCompany
             // Global parameters
             config_CanWerewolvesSeeEachOther           = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other?");
             config_DisableTooltipWhenBodyDroppedInShip = Config.Bind("Global Parameters", "Disable Body in Ship tooltip", true, "Prevents the display of the tooltip to all players when a body is dropped in the ship.");
+            config_VoteCooldown                        = Config.Bind("Global Parameters", "Vote Kill Cooldown", 120f, "Cooldown for the next vote after someone has been vote-kicked.");
 
             // Default parameters
             config_DefaultInteractRange              = Config.Bind("Role: Default Role", "Default Interact Range", 1.5f, "How far the player can use his Action on another player.");
@@ -137,7 +145,7 @@ namespace WerewolvesCompany
             logger.LogInfo("Plugin is initializing...");
 
 
-            BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
             BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
@@ -190,7 +198,7 @@ namespace WerewolvesCompany
             DontDestroyOnLoad(modManagerObject);
             logger.LogInfo("ModManager GameObject created.");
 
-            this.rolesManager = modManagerObject.GetComponent<RolesManager>();
+            this.modManager = modManagerObject.GetComponent<ModManager>();
             // Run checks
             //RunChecks();
 
@@ -204,7 +212,7 @@ namespace WerewolvesCompany
 
         public void InitiateInputsSystem()
         {
-            InputActionsInstance = new InputsClass();
+            InputActionsInstance = new InputsKeybinds();
         }
 
        
@@ -247,9 +255,9 @@ namespace WerewolvesCompany
         void Start()
         {
             // Add the HUDInitializer
-            //InitializeRolesManager();
+            InitializeRolesManager();
             InitializeHUD();
-            InitializeCooldownManager();
+            //InitializeCooldownManager();
             //GameObject hudInitializerObject = new GameObject("HUDInitializer");
             //hudInitializerObject.AddComponent<HUDInitializer>();
             //logger.LogInfo("HUDInitializer has been added to the scene.");
@@ -281,7 +289,8 @@ namespace WerewolvesCompany
             {
                 GameObject rolesManagerObject = new GameObject("RolesManager");
                 rolesManagerObject.AddComponent<RolesManager>();
-                logger.LogInfo("RolesManager has been recreated.");
+                logdebug.LogInfo("RolesManager has been recreated.");
+                Plugin.Instance.rolesManager = rolesManagerObject.GetComponent<RolesManager>();
             }
         }
 
@@ -292,6 +301,7 @@ namespace WerewolvesCompany
                 GameObject roleHUDObject = new GameObject("RoleHUD");
                 roleHUDObject.AddComponent<RoleHUD>();
                 logdebug.LogInfo("RoleHUD has been recreated.");
+                Plugin.Instance.roleHUD = roleHUDObject.GetComponent<RoleHUD>();
             }
         }
         
@@ -302,6 +312,7 @@ namespace WerewolvesCompany
                 GameObject cooldownManagerObject = new GameObject("CooldownManager");
                 cooldownManagerObject.AddComponent<CooldownManager>();
                 logdebug.LogInfo("CooldownManager has been recreated.");
+                Plugin.Instance.cooldownManager = cooldownManagerObject.GetComponent<CooldownManager>();
             }
         }
 

@@ -26,6 +26,7 @@ using System.Collections;
 using UnityEngine.InputSystem.HID;
 using DunGen.Graph;
 using UnityEngine.UIElements;
+using WerewolvesCompany.Inputs;
 
 
 
@@ -170,63 +171,23 @@ namespace WerewolvesCompany.Managers
 
         private void SetupKeybindCallbacks()
         {
-            Plugin.InputActionsInstance.MainRoleActionKey.performed += OnRoleMainKeyPressed;
-            Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += OnRoleSecondaryKeyPressed;
-            Plugin.InputActionsInstance.PopUpRoleActionKey.performed += OnPopUpRoleActionKeyPressed;
-            Plugin.InputActionsInstance.DistributeRolesKey.performed += OnDistributeRolesKeyPressed;
-        }
-
-        public void OnRoleMainKeyPressed(InputAction.CallbackContext keyContext)
-        {
-            if (myRole == null) return; // Prevents NullReferenceException
-            if (myRole.roleName == null) return; // Prevents the default Role class to use the function
             
-            if (!keyContext.performed) return;
+            // Roles Keys
+            Plugin.InputActionsInstance.MainRoleActionKey.performed += KeybindsLogic.OnRoleMainKeyPressed;
+            Plugin.InputActionsInstance.SecondaryRoleActionKey.performed += KeybindsLogic.OnRoleSecondaryKeyPressed;
+            Plugin.InputActionsInstance.PopUpRoleActionKey.performed += KeybindsLogic.OnPopUpRoleActionKeyPressed;
+            Plugin.InputActionsInstance.DistributeRolesKey.performed += KeybindsLogic.OnDistributeRolesKeyPressed;
 
-            if (!myRole.hasMainAction) return;
-
-            if (!myRole.IsLocallyAllowedToPerformMainAction()) 
-            {
-                logdebug.LogInfo("I am not locally allowed to perform my Main Action");
-                return;
-            }
-            
-            logdebug.LogInfo($"Pressed the key, performing main action for my role {myRole.roleName}");
-
-            PerformMainActionServerRpc();
+            // Vote Keys
+            Plugin.InputActionsInstance.OpenCloseVotingWindow.performed += KeybindsLogic.OnOpenCloseVotingWindowKeyPressed;
+            Plugin.InputActionsInstance.VoteScrollUp.performed += KeybindsLogic.OnVoteScrollUpKeyPressed;
+            Plugin.InputActionsInstance.VoteScrollDown.performed += KeybindsLogic.OnVoteScrollDownKeyPressed;
+            Plugin.InputActionsInstance.CastVote.performed += KeybindsLogic.OnCastVoteKeyPressed;
         }
 
-        public void OnRoleSecondaryKeyPressed(InputAction.CallbackContext keyContext)
-        {
-            if (myRole == null) return; // Prevents NullReferenceException
-            if (myRole.roleName == null) return; // Prevents the default Role class to use the function
+        
 
-            if (!keyContext.performed) return;
 
-            if (!myRole.hasSecondaryAction) return;
-
-            if (!myRole.IsLocallyAllowedToPerformSecondaryAction())
-            {
-                logdebug.LogInfo("I am not locally allowed to perform my Secondary Action");
-                return;
-            }
-
-            logdebug.LogInfo($"Pressed the key, performing secondary action for my role {myRole.roleName}");
-
-            PerformSecondaryActionServerRpc();
-        }
-
-        public void OnPopUpRoleActionKeyPressed(InputAction.CallbackContext keyContext)
-        {
-            DisplayMyRolePopUp();
-        }
-
-        public void OnDistributeRolesKeyPressed(InputAction.CallbackContext keyContext)
-        {
-            if (!IsHost) return;
-            if (!keyContext.performed) return;
-            BuildAndSendRoles();
-        }
 
 
         public override void OnDestroy()
@@ -244,8 +205,17 @@ namespace WerewolvesCompany.Managers
             }
         }
 
-#nullable enable
+
         public PlayerControllerB? CheckForPlayerInRange(ulong myId)
+        {
+            if (myRole == null)
+            {
+                throw new Exception("myRole is null in CheckForPlayerInRange. This should have been caught earlier.");
+            }
+            return CheckForPlayerInRange(myId, myRole.interactRange.Value);
+        }
+#nullable enable
+        public PlayerControllerB? CheckForPlayerInRange(ulong myId, float checkRange)
         {
             if (myRole == null)
             {
@@ -263,9 +233,9 @@ namespace WerewolvesCompany.Managers
             int playerLayerMask = 1 << playerObject.layer;
 
             Vector3 castDirection = playerCamera.transform.forward.normalized;
-            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value, playerLayerMask);
+            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange, playerLayerMask);
 
-            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, myRole.interactRange.Value);
+            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange);
             System.Array.Sort(allHits, (a, b) => (a.distance.CompareTo(b.distance)));
 
             if (allHits.Length == 0) // No hits found
@@ -293,15 +263,6 @@ namespace WerewolvesCompany.Managers
                 
                 if (hit.transform.gameObject.layer == playerObject.layer)
                 {
-                    //logdebug.LogInfo($"+++ I saw what I think is a player +++");
-                    //logdebug.LogInfo($"I just saw {hit.transform.name}");
-                    //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
-                    //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
-                    //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
-                    //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
-                    //logdebug.LogInfo($"collider = {hit.collider}");
-                    //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
-                    //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
                     return hit.transform.gameObject.GetComponent<PlayerControllerB>();
                 }
 
@@ -318,17 +279,6 @@ namespace WerewolvesCompany.Managers
                     continue;
                 }
 
-
-                //logdebug.LogInfo($"+++ First hit in line of sight is +++");
-                //logdebug.LogInfo($"I just saw {hit.transform.name}");
-                //logdebug.LogInfo($"name = {hit.transform.gameObject.name}");
-                //logdebug.LogInfo($"layer = {hit.transform.gameObject.layer}");
-                //logdebug.LogInfo($"tag = {hit.transform.gameObject.tag}");
-                //logdebug.LogInfo($"gameobject = {hit.transform.gameObject.gameObject}");
-                //logdebug.LogInfo($"collider = {hit.collider}");
-                //logdebug.LogInfo($"colliderInstanceID = {hit.colliderInstanceID}");
-                //logdebug.LogInfo($"childCount = {hit.transform.childCount}");
-                //logdebug.LogInfo($"rigid body = {hit.transform.GetComponent<Rigidbody>()}");
                 return null;
 
             }

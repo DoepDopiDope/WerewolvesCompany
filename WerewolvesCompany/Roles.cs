@@ -199,17 +199,17 @@ namespace WerewolvesCompany
 
             // If the role has no main action
 
-            logdebug.LogInfo($"There is a main action: {hasMainAction}");
-            logdebug.LogInfo($"There is a secondary action: {hasSecondaryAction}");
+            //logdebug.LogInfo($"There is a main action: {hasMainAction}");
+            //logdebug.LogInfo($"There is a secondary action: {hasSecondaryAction}");
 
             if (!hasMainAction) { outMainTooltip = ""; }
             else { outMainTooltip = mainActionTooltip; }
-            logdebug.LogInfo(outMainTooltip);
+            //logdebug.LogInfo(outMainTooltip);
 
             // If the role has no secondary
             if (!hasSecondaryAction) { outSecondaryTooltip = ""; }
             else { outSecondaryTooltip = secondaryActionTooltip; }
-            logdebug.LogInfo(outSecondaryTooltip);
+            //logdebug.LogInfo(outSecondaryTooltip);
 
             return $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
             

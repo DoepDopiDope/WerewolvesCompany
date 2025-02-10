@@ -8,6 +8,8 @@ using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Managers
 {
+
+    // the Cooldown Manager is not used. It's just a relic of something I tried that did not work
     public class CooldownManager : MonoBehaviour
     {
         public CooldownManager Instance;
@@ -26,7 +28,7 @@ namespace WerewolvesCompany.Managers
             }
             else
             {
-                logger.LogInfo("Duplicate detected, delted the just-created CooldownManager");
+                logdebug.LogInfo("Duplicate detected, delted the just-created CooldownManager");
                 Destroy(gameObject); // Prevent duplicate instances
             }
         }
