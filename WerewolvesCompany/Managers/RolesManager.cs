@@ -183,6 +183,8 @@ namespace WerewolvesCompany.Managers
             
             if (!keyContext.performed) return;
 
+            if (!myRole.hasMainAction) return;
+
             if (!myRole.IsLocallyAllowedToPerformMainAction()) 
             {
                 logdebug.LogInfo("I am not locally allowed to perform my Main Action");
@@ -200,6 +202,8 @@ namespace WerewolvesCompany.Managers
             if (myRole.roleName == null) return; // Prevents the default Role class to use the function
 
             if (!keyContext.performed) return;
+
+            if (!myRole.hasSecondaryAction) return;
 
             if (!myRole.IsLocallyAllowedToPerformSecondaryAction())
             {

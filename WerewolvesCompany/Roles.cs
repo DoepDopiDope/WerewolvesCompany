@@ -36,6 +36,7 @@ namespace WerewolvesCompany
             roles.Add(new Seer());
             roles.Add(new WildBoy());
             roles.Add(new Cupid());
+            roles.Add(new Minion());
 
             return roles;
         }
@@ -135,7 +136,9 @@ namespace WerewolvesCompany
         public virtual string secondaryActionKey { get; set; } = "V";
         public virtual string mainActionName { get; set; } = "Main Action Name";
         public virtual string secondaryActionName { get; set; } = "Secondary Action Name";
-
+        
+        public bool hasMainAction => (!mainActionName.Contains("Main Action Name"));
+        public bool hasSecondaryAction => (!secondaryActionName.Contains("Secondary Action Name"));
         public virtual string mainActionText => $"{mainActionName} {targetInRangeName}";
         //public virtual string mainActionTooltip { get { return $"[{mainActionKey}] {mainActionText} {GetCurrentMainActionCooldownText()}".Trim(); } }
         public virtual string mainActionTooltip => GetMainActionTooltip();
@@ -191,11 +194,25 @@ namespace WerewolvesCompany
 
         public string GetRoleActionText()
         {
-            if (secondaryActionText.Contains("Secondary Action Name"))
-            {
-                return mainActionTooltip;
-            }
-            return $"{mainActionTooltip}\n{secondaryActionTooltip}";
+            string outMainTooltip;
+            string outSecondaryTooltip;
+
+            // If the role has no main action
+
+            logdebug.LogInfo($"There is a main action: {hasMainAction}");
+            logdebug.LogInfo($"There is a secondary action: {hasSecondaryAction}");
+
+            if (!hasMainAction) { outMainTooltip = ""; }
+            else { outMainTooltip = mainActionTooltip; }
+            logdebug.LogInfo(outMainTooltip);
+
+            // If the role has no secondary
+            if (!hasSecondaryAction) { outSecondaryTooltip = ""; }
+            else { outSecondaryTooltip = secondaryActionTooltip; }
+            logdebug.LogInfo(outSecondaryTooltip);
+
+            return $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
+            
         }
 
         public string GetRoleNameColored()
@@ -210,7 +227,7 @@ namespace WerewolvesCompany
         public void DisplayRolePopUp()
         {
             logdebug.LogInfo("Display the role PopUp");
-            HUDManager.Instance.DisplayTip($"{roleName}", rolePopUp); 
+            HUDManager.Instance.DisplayTip($"{roleNameColored}", rolePopUp); 
             //HUDManager.Instance.DisplayTip($"Test <color=red>red</color>", "Test <color=blue>blue</color>");
         }
 
@@ -491,6 +508,7 @@ namespace WerewolvesCompany
         public override string winCondition { get; set; } = "You win by killing the Werewolves.";
         public override string roleShortDescription { get; set; } = "You do not have any special ability.";
         public override string roleActionText { get; set; } = "";
+        public override string mainActionName { get; set; } = "patpat";
         public override string roleDescription { get; set; } = "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
 
         // Parameters
@@ -819,6 +837,21 @@ namespace WerewolvesCompany
         {
             return (!IsSecondaryActionOnCooldown && IsLocallyAllowedToPerformSecondaryActionRoleSpecific());
         }
+    }
+
+
+    class Minion : Role
+    {
+        public override string roleName { get; set; } = "Minion";
+        public override int refInt { get; set; } = 6;
+        public override string roleNameColor { get; set; } = "red";
+        public override string winCondition { get; set; } = "You win with the werewolves.";
+        public override string roleShortDescription { get; set; } = "You can see the werewolves, they cannot see you.";
+        public override string roleDescription { get; set; } = "The minion is part of the werewolves team. He is able to see who the werewolves are, but they cannot see him.";
+
+
+        public Minion() : base() { }
+
     }
 }
 

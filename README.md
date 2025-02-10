@@ -105,7 +105,7 @@ Theses features are not implemented yet, but are planned:
   - There could be a requirement for pulling the lever, that all Werewolves are dead.
   - I personally prefer the vote-to-leave, on top of a Daily quota requirement
 - Add more ways for villagers to kill werewolves. Some ideas:
-  - A vote system, all players can cast a vote on someone, whenever they want. They can change their vote whenever they want. If someone reaches a given amount of vote (say >50% of alive players), that player would die.
+  - A vote system, all players can cast a vote on someone, whenever they want. They can change their vote whenever they want. If someone reaches a given amount of vote (say >50% of alive players), that player would die. The vote would go on cooldown after someone has been votedd off.
   - Something like an Among Us meeting ? Although I really don't know how to implement this ...
 
 ### Minor possible updates

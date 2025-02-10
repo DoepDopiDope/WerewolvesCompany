@@ -88,12 +88,24 @@ namespace WerewolvesCompany.Patches
             {
                 if (!(rolesManager.myRole == null))
                 {
-                    if (rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) 
+                    if (rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) // Check that the targetted player does have a role
                     {
                         if ((rolesManager.myRole.roleName == "Werewolf") && (rolesManager.allRoles[__instance.OwnerClientId].roleName == "Werewolf"))
                         {
                             __instance.usernameBillboardText.color = UnityEngine.Color.red;
                         }
+                    }
+                }
+            }
+
+            // Check if the player is a Minion, in which case he can see the werewolves
+            if (!(rolesManager.myRole == null))
+            {
+                if (rolesManager.allRoles.ContainsKey(__instance.OwnerClientId)) // Check that the targetted player does have a role
+                {
+                    if ((rolesManager.myRole.roleName == "Minion") && (rolesManager.allRoles[__instance.OwnerClientId].roleName == "Werewolf"))
+                    {
+                        __instance.usernameBillboardText.color = UnityEngine.Color.red;
                     }
                 }
             }

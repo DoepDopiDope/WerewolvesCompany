@@ -198,14 +198,6 @@ namespace WerewolvesCompany.UI
                 localPlayer.cursorTip.text = "";
             }
 
-            //if (rolesManager.myRole.targetInRangeId == null)
-            //{
-            //    if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.roleActionText))
-            //    {
-            //        localPlayer.cursorTip.text = "";
-            //    }
-            //}
-
             //logdebug.LogInfo("UpdateToolTip Grab my role");
             Role myRole = rolesManager.myRole;
 
