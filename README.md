@@ -6,7 +6,7 @@ Adds the Werewolves Game to Lethal Company.
 
 ## General information
 
-Werewolves is a party game where Villagers must find one (or multiple) Werewolves within the village. At night, the Werewolves may vote and kill a Villager. When Villagers wake up, they take a note note of who was killed. They may vote and eliminate who they think may be a Werewolf.
+Werewolves is a party game where Villagers must find one (or multiple) Werewolves within the village. At night, the Werewolves may vote and kill a Villager. When Villagers wake up, they learn who was killed. They may vote and eliminate who they think may be a Werewolf.
 
 WerewolvesCompany brings a variant of this game to Lethal Company. Each round, players are assigned a random role:
 - If they're part of the village, they must eliminate the Werewolve(s) before ship departure,
@@ -95,20 +95,38 @@ While they are mainly for my personal use during playtests, you can use debug co
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
+
+### Major possible updates
+
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
+- Make a daily quota for the Villagers, to incentivize them to go inside. There are multiple options for the quota.
+- Add a logic for pulling the lever (ship departure). There are multiple options:
+  - Either the players need to agree on leaving. They could vote on the lever, and if >50% of alive players agreed, then they can leave. Note that villagers still need to have killed all Werewolves. So if they leave while one of them is still alive, they loseQ
+  - There could be a requirement for pulling the lever, that all Werewolves are dead.
+  - I personally prefer the vote-to-leave, on top of a Daily quota requirement
+- Add more ways for villagers to kill werewolves. Some ideas:
+  - A vote system, all players can cast a vote on someone, whenever they want. They can change their vote whenever they want. If someone reaches a given amount of vote (say >50% of alive players), that player would die.
+  - Something like an Among Us meeting ? Although I really don't know how to implement this ...
+
+### Minor possible updates
+
 - Icon for the roles to be displayed at the top of the screen
+- Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won
-- More roles, a few ideas below, they may not all be released:
-  - **Cupid** - Selects two players who become lovers. If one of them die, the other one also dies. They must win together, whether they initially were in the same team or not.
-  - **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
-  - **The Fake Seer** - She only has a 50% chance of guessing the target player's role. The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer. To be used simultaneously with the actual Seer.
-  - **The Hunter** - He can kill another player within a few seconds of his death
-  - **The Flute Player** - He can charm people. His goal is to charm all other players.
-  - **The Drunken Man** - He is immune to the Witch poison.
-  - **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:
-	- Once every cooldown-time, she gets a sets of letter, of which only a few are part of an actual Werewolf name
-	- Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
-  - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
+
+### Possible roles
+
+- **The Bounty Hunter** - Each round, his goal is to kill a random player
+- **The Minion** - He sides with Werewolves, and knows who the Werewolves are. However, the Werewolves do not know who he is.
+- **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
+- **The Fake Seer** - She only has a 50% chance of guessing the target player's role. The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer. To be used simultaneously with the actual Seer.
+- **The Hunter** - He can kill another player within a few seconds of his death
+- **The Flute Player** - He can charm people. His goal is to charm all other players.
+- **The Drunken Man** - He is immune to the Witch poison.
+- **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:
+  - Once every cooldown-time, she gets a sets of letter, of which only a few are part of an actual Werewolf name
+  - Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
+- **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
   - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
 
 ## Known issues
@@ -117,7 +135,7 @@ Major:
 - No major bugs have been reported.
 
 Minor:
-- No minor bugs have been reported.
+- If there are multiple Cupids in the game, this will lead to unexpected behaviors.
 
 ## Contact
 
