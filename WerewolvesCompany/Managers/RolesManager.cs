@@ -27,6 +27,7 @@ using UnityEngine.InputSystem.HID;
 using DunGen.Graph;
 using UnityEngine.UIElements;
 using WerewolvesCompany.Inputs;
+using System.Numerics;
 
 
 
@@ -36,6 +37,7 @@ namespace WerewolvesCompany.Managers
     {
         
         public RolesManager Instance;
+        public RoleHUD roleHUD => Plugin.Instance.roleHUD;
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -60,6 +62,8 @@ namespace WerewolvesCompany.Managers
         // Global parameters
         public NetworkVariable<bool> CanWerewolvesSeeEachOther = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<bool> DisableTooltipWhenBodyDroppedInShip = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> VoteCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> VoteAmount = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Default parameters
         public NetworkVariable<float> DefaultInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -119,6 +123,8 @@ namespace WerewolvesCompany.Managers
                 // Global parameters
                 CanWerewolvesSeeEachOther.Value = Plugin.config_CanWerewolvesSeeEachOther.Value;
                 DisableTooltipWhenBodyDroppedInShip.Value = Plugin.config_DisableTooltipWhenBodyDroppedInShip.Value;
+                VoteCooldown.Value = Plugin.config_VoteCooldown.Value;
+                VoteAmount.Value = Plugin.config_VoteAmount.Value;
 
                 // Default 
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
@@ -179,7 +185,17 @@ namespace WerewolvesCompany.Managers
                 myRole.UpdateCooldowns(Time.deltaTime);
             }
 
-            // Check for voted off players
+            if (IsServer)
+            {
+                // Check for voted off players
+                ulong? votedPlayer = CheckForVotedPlayer();
+                if (votedPlayer != null)
+                {
+                    ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(votedPlayer.Value);
+                    VoteKillPlayerClientRpc(clientRpcParams);
+                    NotifyAllPlayersOfVoteKillClientRpc(votedPlayer.Value);
+                }
+            }
         }
 
 
@@ -241,7 +257,7 @@ namespace WerewolvesCompany.Managers
             // Cast rays to check whether another player is in range
             int playerLayerMask = 1 << playerObject.layer;
 
-            Vector3 castDirection = playerCamera.transform.forward.normalized;
+            UnityEngine.Vector3 castDirection = playerCamera.transform.forward.normalized;
             RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange, playerLayerMask);
 
             RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange);
@@ -561,6 +577,42 @@ namespace WerewolvesCompany.Managers
             allPlayersVotes = newVotes;
         }
 
+        public ulong? CheckForVotedPlayer()
+        {
+            Dictionary<ulong,int> castedVotes = new Dictionary<ulong,int>();
+            
+            // Check which players are alive
+            foreach (GameObject playerObject in StartOfRound.Instance.allPlayerObjects)
+            {
+                PlayerControllerB controller = playerObject.GetComponent<PlayerControllerB>();
+                if (!controller.isPlayerDead)
+                {
+                    castedVotes.Add(controller.OwnerClientId, 0);
+                }
+            }
+
+            // Check for existing votes
+            foreach (var item in allPlayersVotes)
+            {
+                if (castedVotes.ContainsKey(item.Key))
+                {
+                    castedVotes[item.Key] += 1;
+                }
+            }
+
+            // Check if some player should be voted off
+            foreach (var item in castedVotes)
+            {
+                if ((item.Value/castedVotes.Count) > VoteAmount.Value)
+                {
+                    return item.Key;
+                }
+            }
+            return null;
+
+
+        }
+
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
@@ -575,6 +627,37 @@ namespace WerewolvesCompany.Managers
             allPlayersVotes[serverRpcParams.Receive.SenderClientId] = voteId;
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void ResetPlayerVoteServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ResetPlayerVote(serverRpcParams.Receive.SenderClientId);
+        }
+
+        public void ResetPlayerVote(ulong playerId)
+        {
+            allPlayersVotes[playerId] = null;
+        }
+
+        [ClientRpc]
+        public void VoteKillPlayerClientRpc(ClientRpcParams clientRpcParams)
+        {
+            // Edit the death screen message
+            string message = $"YOU HAVE BEEN VOTED OFF";
+            Utils.EditDeathMessage(message);
+
+            // Run the kill animation
+            logger.LogInfo("I have been voted off");
+            PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
+            controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
+        }
+
+        [ClientRpc]
+        public void NotifyAllPlayersOfVoteKillClientRpc(ulong votedPlayer)
+        {
+            string playerName = GetPlayerById(votedPlayer).playerUsername;
+            HUDManager.Instance.DisplayTip("Vote Kill", $"{playerName} has been vote killed",isWarning:true);
+            roleHUD.voteCastedPlayer = null; // reset vote
+        }
 
         //--------------------------------
         // Query role logic 
@@ -611,6 +694,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"I received all the roles. I am the role Manager of name: {Instance.name}");
             allRoles = UnWrapAllPlayersRoles(playersRefsIds, rolesRefInts);
             allPlayersIds = GetAllPlayersIds();
+            allPlayersList = GetAllPlayersIdsNamesDic();
         }
 
         public void WrapAllPlayersRoles(out string playersRefsIds, out string rolesRefInts)
@@ -1085,7 +1169,7 @@ namespace WerewolvesCompany.Managers
             // Run the kill animation
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
-            controller.KillPlayer(new Vector3(0, 0, 0));
+            controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
             //HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
 
             
@@ -1116,7 +1200,7 @@ namespace WerewolvesCompany.Managers
             Utils.EditDeathMessage(message);
 
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
-            controller.KillPlayer(new Vector3(0, 0, 0));
+            controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
             //HUDManager.Instance.DisplayTip("You were poisoned", $"You were poisoned by a witch: {GetPlayerById(witchId).playerUsername}", true);
             NotifyMainActionSuccessServerRpc(witchId);
         }
@@ -1173,15 +1257,15 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        [ServerRpc(RequireOwnership =false)]
+        [ServerRpc(RequireOwnership = false)]
         public void OnSomebodyDeathServerRpc(ulong deadId)
         {
             logdebug.LogInfo("Someone just died");
             // Somebody just died, notify everyone so they can do their stuff
             OnSomebodyDeathClientRpc(deadId);
 
-            // Reset his vote to no vote
-            allPlayersVotes[deadId] = null;
+            // Reset his vote to null
+            ResetPlayerVote(deadId);
         }
 
 
@@ -1208,7 +1292,7 @@ namespace WerewolvesCompany.Managers
                     Utils.EditDeathMessage(message);
 
 
-                    Utils.GetLocalPlayerControllerB().KillPlayer(new Vector3(0, 0, 0));
+                    Utils.GetLocalPlayerControllerB().KillPlayer(new UnityEngine.Vector3(0, 0, 0));
                 }
             }
         }
