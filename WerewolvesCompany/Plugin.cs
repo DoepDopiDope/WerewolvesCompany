@@ -254,25 +254,9 @@ namespace WerewolvesCompany
 
         void Start()
         {
-            // Add the HUDInitializer
             InitializeRolesManager();
             InitializeHUD();
             //InitializeCooldownManager();
-            //GameObject hudInitializerObject = new GameObject("HUDInitializer");
-            //hudInitializerObject.AddComponent<HUDInitializer>();
-            //logger.LogInfo("HUDInitializer has been added to the scene.");
-
-            // Example: Initialize some roles for testing
-            //Role werewolf = new Werewolf();
-            //Role villager = new Villager();
-            //Role witch = new Witch();
-            //Role seer = new Seer();
-
-            //werewolf.PerformRoleAction();
-            //villager.PerformRoleAction();
-            //witch.PerformRoleAction();
-            //seer.PerformRoleAction();
-
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

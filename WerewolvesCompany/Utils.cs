@@ -55,5 +55,10 @@ namespace WerewolvesCompany
             TextMeshProUGUI component = val.GetComponent<TextMeshProUGUI>();
             ((TMP_Text)component).text = message;
         }
+
+        static public int Modulo(int a, int b)
+        {
+            return (a % b + b) % b;
+        }
     }
 }

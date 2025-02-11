@@ -43,6 +43,10 @@ namespace WerewolvesCompany.Managers
 
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;
+        public Dictionary<ulong,string> allPlayersList;
+        public List<ulong> allPlayersIds;
+
+        public Dictionary<ulong, ulong?> allPlayersVotes;
 
         public List<Role> currentRolesSetup = new List<Role>();
 
@@ -166,8 +170,19 @@ namespace WerewolvesCompany.Managers
                 logdebug.LogInfo("Duplicate detected, delted the just-created RolesManager");
                 Destroy(gameObject); // Prevent duplicate instances
             }
-
         }
+
+        void Update()
+        {
+            if (myRole != null)
+            {
+                myRole.UpdateCooldowns(Time.deltaTime);
+            }
+
+            // Check for voted off players
+        }
+
+
 
         private void SetupKeybindCallbacks()
         {
@@ -197,15 +212,9 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        void Update()
-        {
-            if (myRole != null)
-            {
-                myRole.UpdateCooldowns(Time.deltaTime);
-            }
-        }
+        
 
-
+#nullable enable
         public PlayerControllerB? CheckForPlayerInRange(ulong myId)
         {
             if (myRole == null)
@@ -214,7 +223,7 @@ namespace WerewolvesCompany.Managers
             }
             return CheckForPlayerInRange(myId, myRole.interactRange.Value);
         }
-#nullable enable
+
         public PlayerControllerB? CheckForPlayerInRange(ulong myId, float checkRange)
         {
             if (myRole == null)
@@ -347,6 +356,9 @@ namespace WerewolvesCompany.Managers
             allRoles = finalRoles;
             logdebug.LogInfo("Stored all roles in RolesManager.");
 
+            // Initiate the votes
+            ResetVotes();
+
 
             // Send all roles list to all players
             // I know that that the previous loop is redundant with this line, but I added this line later on, so whatever...
@@ -359,6 +371,7 @@ namespace WerewolvesCompany.Managers
             
         }
 
+        
 
         public void MakeDefaultRoles()
         {
@@ -479,6 +492,8 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        
+
         public void DisplayMyRolePopUp()
         {
             if (myRole == null) return;
@@ -534,6 +549,17 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        public void ResetVotes()
+        {
+            Dictionary<ulong, ulong?> newVotes = new Dictionary<ulong, ulong?>();
+
+            foreach (var item in allRoles)
+            {
+                newVotes.Add(item.Key, null);
+            }
+
+            allPlayersVotes = newVotes;
+        }
 
         // ---------------------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------------------
@@ -541,8 +567,17 @@ namespace WerewolvesCompany.Managers
         // ---------------------------------------------------------------------------------------------------------------
         // ServerRpc and ClientRpc roles logic
 
-        // Query Role
+        //------------
+        // Voting logic
+        [ServerRpc(RequireOwnership = false)]
+        public void CastVoteServerRpc(ulong voteId, ServerRpcParams serverRpcParams = default)
+        {
+            allPlayersVotes[serverRpcParams.Receive.SenderClientId] = voteId;
+        }
 
+
+        //--------------------------------
+        // Query role logic 
         [ServerRpc(RequireOwnership = false)]
         public void QueryAllRolesServerRpc(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
         {
@@ -575,6 +610,7 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"I received all the roles. I am the role Manager of name: {Instance.name}");
             allRoles = UnWrapAllPlayersRoles(playersRefsIds, rolesRefInts);
+            allPlayersIds = GetAllPlayersIds();
         }
 
         public void WrapAllPlayersRoles(out string playersRefsIds, out string rolesRefInts)
@@ -624,7 +660,29 @@ namespace WerewolvesCompany.Managers
             return dic;
         }
 
+        public List<ulong> GetAllPlayersIds()
+        {
+            List<ulong> ids = new List<ulong>();
+            
+            foreach (var item in allRoles)
+            {
+                ids.Add(item.Key);
+            }
 
+            return ids;
+        }
+
+        public Dictionary<ulong, string> GetAllPlayersIdsNamesDic()
+        {
+            Dictionary <ulong, string> dic = new Dictionary<ulong, string>();
+
+            foreach (var item in allRoles)
+            {
+                dic.Add(item.Key, GetPlayerById(item.Key).playerUsername);
+            }
+
+            return dic;
+        }
 
         // ------------------------------------------------------------------------------------
         // Terminal logic
@@ -1121,7 +1179,11 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Someone just died");
             // Somebody just died, notify everyone so they can do their stuff
             OnSomebodyDeathClientRpc(deadId);
+
+            // Reset his vote to no vote
+            allPlayersVotes[deadId] = null;
         }
+
 
         [ClientRpc]
         public void OnSomebodyDeathClientRpc(ulong deadId)
