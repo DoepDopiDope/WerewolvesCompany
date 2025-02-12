@@ -560,6 +560,7 @@ namespace WerewolvesCompany.Managers
             {
                 logger.LogInfo("Update the HUD with the role");
                 roleHUD.UpdateRoleDisplay();
+                roleHUD.roleTextContainer.SetActive(true);
             }
             else
             {

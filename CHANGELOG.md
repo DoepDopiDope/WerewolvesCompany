@@ -5,7 +5,8 @@ Main additions
 - 
 
 Minor additions
-- Nope
+- Added colored roles when spectating
+- Disables the mod HUD when dead
 
 Bug fixes:
 - Fixed a bug where Cupid would see he made a couple of twice the same person. It was only a visual bug though, and only for Cupid. The couple would still know they were targetted.

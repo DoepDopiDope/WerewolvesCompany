@@ -142,8 +142,8 @@ Major:
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really don't have no idea...
 
 Minor:
-- If someone leaves the game and does not rejoin, the roles distribution will fail.
-- I got my pop up to stop working at some point. I got it working again after rejoining the game.
+- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?)
+- I got my pop up to stop working at some point. I got it working again after rejoining the game. No idea why this happens.
 - Dead werewolves can have the pop up in the middle of the screen to kill players.
 
 ## Contact

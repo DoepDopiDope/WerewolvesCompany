@@ -80,6 +80,9 @@ namespace WerewolvesCompany.Patches
             // Reset my vote to no vote
             roleHUD.voteCastedPlayer = null;
             roleHUD.voteWindowContainer.SetActive(false);
+
+            // Set HUD off
+            roleHUD.roleTextContainer.SetActive(false);
         }
 
         [HarmonyPrefix]

@@ -288,10 +288,10 @@ namespace WerewolvesCompany.UI
                 CreateRoleHUD();
             }
 
+
             if (rolesManager.myRole == null)
             {
                 roleText.text = "";
-                //roleIcon.enabled = false;
                 return;
             }
 
@@ -318,6 +318,8 @@ namespace WerewolvesCompany.UI
             {
                 localPlayer.cursorTip.text = "";
             }
+
+            if (localPlayer.isPlayerDead) return;
 
             //logdebug.LogInfo("UpdateToolTip Grab my role");
             Role myRole = rolesManager.myRole;
