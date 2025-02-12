@@ -58,17 +58,28 @@ namespace WerewolvesCompany.Patches
             //logdebug.LogInfo("Update HUD");
             roleHUD.UpdateRoleDisplay();
             roleHUD.UpdateToolTip();
+            roleHUD.UpdateVoteWindowText();
         }
 
         [HarmonyPostfix]
         [HarmonyPatch("KillPlayer")]
-        static void OnDeathNotifyServerOfDeath(PlayerControllerB __instance)
+        static void OnDeathLogic(PlayerControllerB __instance)
         {
+            // SKip if not killing the local controller
+            if (!(__instance == Utils.GetLocalPlayerControllerB())) return;
+            if (!__instance.IsOwner) return;
+
             // Reset role to its initial state
             Plugin.Instance.rolesManager.myRole = References.GetRoleByName(Plugin.Instance.rolesManager.myRole.roleName);
+            logger.LogInfo("Role has been reset due to death");
 
+            // Notify server of death
             Plugin.Instance.rolesManager.OnSomebodyDeathServerRpc(__instance.OwnerClientId);
             Plugin.Instance.rolesManager.QueryAllRolesServerRpc();
+
+            // Reset my vote to no vote
+            roleHUD.voteCastedPlayer = null;
+            roleHUD.voteWindowContainer.SetActive(false);
         }
 
         [HarmonyPrefix]

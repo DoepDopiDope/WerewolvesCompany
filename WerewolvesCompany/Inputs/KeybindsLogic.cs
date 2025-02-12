@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using BepInEx.Logging;
+using GameNetcodeStuff;
 using JetBrains.Annotations;
 using UnityEngine.InputSystem;
 using WerewolvesCompany.Managers;
+using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Inputs
 {
     static class KeybindsLogic
     {
         static public RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static public RoleHUD roleHUD => Plugin.Instance.roleHUD;
         static public Role myRole => Plugin.Instance.rolesManager.myRole;
 
         static public ManualLogSource logger = Plugin.Instance.logger;
@@ -19,6 +22,7 @@ namespace WerewolvesCompany.Inputs
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         static public bool IsHost => rolesManager.IsHost;
+        static public PlayerControllerB localController => Utils.GetLocalPlayerControllerB();
 
 
         // ----------------------------------------------------------------------------
@@ -81,22 +85,53 @@ namespace WerewolvesCompany.Inputs
 
         static public void OnOpenCloseVotingWindowKeyPressed(InputAction.CallbackContext keyContext)
         {
-            return;
+            if (localController.inTerminalMenu || localController.isPlayerDead) return;
+            logdebug.LogInfo("Toggling vote window On/Off");
+            roleHUD.OpenCloseVoteTab();
         }
 
         static public void OnVoteScrollUpKeyPressed(InputAction.CallbackContext keyContext)
         {
-            return;
+            if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
+
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersList.Count);
+            logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
+            
+            
         }
 
         static public void OnVoteScrollDownKeyPressed(InputAction.CallbackContext keyContext)
         {
-            return;
+            if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
+            
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersList.Count);
+            logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
+            
         }
 
         static public void OnCastVoteKeyPressed(InputAction.CallbackContext keyContext)
         {
-            return;
+            if (rolesManager.isVoteOnCooldown || !roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
+
+            if (roleHUD.voteCastedPlayer != roleHUD.voteWindowSelectedPlayer)
+            {
+                roleHUD.voteCastedPlayer = roleHUD.voteWindowSelectedPlayer;
+            }
+            else
+            {
+                roleHUD.voteCastedPlayer = null;
+            }
+
+            if (roleHUD.voteCastedPlayer == null)
+            {
+                rolesManager.CastVoteServerRpc();
+            }
+            else
+            {
+                ulong castPlayerId = rolesManager.allPlayersIds[roleHUD.voteCastedPlayer.Value];
+                rolesManager.CastVoteServerRpc(castPlayerId);
+            }
+            
         }
 
 

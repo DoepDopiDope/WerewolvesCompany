@@ -53,6 +53,7 @@ namespace WerewolvesCompany
         public static ConfigEntry<float>
             // Global parameters
             config_VoteCooldown,
+            config_VoteAmount,
             
             // Default Role Parameters
             config_DefaultInteractRange,
@@ -96,6 +97,7 @@ namespace WerewolvesCompany
             config_CanWerewolvesSeeEachOther           = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other?");
             config_DisableTooltipWhenBodyDroppedInShip = Config.Bind("Global Parameters", "Disable Body in Ship tooltip", true, "Prevents the display of the tooltip to all players when a body is dropped in the ship.");
             config_VoteCooldown                        = Config.Bind("Global Parameters", "Vote Kill Cooldown", 120f, "Cooldown for the next vote after someone has been vote-kicked.");
+            config_VoteAmount                          = Config.Bind("Global Parameters", "Vote Kill Required Amount", 0.5f, "Which fraction of the alive players are required to vote kick someone.");
 
             // Default parameters
             config_DefaultInteractRange              = Config.Bind("Role: Default Role", "Default Interact Range", 1.5f, "How far the player can use his Action on another player.");
@@ -254,25 +256,9 @@ namespace WerewolvesCompany
 
         void Start()
         {
-            // Add the HUDInitializer
             InitializeRolesManager();
             InitializeHUD();
             //InitializeCooldownManager();
-            //GameObject hudInitializerObject = new GameObject("HUDInitializer");
-            //hudInitializerObject.AddComponent<HUDInitializer>();
-            //logger.LogInfo("HUDInitializer has been added to the scene.");
-
-            // Example: Initialize some roles for testing
-            //Role werewolf = new Werewolf();
-            //Role villager = new Villager();
-            //Role witch = new Witch();
-            //Role seer = new Seer();
-
-            //werewolf.PerformRoleAction();
-            //villager.PerformRoleAction();
-            //witch.PerformRoleAction();
-            //seer.PerformRoleAction();
-
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)

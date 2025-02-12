@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
@@ -25,7 +26,25 @@ namespace WerewolvesCompany.UI
         GUIStyle style = new GUIStyle();
 
         public Canvas canvas;
+        public GameObject roleTextContainer;
         public Text roleText;
+
+        public GameObject voteWindowContainer;
+        public Text voteText;
+        public Text voteTitleText;
+
+
+        public string voteWindowHeaderText = "-------------------------------------\n" +
+                                             "Open/Close: [N]\n" +
+                                             "Select: UP & DOWN arrows\n" +
+                                             "Vote: ENTER\n" +
+                                             "-------------------------------------";
+        public string voteWindowPlayersText = "";
+        public string voteWindowFullText => $"{voteWindowHeaderText}\n\n{voteWindowPlayersText}";
+
+        public int voteWindowSelectedPlayer = 0;
+        public int? voteCastedPlayer = null;
+
         //public Image roleIcon;
         //public Text toolTipText;
 
@@ -72,44 +91,45 @@ namespace WerewolvesCompany.UI
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             DontDestroyOnLoad(canvas.gameObject);
 
-            // Create a parent GameObject to hold the image and text
-            GameObject container = new GameObject("RoleContainer");
-            container.transform.SetParent(canvas.transform);
+            if (roleTextContainer == null)
+            {
+                CreateRoleText();
+            }
+            
+
+            if (voteWindowContainer == null)
+            {
+                CreateVoteWindow();
+            }
+            
+            
+
+        }
+
+        public void CreateRoleText()
+        {
+            // --------------------------------------------------------------
+            // Create a parent GameObject to hold the text
+            roleTextContainer = new GameObject("RoleTextContainer");
+            roleTextContainer.transform.SetParent(canvas.transform);
 
             // Add Horizontal Layout Group to the container
-            HorizontalLayoutGroup layoutGroup = container.AddComponent<HorizontalLayoutGroup>();
+            HorizontalLayoutGroup layoutGroup = roleTextContainer.AddComponent<HorizontalLayoutGroup>();
             layoutGroup.childAlignment = TextAnchor.UpperCenter;
             layoutGroup.spacing = 10; // Space between image and text
             layoutGroup.padding = new RectOffset(10, 10, 10, 10); // Add padding
 
             // Configure RectTransform of the container
-            RectTransform containerTransform = container.GetComponent<RectTransform>();
+            RectTransform containerTransform = roleTextContainer.GetComponent<RectTransform>();
             containerTransform.anchorMin = new Vector2(0.5f, 1f); // Center top
             containerTransform.anchorMax = new Vector2(0.5f, 1f); // Center top
             containerTransform.pivot = new Vector2(0.5f, 1f);      // Pivot around top-center
-            containerTransform.anchoredPosition = new Vector2(0,-5); // Offset 50 units down from the top
+            containerTransform.anchoredPosition = new Vector2(0, -5); // Offset 50 units down from the top
             containerTransform.sizeDelta = new Vector2(500, 200); // Offset 50 units down from the top
-
-            // Create a GameObject for the role image
-            //GameObject imageObject = new GameObject("RoleImage");
-            //imageObject.transform.SetParent(container.transform);
-            //roleIcon = imageObject.AddComponent<Image>();
-            //roleIcon.color = Color.white; // Default color
-
-            //// Load a placeholder image (replace "your-image-path" with your actual image path or asset)
-            //Sprite placeholderSprite = Resources.Load<Sprite>("placeholder-image");
-            //if (placeholderSprite != null)
-            //{
-            //    roleIcon.sprite = placeholderSprite;
-            //}
-
-            // Configure RectTransform of the image
-            //RectTransform imageTransform = roleIcon.GetComponent<RectTransform>();
-            //imageTransform.sizeDelta = new Vector2(50, 50); // Set image size (adjust as needed)
 
             // Create a GameObject for the role text
             GameObject textObject = new GameObject("RoleText");
-            textObject.transform.SetParent(container.transform);
+            textObject.transform.SetParent(roleTextContainer.transform);
 
             roleText = textObject.AddComponent<Text>();
             roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
@@ -120,37 +140,146 @@ namespace WerewolvesCompany.UI
             roleText.fontSize = 24;
             roleText.color = UnityEngine.Color.white;
 
-            
+
 
             // Configure RectTransform of the text
             RectTransform textTransform = roleText.GetComponent<RectTransform>();
-            textTransform.sizeDelta = new Vector2(500, 200); // Width = 200, Height = 50 (adjust as needed)
+            textTransform.sizeDelta = new Vector2(50, 50); // Width = 200, Height = 50 (adjust as needed)
             textTransform.anchorMin = new Vector2(0.5f, 1.0f); // Anchor to center-left of the parent
             textTransform.anchorMax = new Vector2(0.5f, 1.0f);
 
             textTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
             textTransform.pivot = new Vector2(0.5f, 1f);    // Pivot around center-left
+        }
 
 
-            //// Create the tooltip in the middle  of the screen
-            //GameObject toolTipTextObject = new GameObject("RoleActionToolTip");
-            //toolTipTextObject.transform.SetParent(canvas.transform);
+        public VerticalLayoutGroup AddLayoutGroup(GameObject gameObject)
+        {
+            VerticalLayoutGroup layoutGroupVertical = gameObject.AddComponent<VerticalLayoutGroup>();
+            layoutGroupVertical.childAlignment = TextAnchor.UpperCenter;
+            layoutGroupVertical.childControlHeight = true;
+            layoutGroupVertical.childControlWidth = true;
+            //layoutGroupVertical.padding = new RectOffset(0, 0, 0, 0);
+            return layoutGroupVertical;
+        }
+        public void CreateVoteWindow()
+        {
+            // --------------------------------------------------------------
+            // Create a parent GameObject to hold the text
+            voteWindowContainer = new GameObject("VoteWindowContainer",typeof(RectTransform));
+            voteWindowContainer.transform.SetParent(canvas.transform);
 
-            //toolTipText = toolTipTextObject.AddComponent<Text>();
-            //toolTipText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
-            //toolTipText.text = "Role: Unknown";
-            //toolTipText.alignment = TextAnchor.MiddleLeft;
-            //toolTipText.fontSize = 24;
-            //toolTipText.color = Color.white;
 
-            //// Configure RectTransform of the text
-            //RectTransform toolTipTextTransform = toolTipText.GetComponent<RectTransform>();
-            //toolTipTextTransform.sizeDelta = new Vector2(1000, 50); // Width = 200, Height = 50 (adjust as needed)
-            //toolTipTextTransform.anchorMin = new Vector2(0, 0.5f); // Anchor to center-left of the parent
-            //toolTipTextTransform.anchorMax = new Vector2(0, 0.5f);
-            //toolTipTextTransform.pivot = new Vector2(0, 0.5f);    // Pivot around center-left
+            // Add Vertical Layout Group to the container
+            AddLayoutGroup(voteWindowContainer);
+
+            //VerticalLayoutGroup layoutGroup = voteWindowContainer.AddComponent<VerticalLayoutGroup>();
+            //layoutGroup.childAlignment = TextAnchor.UpperCenter;
+            //layoutGroup.childControlHeight = true;
+            //layoutGroup.childControlWidth = true;
+            //layoutGroup.padding = new RectOffset(0, 0, 0, 0);
+
+            //layoutGroup.spacing = 10; // Space between image and text
+            //layoutGroup.padding = new RectOffset(10, 10, 10, 10); // Add padding
+
+
+            // Configure RectTransform of the container
+            RectTransform containerTransform = voteWindowContainer.GetComponent<RectTransform>();
+            containerTransform.anchorMin = new Vector2(0.99f, 0.99f); // Center top
+            containerTransform.anchorMax = new Vector2(0.99f, 0.99f); // Center top
+            containerTransform.pivot = new Vector2(1.0f, 1.0f);      // Pivot around top-center
+            containerTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
+            containerTransform.sizeDelta = new Vector2(50, 50); // Offset 50 units down from the top
+
+            ContentSizeFitter containerFitter = voteWindowContainer.AddComponent<ContentSizeFitter>();
+            containerFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            containerFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+
+
+            // Create a GameObject for the vote window image background
+            GameObject bckgObject = new GameObject("VoteWindowBckg");
+            bckgObject.transform.SetParent(voteWindowContainer.transform);
+
+            Image image = bckgObject.AddComponent<Image>();
+            image.color = new UnityEngine.Color(1.0f,1.0f,1.0f,0.01f);
+
+            // Vertical Layout group to the image
+            //VerticalLayoutGroup imageLayoutGroup = bckgObject.AddComponent<VerticalLayoutGroup>();
+            //imageLayoutGroup.childAlignment= TextAnchor.MiddleCenter;
+            //imageLayoutGroup.childControlHeight = true;
+            //imageLayoutGroup.childControlWidth = true;
+            //imageLayoutGroup.padding = new RectOffset(0,0,0,0);
+
+            VerticalLayoutGroup imageLayoutGroup = AddLayoutGroup(bckgObject);
+            imageLayoutGroup.padding = new RectOffset(10, 10, 10, 10);
+            imageLayoutGroup.spacing = 10;
+
+
+            // Rect Transform to the image
+            RectTransform bckgTransform = bckgObject.GetComponent<RectTransform>();
+            bckgTransform.sizeDelta = new Vector2(50, 50); // Width = 200, Height = 50 (adjust as needed)
+            bckgTransform.anchorMin = new Vector2(0.5f, 0.5f); // Anchor to center-left of the parent
+            bckgTransform.anchorMax = new Vector2(0.5f, 0.5f);
+
+            bckgTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
+            bckgTransform.pivot = new Vector2(0.5f, 0.5f);    // Pivot around center-left
+
+
+            // Create a GameObject for the title of the window
+            GameObject windowTitleObject = new GameObject("VoteWindowTitleText");
+            windowTitleObject.transform.SetParent(bckgObject.transform);
+
+            voteTitleText = windowTitleObject.AddComponent<Text>();
+            voteTitleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            voteTitleText.text = "Vote Window";
+            voteTitleText.supportRichText = true;
+            voteTitleText.alignment = TextAnchor.UpperCenter;
+            voteTitleText.fontSize = 24;
+            voteTitleText.color = UnityEngine.Color.white;
+
+            // Configure RectTransform of the text
+            RectTransform titleTextTransform = voteTitleText.rectTransform;
+            titleTextTransform.sizeDelta = new Vector2(50, 50); // Width = 200, Height = 50 (adjust as needed)
+            titleTextTransform.anchorMin = new Vector2(0.5f, 1.0f); // Anchor to center-left of the parent
+            titleTextTransform.anchorMax = new Vector2(0.5f, 1.0f);
+
+            titleTextTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
+            titleTextTransform.pivot = new Vector2(0.5f, 0.5f);    // Pivot around center-left
+
+
+            // Create a GameObject for the players list text
+            GameObject playersListObject = new GameObject("VoteWindowPlayersListText");
+            playersListObject.transform.SetParent(bckgObject.transform);
+
+
+
+            voteText = playersListObject.AddComponent<Text>();
+            voteText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            voteWindowPlayersText = "Doep\nBananonymous\nPawaeca\nAlmerit\nCookynou\nSynaeh";
+            
+            voteText.text = voteWindowFullText;
+            voteText.supportRichText = true;
+            voteText.alignment = TextAnchor.UpperLeft;
+            voteText.fontSize = 24;
+            voteText.color = UnityEngine.Color.white;
+
+
+
+            // Configure RectTransform of the text
+            RectTransform textTransform = voteText.rectTransform;
+            textTransform.sizeDelta = new Vector2(50, 50); // Width = 200, Height = 50 (adjust as needed)
+            textTransform.anchorMin = new Vector2(0.5f, 0.5f); // Anchor to center-left of the parent
+            textTransform.anchorMax = new Vector2(0.5f, 0.5f);
+
+            textTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
+            textTransform.pivot = new Vector2(0.5f, 0.5f);    // Pivot around center-left
+
+            voteWindowContainer.SetActive(false);
 
         }
+
+
 
         public void UpdateRoleDisplay()
         {
@@ -172,21 +301,13 @@ namespace WerewolvesCompany.UI
             {
                 // Build the text to be displayed;
                 string text = $"{myRole.roleNameColored}\n" + 
+                              $"[N] {voteTitleText.text}\n" +
                               $"{myRole.roleActionText.Replace("  ", " ")}";
                 roleText.text = text;
+
+                //roleText.text = $"{isVoteWindowOpened}"
             }
 
-            //if (roleIcon != null && myRole.roleIcon != null)
-            //{
-            //    roleIcon.sprite = myRole.roleIcon;
-            //    roleIcon.enabled = true;
-            //}
-            //else
-            //{
-            //    roleIcon.enabled = false;
-            //}
-
-            //toolTipText.text = myRole.roleActionText;
         }
 
         public void UpdateToolTip()
@@ -209,8 +330,70 @@ namespace WerewolvesCompany.UI
                 localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
 
             }
+        }
+
+        public void UpdateVoteWindowText()
+        {
+            // Update players list
+            string displayString = "";
+            for (int i = 0; i < rolesManager.allPlayersList.Count; i++)
+            {
+                ulong playerId = rolesManager.allPlayersIds[i];
+                string playerName = rolesManager.allPlayersList[playerId];
+                string playerString = playerName;
+                if (voteCastedPlayer != null)
+                {
+                    if (voteCastedPlayer.Value == i)
+                    {
+                        playerString = $"<color=red>{playerName}</color>";
+                    }
+                    
+                }
+                if (i == voteWindowSelectedPlayer)
+                {
+                    playerString = $"-> {playerString}";
+                }
+                displayString += $"{playerString}\n";
+            }
+
+            voteWindowPlayersText = displayString.Trim('\n');
+            voteText.text = voteWindowFullText;
+
+            // Update cooldown for the vote
+
+            //voteTitleText = "Vote";
+            string cooldownText;
+            float currentCooldown = rolesManager.voteKillCurrentCooldown;
+            
+            if (currentCooldown > 0)
+            { 
+                cooldownText = $" ({(int)currentCooldown}s)";
+            }
+            else
+            {
+                cooldownText = $" Available";
+            }
+
+            voteTitleText.text = $"Vote{cooldownText}";
 
 
+
+        }
+
+        public void OpenCloseVoteTab()
+        {
+            if (voteWindowContainer.activeSelf) CloseVoteTab();
+            else OpenVoteTab();
+        }
+
+        private void OpenVoteTab()
+        {
+            voteWindowContainer.SetActive(true);
+        }
+
+        private void CloseVoteTab()
+        {
+            voteWindowContainer.SetActive(false);
         }
     }
 }
