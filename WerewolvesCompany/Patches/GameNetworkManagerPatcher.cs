@@ -12,5 +12,14 @@ namespace WerewolvesCompany.Patches
         {
             __instance.GetComponent<NetworkManager>().AddNetworkPrefab(Plugin.Instance.netManagerPrefab);
         }
+
+
+        [HarmonyPostfix]
+        [HarmonyPatch("Disconnect")]
+        static void DisableHUD()
+        {
+            Plugin.Instance.roleHUD.roleTextContainer.SetActive(false);
+            Plugin.Instance.roleHUD.voteWindowContainer.SetActive(false);
+        }
     }
 }

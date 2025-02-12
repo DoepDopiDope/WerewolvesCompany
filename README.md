@@ -16,6 +16,8 @@ The roles are currently filled as follows (Werewolf, Witch, Seer, Wild Boy, Vill
 
 Your role is permanently displayed at the top of your screen. You can also bring the tooltip for your role by pressing **[M]**
 
+Players can vote to kill another player. Press [N] to open the voting window. When a player reaches >50% of alive players votes, he is vote-killed. The vote then enters a 120s cooldown (can be changed in config files).
+
 ### IMPORTANT NOTE
 
 By default, the mod disables the tooltip for dropping a player body in the ship. You can enable it if you wish by setting the config parameter "Disable Body in Ship tooltip" to false.
@@ -110,9 +112,6 @@ Theses features are not implemented yet, but are planned:
   - Either the players need to agree on leaving. They could vote on the lever, and if >50% of alive players agreed, then they can leave. Note that villagers still need to have killed all Werewolves. So if they leave while one of them is still alive, they loseQ
   - There could be a requirement for pulling the lever, that all Werewolves are dead.
   - I personally prefer the vote-to-leave, on top of a Daily quota requirement
-- Add more ways for villagers to kill werewolves. Some ideas:
-  - A vote system, all players can cast a vote on someone, whenever they want. They can change their vote whenever they want. If someone reaches a given amount of vote (say >50% of alive players), that player would die. The vote would go on cooldown after someone has been votedd off.
-  - Something like an Among Us meeting ? Although I really don't know how to implement this ...
 
 ### Minor possible updates
 
@@ -144,7 +143,6 @@ Major:
 Minor:
 - If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?)
 - I got my pop up to stop working at some point. I got it working again after rejoining the game. No idea why this happens.
-- Dead werewolves can have the pop up in the middle of the screen to kill players.
 
 ## Contact
 
