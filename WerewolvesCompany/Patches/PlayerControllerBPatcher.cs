@@ -19,8 +19,7 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         static public ManualLogSource logupdate = Plugin.Instance.logupdate;
         
-        //static RolesManager rolesManager = Utils.GetRolesManager();
-        static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
+        static private RoleHUD roleHUD = Plugin.Instance.roleHUD;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;
         static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
 
@@ -132,20 +131,7 @@ namespace WerewolvesCompany.Patches
             }
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch("SetHoverTipAndCurrentInteractTrigger")]
-        static void HoverLeverCheckForQuotaRequirement(PlayerControllerB __instance)
-        {
-            TextMeshProUGUI cursorTip = __instance.cursorTip;
-            if (cursorTip.text.Contains("Start ship :"))
-            {
-                if (!quotaManager.isQuotaMet)
-                { 
-                    cursorTip.text = $"[Daily quota not met {quotaManager.currentScrapValue}/{quotaManager.requiredScrapValue}]";
-                }
-            }
-            //logdebug.LogInfo(cursorTip.text);
-    }
+        
 
     }
 }

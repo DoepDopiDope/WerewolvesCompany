@@ -8,6 +8,7 @@ using GameNetcodeStuff;
 using BepInEx.Logging;
 using System;
 using System.Collections;
+using WerewolvesCompany.UI;
 
 
 namespace WerewolvesCompany.Patches
@@ -19,7 +20,9 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         //static public RolesManager rolesManager = new RolesManager();
-        static private RolesManager rolesManager => Utils.GetRolesManager();
+        static private RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
+        static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
 
 
         [HarmonyPostfix]
@@ -38,6 +41,9 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("StartGame")]
         static void SendPlayersTheirRole(StartOfRound __instance)
         {
+
+            quotaManager.currentScrapValue = 0;
+
             // Only host can send roles
             if (!(__instance.IsHost || __instance.IsServer))
             {
