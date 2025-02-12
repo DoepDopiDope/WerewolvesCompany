@@ -38,6 +38,7 @@ namespace WerewolvesCompany.Managers
         
         public RolesManager Instance;
         public RoleHUD roleHUD => Plugin.Instance.roleHUD;
+        public QuotaManager quotaManager => Plugin.Instance.quotaManager;
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -652,7 +653,36 @@ namespace WerewolvesCompany.Managers
         // ---------------------------------------------------------------------------------------------------------------
         // ServerRpc and ClientRpc roles logic
 
-        //------------
+        //---------------------------------------------
+        // Quota logic
+
+
+        [ServerRpc(RequireOwnership = false)]
+        public void AddQuotaValueServerRpc(int scrapValue, ServerRpcParams serverRpcParams = default)
+        {
+            AddQuotaValueClientRpc(scrapValue);
+        }
+
+        [ClientRpc]
+        public void AddQuotaValueClientRpc(int scrapValue, ClientRpcParams clientRpcParams = default)
+        {
+            quotaManager.AddScrapValue(scrapValue);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetNewDailyQuotaServerRpc(int newQuota, ServerRpcParams serverRpcParams = default)
+        {
+            SetNewDailyQuotaClientRpc(newQuota);
+        }
+        [ClientRpc]
+        public void SetNewDailyQuotaClientRpc(int newQuota, ClientRpcParams clientRpcParams = default)
+        {
+            quotaManager.SetNewDailyQuota(newQuota);
+        }
+
+
+
+        //---------------------------------------------
         // Voting logic
         [ServerRpc(RequireOwnership = false)]
         public void CastVoteServerRpc(ulong voteId, ServerRpcParams serverRpcParams = default)

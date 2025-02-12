@@ -37,22 +37,24 @@ namespace WerewolvesCompany.Patches
         }
 
 
-        [HarmonyPostfix]
-        [HarmonyPatch("StartGame")]
-        static void SendPlayersTheirRole(StartOfRound __instance)
-        {
+        //[HarmonyPostfix]
+        //[HarmonyPatch("StartGame")]
+        //static void SendPlayersTheirRole(StartOfRound __instance)
+        //{
 
-            quotaManager.currentScrapValue = 0;
+        //    quotaManager.ResetScrapValue();
 
-            // Only host can send roles
-            if (!(__instance.IsHost || __instance.IsServer))
-            {
-                return;
-            }
+        //    // Only host can send roles
+        //    if (!(__instance.IsHost || __instance.IsServer))
+        //    {
+        //        return;
+        //    }
             
-            logger.LogInfo("Providing roles");
-            rolesManager.BuildAndSendRoles();
-        }
+        //    logger.LogInfo("Providing roles");
+        //    rolesManager.BuildAndSendRoles();
+
+        //    quotaManager.ComputeAndSetNewDailyQuota();
+        //}
 
 
     }

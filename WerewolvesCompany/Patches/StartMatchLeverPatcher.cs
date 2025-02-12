@@ -35,7 +35,6 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("Update")]
         static void HoverLeverCheckForQuotaRequirement(StartMatchLever __instance)
         {
-            logdebug.LogInfo($"{quotaManager.currentScrapValue}");
             if (StartOfRound.Instance.shipIsLeaving)
             {
                 __instance.triggerScript.disabledHoverTip = defaultDisabledHoverTip;
@@ -49,7 +48,7 @@ namespace WerewolvesCompany.Patches
                 if (!quotaManager.isQuotaMet)
                 {
                     __instance.triggerScript.interactable = false;
-                    __instance.triggerScript.disabledHoverTip = $"[Daily quota not met {quotaManager.currentScrapValue}/{quotaManager.requiredScrapValue}]";
+                    __instance.triggerScript.disabledHoverTip = $"[Daily quota not met {quotaManager.currentScrapValue}/{quotaManager.requiredDailyQuota}]";
                 }
                 else
                 {

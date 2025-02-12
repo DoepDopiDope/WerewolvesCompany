@@ -238,7 +238,7 @@ namespace WerewolvesCompany.Patches
 
                     else if (args[2].ToLower() == "quota")
                     {
-                        quotaManager.currentScrapValue = quotaManager.requiredScrapValue;
+                        quotaManager.CheatValue();
                     }
 
                     return false;
@@ -317,7 +317,8 @@ namespace WerewolvesCompany.Patches
                               "wc debug         -> show this page\n" +
                               "wc debug cd      -> set all players cooldowns to 0\n" +
                               "wc debug distrib -> distribute roles\n" +
-                              "wc debug reset   -> reset all players roles to their initial state\n\n",
+                              "wc debug reset   -> reset all players roles to their initial state\n" +
+                              "wc debug quota   -> set the current daily quota to max\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };

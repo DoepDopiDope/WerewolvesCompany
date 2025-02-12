@@ -21,9 +21,9 @@ namespace WerewolvesCompany.Managers
         public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         public int currentScrapValue = 0;
-        public int requiredScrapValue = 100;
+        public int requiredDailyQuota = 100;
 
-        public bool isQuotaMet => (currentScrapValue >= requiredScrapValue);
+        public bool isQuotaMet => (currentScrapValue >= requiredDailyQuota);
 
         void Awake()
         {
@@ -43,6 +43,48 @@ namespace WerewolvesCompany.Managers
         void Update()
         {
             
+        }
+
+        public void AddScrapValue(int scrapValue)
+        {
+            logdebug.LogInfo($"Added quota value : {scrapValue}");
+            currentScrapValue += scrapValue;
+        }
+
+        public void ResetScrapValue()
+        {
+            logger.LogInfo("Quota value has been reset");
+            currentScrapValue = 0;
+        }
+
+        public void CheatValue()
+        {
+            logger.LogInfo("Quota value has been cheated to meet the daily quota");
+            currentScrapValue = requiredDailyQuota;
+        }
+
+        public void SetNewDailyQuota(int quotaValue)
+        {
+            logger.LogInfo($"Set new daily quota to {quotaValue}");
+            requiredDailyQuota = quotaValue;
+        }
+
+        public int ComputeDailyQuota()
+        {
+            // Quota from Infected Company, will require testing
+            int levelTotalValue = Mathf.RoundToInt(RoundManager.Instance.totalScrapValueInLevel);
+            int Nplayers = StartOfRound.Instance.connectedPlayersAmount;
+            float playersWeightedQuota = (float)Mathf.Max(0, Nplayers - 3) * 0.05f;
+            float playersAndLevelWeightedQuota = (float)levelTotalValue * (0.25f + playersWeightedQuota);
+            float finalQuota = Mathf.Min(playersAndLevelWeightedQuota, (float)levelTotalValue * 0.5f);
+
+            return (int)finalQuota;
+        }
+
+        public void ComputeAndSetNewDailyQuota()
+        {
+            logger.LogInfo("Computing the new daily Quota");
+            rolesManager.SetNewDailyQuotaServerRpc(ComputeDailyQuota());
         }
     }
 }

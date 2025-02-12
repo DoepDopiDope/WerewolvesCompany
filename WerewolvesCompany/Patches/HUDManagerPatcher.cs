@@ -13,10 +13,13 @@ namespace WerewolvesCompany.Patches
     [HarmonyPatch]
     internal class HUDManagerPatcher
     {
-        static public ManualLogSource logger = Plugin.Instance.logger;
-        static public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        static public ManualLogSource logupdate = Plugin.Instance.logupdate;
-        static private RoleHUD roleHUD = Plugin.FindObjectOfType<RoleHUD>();
+        static public ManualLogSource logger => Plugin.Instance.logger;
+        static public ManualLogSource logdebug => Plugin.Instance.logdebug;
+        static public ManualLogSource logupdate => Plugin.Instance.logupdate;
+        static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
+        static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
+        static private RolesManager rolesManager => Plugin.Instance.rolesManager;
+
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(HUDManager), "SetSpectatingTextToPlayer")]
@@ -34,16 +37,21 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
         static bool PreventTooltipOnDropBodyInShip(GrabbableObject GObject)
         {
-            if (Utils.GetRolesManager().DisableTooltipWhenBodyDroppedInShip.Value)
+            // Check if object is a ragdoll, and therefore do not display the tooltip
+            if (Utils.GetRolesManager().DisableTooltipWhenBodyDroppedInShip.Value && GObject.name.ToLower().Contains("ragdoll"))
             {
-                if (GObject.name.ToLower().Contains("ragdoll"))
-                {
-                    logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
-                    return false;
-                }
+                logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
+                return false;
             }
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
+        static void AddScrapValueToQuota(GrabbableObject GObject)
+        {
+            quotaManager.AddScrapValue(GObject.scrapValue);
+            rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
+        }
     }
 }
