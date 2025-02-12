@@ -26,7 +26,7 @@ namespace WerewolvesCompany.Inputs
 
 
         // Vote keys
-        [InputAction(KeyboardControl.N, Name = "Open/Close Voting Window", KbmInteractions = "hold(duration = 1)")]
+        [InputAction(KeyboardControl.N, Name = "Open/Close Voting Window")]
         public InputAction OpenCloseVotingWindow { get; set; }
 
         [InputAction(KeyboardControl.UpArrow, Name = "VoteScrollUp")]

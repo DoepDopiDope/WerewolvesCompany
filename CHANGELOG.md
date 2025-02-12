@@ -4,6 +4,12 @@ Main additions
 - New role: the Minion. He wins with the Werewolves. He can see the werewolves, but the werewolves cannot see him.
 - 
 
+Minor additions
+- Nope
+
+Bug fixes:
+- Fixed a bug where Cupid would see he made a couple of twice the same person. It was only a visual bug though, and only for Cupid. The couple would still know they were targetted.
+
 ### [0.4.0]
 
 Main additions

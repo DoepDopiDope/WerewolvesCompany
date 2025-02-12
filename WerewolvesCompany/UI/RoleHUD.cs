@@ -35,7 +35,7 @@ namespace WerewolvesCompany.UI
 
 
         public string voteWindowHeaderText = "-------------------------------------\n" +
-                                             "Open/Close: N (hold 1s)\n" +
+                                             "Open/Close: [N]\n" +
                                              "Select: UP & DOWN arrows\n" +
                                              "Vote: ENTER\n" +
                                              "-------------------------------------";
@@ -67,7 +67,7 @@ namespace WerewolvesCompany.UI
         void Start()
         {
             //logger.LogInfo("Creating the RoleHUD");
-            CreateRoleHUD();
+            //CreateRoleHUD();
             //logger.LogInfo("RoleHUD has been created");
         }
 
@@ -275,11 +275,7 @@ namespace WerewolvesCompany.UI
             textTransform.anchoredPosition = new Vector2(0, 0); // Offset 50 units down from the top
             textTransform.pivot = new Vector2(0.5f, 0.5f);    // Pivot around center-left
 
-
-
-            
-
-
+            voteWindowContainer.SetActive(false);
 
         }
 
@@ -305,6 +301,7 @@ namespace WerewolvesCompany.UI
             {
                 // Build the text to be displayed;
                 string text = $"{myRole.roleNameColored}\n" + 
+                              $"[N] {voteTitleText.text}\n" +
                               $"{myRole.roleActionText.Replace("  ", " ")}";
                 roleText.text = text;
 
@@ -337,6 +334,7 @@ namespace WerewolvesCompany.UI
 
         public void UpdateVoteWindowText()
         {
+            // Update players list
             string displayString = "";
             for (int i = 0; i < rolesManager.allPlayersList.Count; i++)
             {
@@ -360,6 +358,26 @@ namespace WerewolvesCompany.UI
 
             voteWindowPlayersText = displayString.Trim('\n');
             voteText.text = voteWindowFullText;
+
+            // Update cooldown for the vote
+
+            //voteTitleText = "Vote";
+            string cooldownText;
+            float currentCooldown = rolesManager.voteKillCurrentCooldown;
+            
+            if (currentCooldown > 0)
+            { 
+                cooldownText = $" ({(int)currentCooldown}s)";
+            }
+            else
+            {
+                cooldownText = $" Available";
+            }
+
+            voteTitleText.text = $"Vote{cooldownText}";
+
+
+
         }
 
         public void OpenCloseVoteTab()

@@ -138,10 +138,13 @@ Theses features are not implemented yet, but are planned:
 ## Known issues
 
 Major:
-- No major bugs have been reported.
+- Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
+  - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really don't have no idea...
 
 Minor:
-- If there are multiple Cupids in the game, this will lead to unexpected behaviors.
+- If someone leaves the game and does not rejoin, the roles distribution will fail.
+- I got my pop up to stop working at some point. I got it working again after rejoining the game.
+- Dead werewolves can have the pop up in the middle of the screen to kill players.
 
 ## Contact
 

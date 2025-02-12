@@ -791,7 +791,7 @@ namespace WerewolvesCompany
             {
                 logdebug.LogInfo("Received 2 callbacks from lovers, notifying to Cupid.");
                 string player1Name = rolesManager.GetPlayerById(lovers[0]).playerUsername;
-                string player2Name = rolesManager.GetPlayerById(lovers[0]).playerUsername;
+                string player2Name = rolesManager.GetPlayerById(lovers[1]).playerUsername;
                 roleShortDescription = $"<color=#ff00ffff>{player1Name}</color> and <color=#ff00ffff>{player2Name}</color> are deeply in love. They will die together. They must win together.";
                 if (!lovers.Contains(Utils.GetLocalPlayerControllerB().OwnerClientId))
                 {

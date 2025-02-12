@@ -52,6 +52,8 @@ namespace WerewolvesCompany.Managers
 
         public List<Role> currentRolesSetup = new List<Role>();
 
+        public float voteKillCurrentCooldown = 0f;
+        public bool isVoteOnCooldown => (voteKillCurrentCooldown > 0);
         //public Role spectatedPlayerRole;
 
 #nullable enable
@@ -185,15 +187,22 @@ namespace WerewolvesCompany.Managers
                 myRole.UpdateCooldowns(Time.deltaTime);
             }
 
+            // Update cooldown
+            voteKillCurrentCooldown -= Time.deltaTime;
+
+            // Check for voted off players
             if (IsServer)
             {
-                // Check for voted off players
-                ulong? votedPlayer = CheckForVotedPlayer();
-                if (votedPlayer != null)
+                if (!(allPlayersVotes == null))
                 {
-                    ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(votedPlayer.Value);
-                    VoteKillPlayerClientRpc(clientRpcParams);
-                    NotifyAllPlayersOfVoteKillClientRpc(votedPlayer.Value);
+                    ulong? votedPlayer = CheckForVotedPlayer();
+                    if (votedPlayer != null)
+                    {
+                        ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(votedPlayer.Value);
+                        VoteKillPlayerClientRpc(clientRpcParams);
+                        NotifyAllPlayersOfVoteKillClientRpc(votedPlayer.Value);
+                        ResetVotes();
+                    }
                 }
             }
         }
@@ -343,7 +352,6 @@ namespace WerewolvesCompany.Managers
 
         public void BuildAndSendRoles()
         {
-            
             // Build roles
             Dictionary<ulong, Role> finalRoles;
             logger.LogInfo("Roles generation has started");
@@ -374,7 +382,7 @@ namespace WerewolvesCompany.Managers
 
             // Initiate the votes
             ResetVotes();
-
+            ResetVoteCooldownClientRpc();
 
             // Send all roles list to all players
             // I know that that the previous loop is redundant with this line, but I added this line later on, so whatever...
@@ -577,33 +585,57 @@ namespace WerewolvesCompany.Managers
             allPlayersVotes = newVotes;
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void ResetVoteCooldownServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ResetVoteCooldownClientRpc();
+        }
+
+        [ClientRpc]
+        public void ResetVoteCooldownClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            ResetVoteCooldown();
+        }
+
+        public void ResetVoteCooldown()
+        {
+            voteKillCurrentCooldown = 0f;
+        }
+
         public ulong? CheckForVotedPlayer()
         {
-            Dictionary<ulong,int> castedVotes = new Dictionary<ulong,int>();
-            
+            Dictionary<ulong,int> votesResults = new Dictionary<ulong,int>();
+
             // Check which players are alive
+            //logdebug.LogInfo("===================================");
+            //logdebug.LogInfo("Build the dictionary");
             foreach (GameObject playerObject in StartOfRound.Instance.allPlayerObjects)
             {
                 PlayerControllerB controller = playerObject.GetComponent<PlayerControllerB>();
-                if (!controller.isPlayerDead)
+                if (!controller.isPlayerDead && controller.isPlayerControlled)
                 {
-                    castedVotes.Add(controller.OwnerClientId, 0);
+                    //logdebug.LogInfo($"Adding controller name: {controller.playerUsername}, id: {controller.OwnerClientId}");
+                    votesResults.Add(controller.OwnerClientId, 0);
                 }
             }
 
             // Check for existing votes
             foreach (var item in allPlayersVotes)
             {
-                if (castedVotes.ContainsKey(item.Key))
+                if (item.Value != null)
                 {
-                    castedVotes[item.Key] += 1;
+                    if (votesResults.ContainsKey(item.Value.Value))
+                    {
+                        votesResults[item.Value.Value] += 1;
+                    }
                 }
             }
 
             // Check if some player should be voted off
-            foreach (var item in castedVotes)
+            //logdebug.LogInfo("Check fo rvoted off player");
+            foreach (var item in votesResults)
             {
-                if ((item.Value/castedVotes.Count) > VoteAmount.Value)
+                if ((((float)item.Value) / ((float)votesResults.Count)) > VoteAmount.Value)
                 {
                     return item.Key;
                 }
@@ -624,7 +656,19 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void CastVoteServerRpc(ulong voteId, ServerRpcParams serverRpcParams = default)
         {
-            allPlayersVotes[serverRpcParams.Receive.SenderClientId] = voteId;
+            CastVoteGeneric(voteId, serverRpcParams.Receive.SenderClientId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void CastVoteServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            CastVoteGeneric(null, serverRpcParams.Receive.SenderClientId);
+        }
+
+
+        public void CastVoteGeneric(ulong? voteId, ulong voterId)
+        {
+            allPlayersVotes[voterId] = voteId;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -636,6 +680,11 @@ namespace WerewolvesCompany.Managers
         public void ResetPlayerVote(ulong playerId)
         {
             allPlayersVotes[playerId] = null;
+        }
+
+        public void SetVoteKillOnCooldown()
+        {
+            voteKillCurrentCooldown = VoteCooldown.Value;
         }
 
         [ClientRpc]
@@ -657,6 +706,9 @@ namespace WerewolvesCompany.Managers
             string playerName = GetPlayerById(votedPlayer).playerUsername;
             HUDManager.Instance.DisplayTip("Vote Kill", $"{playerName} has been vote killed",isWarning:true);
             roleHUD.voteCastedPlayer = null; // reset vote
+            roleHUD.voteWindowContainer.SetActive(false); // close voting window
+            // Set vote kill on cooldown
+            SetVoteKillOnCooldown();
         }
 
         //--------------------------------
@@ -845,7 +897,11 @@ namespace WerewolvesCompany.Managers
             myRole.currentMainActionCooldown = 0f;
             myRole.currentSecondaryActionCooldown = 0f;
             HUDManager.Instance.DisplayTip("Admin", "Cooldowns set to 0");
-            logger.LogInfo("Cooldowns set to 0");
+            logger.LogInfo("Role cooldowns set to 0");
+
+            ResetVoteCooldown();
+            logger.LogInfo("Vote cooldown set to 0");
+
         }
 
         [ServerRpc(RequireOwnership =false)]

@@ -94,7 +94,7 @@ namespace WerewolvesCompany.Inputs
         {
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
 
-            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersList.Count);
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersList.Count);
             logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
             
             
@@ -104,19 +104,34 @@ namespace WerewolvesCompany.Inputs
         {
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
             
-            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersList.Count);
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersList.Count);
             logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
             
         }
 
         static public void OnCastVoteKeyPressed(InputAction.CallbackContext keyContext)
         {
-            if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
+            if (rolesManager.isVoteOnCooldown || !roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
 
-            roleHUD.voteCastedPlayer = roleHUD.voteWindowSelectedPlayer;
+            if (roleHUD.voteCastedPlayer != roleHUD.voteWindowSelectedPlayer)
+            {
+                roleHUD.voteCastedPlayer = roleHUD.voteWindowSelectedPlayer;
+            }
+            else
+            {
+                roleHUD.voteCastedPlayer = null;
+            }
 
-            ulong castPlayerId = rolesManager.allPlayersIds[roleHUD.voteCastedPlayer.Value];
-            rolesManager.CastVoteServerRpc(castPlayerId);
+            if (roleHUD.voteCastedPlayer == null)
+            {
+                rolesManager.CastVoteServerRpc();
+            }
+            else
+            {
+                ulong castPlayerId = rolesManager.allPlayersIds[roleHUD.voteCastedPlayer.Value];
+                rolesManager.CastVoteServerRpc(castPlayerId);
+            }
+            
         }
 
 
