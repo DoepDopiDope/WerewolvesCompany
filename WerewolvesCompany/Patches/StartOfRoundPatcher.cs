@@ -38,7 +38,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("StartGame")]
         static void SendPlayersTheirRole(StartOfRound __instance)
         {
-            // Verify that this is the host, so that it does not send roles multiple times
+            // Only host can send roles
             if (!(__instance.IsHost || __instance.IsServer))
             {
                 return;

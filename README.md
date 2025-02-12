@@ -72,6 +72,12 @@ The Minion wins with the werewolves.
 
 The Minion can see other Werewolves, but the Werewolves cannot see him.
 
+### The Drunken Man
+
+The Drunken Man wins with the village
+
+The Drunken Man is so drunk that he is immune to the Witch poison.
+
 ## Setup and parameters
 
 You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.
@@ -119,15 +125,13 @@ Theses features are not implemented yet, but are planned:
 - Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won
 
-### Possible roles
+### New roles ideas
 
 - **The Bounty Hunter** - Each round, his goal is to kill a random player
-- **The Minion** - He sides with Werewolves, and knows who the Werewolves are. However, the Werewolves do not know who he is.
 - **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
 - **The Fake Seer** - She only has a 50% chance of guessing the target player's role. The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer. To be used simultaneously with the actual Seer.
 - **The Hunter** - He can kill another player within a few seconds of his death
 - **The Flute Player** - He can charm people. His goal is to charm all other players.
-- **The Drunken Man** - He is immune to the Witch poison.
 - **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:
   - Once every cooldown-time, she gets a sets of letter, of which only a few are part of an actual Werewolf name
   - Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
@@ -138,11 +142,11 @@ Theses features are not implemented yet, but are planned:
 
 Major:
 - Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
-  - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really don't have no idea...
+  - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
 
 Minor:
 - If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?)
-- I got my pop up to stop working at some point. I got it working again after rejoining the game. No idea why this happens.
+- I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
 
 ## Contact
 

@@ -3,6 +3,7 @@
 Main additions
 - New roles:
   - The Minion. He wins with the Werewolves. He can see the werewolves, but the werewolves cannot see him.
+  - The Drunken Man. He is so drunk that he is immune to the Witch poison.
 - Added the vote-kill system. Players can vote to kill a player at any time (120s cd by default). When a player reaches over 50% votes of alive players, he is vote-killed. Press [N] to open the voting window.
 
 Minor additions

@@ -17,7 +17,7 @@ namespace WerewolvesCompany.UI
     {
         public RoleHUD Instance;
 
-        public RolesManager rolesManager = Utils.GetRolesManager();
+        public RolesManager rolesManager => Utils.GetRolesManager();
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -73,10 +73,10 @@ namespace WerewolvesCompany.UI
 
         void Update()
         {
-            if (rolesManager == null)
-            {
-                rolesManager = Utils.GetRolesManager();
-            }
+            //if (rolesManager == null)
+            //{
+            //    rolesManager = Utils.GetRolesManager();
+            //}
         }
 
         void OnDestroy()
