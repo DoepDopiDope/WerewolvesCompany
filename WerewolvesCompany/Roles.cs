@@ -37,6 +37,7 @@ namespace WerewolvesCompany
             roles.Add(new WildBoy());
             roles.Add(new Cupid());
             roles.Add(new Minion());
+            roles.Add(new DrunkenMan());
 
             return roles;
         }
@@ -572,6 +573,11 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip($"{roleName}", $"You poisoned {targetPlayerName}.");
         }
 
+        public override void NotifyMainActionFailed(string targetPlayerName)
+        {
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{targetPlayerName} is so drunk that your poison does not seem that have any effect on him.");
+        }
+
         public override void NotifySecondaryActionSuccess(string targetPlayerName)
         {
             logger.LogInfo($"Successfully immunized {targetPlayerName}.");
@@ -851,6 +857,25 @@ namespace WerewolvesCompany
 
 
         public Minion() : base() { }
+
+    }
+
+    class DrunkenMan : Role
+    {
+        public override string roleName { get; set; } = "Drunken Man";
+        public override int refInt { get; set; } = 7;
+        public override string winCondition { get; set; } = "You win with the village.";
+        public override string roleShortDescription { get; set; } = "You've been drinking so much that you are immune to the Witch poison.";
+        public override string roleDescription { get; set; } = "The Drunken Man has spent too much time at the local tavern. He has become immune to all kinds of poison, making him immune to the Witch poison.";
+
+
+        public DrunkenMan() : base() { }
+
+        public void NotifyOldLadyStrongBeverage(ulong witchId)
+        {
+            string witchName = rolesManager.GetPlayerById(witchId).playerUsername;
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{witchName} has provided you with a really strong beverage. You drank worse than that.");
+        }
 
     }
 }

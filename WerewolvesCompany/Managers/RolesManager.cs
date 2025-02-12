@@ -1252,6 +1252,13 @@ namespace WerewolvesCompany.Managers
         private void WitchPoisonPlayerClientRpc(ulong witchId, ClientRpcParams clientRpcParams = default)
         {
 
+            if (myRole.GetType() == typeof(DrunkenMan))
+            {
+                NotifyMainActionFailedServerRpc(witchId);
+                ((DrunkenMan)myRole).NotifyOldLadyStrongBeverage(witchId);
+                return;
+            }
+
             // Edit the death screen message
             string message = $"{GetPlayerById(witchId).playerUsername.ToUpper()}\nWAS A WITCH";
             Utils.EditDeathMessage(message);

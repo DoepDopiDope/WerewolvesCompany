@@ -85,6 +85,7 @@ namespace WerewolvesCompany.Inputs
 
         static public void OnOpenCloseVotingWindowKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (rolesManager == null || roleHUD == null) return;
             if (localController.inTerminalMenu || localController.isPlayerDead) return;
             logdebug.LogInfo("Toggling vote window On/Off");
             roleHUD.OpenCloseVoteTab();
@@ -92,6 +93,7 @@ namespace WerewolvesCompany.Inputs
 
         static public void OnVoteScrollUpKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (rolesManager == null || roleHUD == null) return;
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
 
             roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersList.Count);
@@ -102,6 +104,7 @@ namespace WerewolvesCompany.Inputs
 
         static public void OnVoteScrollDownKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (rolesManager == null || roleHUD == null) return;
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
             
             roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersList.Count);
@@ -111,6 +114,7 @@ namespace WerewolvesCompany.Inputs
 
         static public void OnCastVoteKeyPressed(InputAction.CallbackContext keyContext)
         {
+            if (rolesManager == null || roleHUD == null) return;
             if (rolesManager.isVoteOnCooldown || !roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
 
             if (roleHUD.voteCastedPlayer != roleHUD.voteWindowSelectedPlayer)
