@@ -680,6 +680,18 @@ namespace WerewolvesCompany.Managers
             quotaManager.SetNewDailyQuota(newQuota);
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void ResetCurrentQuotaValueServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ResetCurrentQuotaValueClientRpc();
+        }
+        [ClientRpc]
+        public void ResetCurrentQuotaValueClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            quotaManager.ResetScrapValue();
+        }
+
+
 
 
         //---------------------------------------------

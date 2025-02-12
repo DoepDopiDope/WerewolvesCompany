@@ -48,9 +48,7 @@ namespace WerewolvesCompany.Patches
                 rolesManager.myRole.targetInRangeName = hitPlayer.playerUsername;
             }
 
-            roleHUD.UpdateRoleDisplay();
-            roleHUD.UpdateToolTip();
-            roleHUD.UpdateVoteWindowText();
+            
         }
 
 

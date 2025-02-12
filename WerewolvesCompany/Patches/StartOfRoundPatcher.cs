@@ -37,24 +37,21 @@ namespace WerewolvesCompany.Patches
         }
 
 
-        //[HarmonyPostfix]
-        //[HarmonyPatch("StartGame")]
-        //static void SendPlayersTheirRole(StartOfRound __instance)
-        //{
+        [HarmonyPostfix]
+        [HarmonyPatch("ReviveDeadPlayers")]
+        static void ResetRolesToNullOnRoundEnd(StartOfRound __instance)
+        {
+            logdebug.LogInfo("Resetting my role to null");
+            rolesManager.myRole = null;
+        }
 
-        //    quotaManager.ResetScrapValue();
-
-        //    // Only host can send roles
-        //    if (!(__instance.IsHost || __instance.IsServer))
-        //    {
-        //        return;
-        //    }
-            
-        //    logger.LogInfo("Providing roles");
-        //    rolesManager.BuildAndSendRoles();
-
-        //    quotaManager.ComputeAndSetNewDailyQuota();
-        //}
+        [HarmonyPrefix]
+        [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
+        static void ResetRolesToNullOnRoundStart(StartOfRound __instance)
+        {
+            logdebug.LogInfo("Resetting my role to null");
+            rolesManager.myRole = null;
+        }
 
 
     }
