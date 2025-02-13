@@ -4,10 +4,6 @@ I forgot to add the assetbundle in 0.5.0. I added it there.
 
 Added configurable quota parameters.
 
-
-
-
-
 ### [0.5.0]
 
 Main additions
