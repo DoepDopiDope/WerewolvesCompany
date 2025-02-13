@@ -45,8 +45,10 @@ namespace WerewolvesCompany
 
         static public RolesManager GetRolesManager()
         {
-            RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            return roleManagerObject;
+            //RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
+            //return roleManagerObject;
+
+            return Plugin.Instance.rolesManager;
         }
 
         static public void EditDeathMessage(string message = "[LIFE SUPPORT: OFFLINE]")

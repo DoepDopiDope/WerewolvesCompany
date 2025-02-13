@@ -9,6 +9,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 using WerewolvesCompany.Managers;
+using WerewolvesCompany.UI;
 using static UnityEngine.EventSystems.EventTrigger;
 
 
@@ -21,8 +22,13 @@ namespace WerewolvesCompany.Patches
         public static Terminal terminalInstance;
         public static bool initializedTerminalNodes = false;
 
-        static RolesManager rolesManager => Utils.GetRolesManager();
+        static RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static RoleHUD roleHUD => Plugin.Instance.roleHUD;
+        static QuotaManager quotaManager => Plugin.Instance.quotaManager;
+        
         public static List<Role> availableRoles => References.GetAllRoles();
+
+
         //public List<Role> currentRoles => Utils.GetRolesManager().currentRolesSetup;
 
 
@@ -216,18 +222,23 @@ namespace WerewolvesCompany.Patches
                         return false;
                     }
 
-                    if (args[2].ToLower() == "cd")
+                    else if (args[2].ToLower() == "cd")
                     {
                         rolesManager.ResetAllCooldownsServerRpc();
                     }
-                    if ((args[2].ToLower() == "distrib") || args[2].ToLower() == "distribute")
+                    else if ((args[2].ToLower() == "distrib") || args[2].ToLower() == "distribute")
                     {
                         rolesManager.BuildAndSendRolesServerRpc();
                     }
 
-                    if (args[2].ToLower() == "reset")
+                    else if (args[2].ToLower() == "reset")
                     {
                         rolesManager.ResetRolesServerRpc();
+                    }
+
+                    else if (args[2].ToLower() == "quota")
+                    {
+                        quotaManager.CheatValue();
                     }
 
                     return false;
@@ -306,7 +317,8 @@ namespace WerewolvesCompany.Patches
                               "wc debug         -> show this page\n" +
                               "wc debug cd      -> set all players cooldowns to 0\n" +
                               "wc debug distrib -> distribute roles\n" +
-                              "wc debug reset   -> reset all players roles to their initial state\n\n",
+                              "wc debug reset   -> reset all players roles to their initial state\n" +
+                              "wc debug quota   -> set the current daily quota to max\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };

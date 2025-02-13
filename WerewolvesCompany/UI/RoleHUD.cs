@@ -17,7 +17,7 @@ namespace WerewolvesCompany.UI
     {
         public RoleHUD Instance;
 
-        public RolesManager rolesManager = Utils.GetRolesManager();
+        public RolesManager rolesManager => Utils.GetRolesManager();
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -73,10 +73,16 @@ namespace WerewolvesCompany.UI
 
         void Update()
         {
-            if (rolesManager == null)
-            {
-                rolesManager = Utils.GetRolesManager();
-            }
+            //if (rolesManager == null)
+            //{
+            //    rolesManager = Utils.GetRolesManager();
+            //}
+
+            UpdateRoleDisplay();
+            UpdateToolTip();
+            UpdateVoteWindowText();
+
+
         }
 
         void OnDestroy()
@@ -313,6 +319,8 @@ namespace WerewolvesCompany.UI
         public void UpdateToolTip()
         {
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
+            if (localPlayer == null) return;
+            if (rolesManager.myRole == null) return;
 
             if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.mainActionName))
             {
@@ -336,6 +344,7 @@ namespace WerewolvesCompany.UI
 
         public void UpdateVoteWindowText()
         {
+            if (rolesManager.myRole == null) return;
             // Update players list
             string displayString = "";
             for (int i = 0; i < rolesManager.allPlayersList.Count; i++)

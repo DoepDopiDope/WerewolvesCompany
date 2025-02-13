@@ -39,11 +39,12 @@ namespace WerewolvesCompany
         public ManualLogSource logupdate;
 
         public System.Random rng;
-
+        
         public ModManager modManager;
         public RolesManager rolesManager;
         public RoleHUD roleHUD;
         public CooldownManager cooldownManager;
+        public QuotaManager quotaManager;
 
         public static ConfigEntry<bool>
             // Global parameters
@@ -266,6 +267,7 @@ namespace WerewolvesCompany
             logdebug.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
             InitializeHUD();
             InitializeCooldownManager();
+            InitializeQuotaManager();
             //InitializeRolesManager();
         }
 
@@ -299,6 +301,17 @@ namespace WerewolvesCompany
                 cooldownManagerObject.AddComponent<CooldownManager>();
                 logdebug.LogInfo("CooldownManager has been recreated.");
                 Plugin.Instance.cooldownManager = cooldownManagerObject.GetComponent<CooldownManager>();
+            }
+        }
+
+        private void InitializeQuotaManager()
+        {
+            if (FindObjectOfType<QuotaManager>() == null)
+            {
+                GameObject quotaManagerObject = new GameObject("QuotaManager");
+                quotaManagerObject.AddComponent<QuotaManager>();
+                logdebug.LogInfo("QuotaManager has been recreated.");
+                Plugin.Instance.quotaManager = quotaManagerObject.GetComponent<QuotaManager>();
             }
         }
 

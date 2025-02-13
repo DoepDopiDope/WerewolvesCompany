@@ -8,6 +8,7 @@ using GameNetcodeStuff;
 using BepInEx.Logging;
 using System;
 using System.Collections;
+using WerewolvesCompany.UI;
 
 
 namespace WerewolvesCompany.Patches
@@ -19,7 +20,9 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
         //static public RolesManager rolesManager = new RolesManager();
-        static private RolesManager rolesManager => Utils.GetRolesManager();
+        static private RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
+        static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
 
 
         [HarmonyPostfix]
@@ -35,17 +38,19 @@ namespace WerewolvesCompany.Patches
 
 
         [HarmonyPostfix]
-        [HarmonyPatch("StartGame")]
-        static void SendPlayersTheirRole(StartOfRound __instance)
+        [HarmonyPatch("ReviveDeadPlayers")]
+        static void ResetRolesToNullOnRoundEnd(StartOfRound __instance)
         {
-            // Verify that this is the host, so that it does not send roles multiple times
-            if (!(__instance.IsHost || __instance.IsServer))
-            {
-                return;
-            }
-            
-            logger.LogInfo("Providing roles");
-            rolesManager.BuildAndSendRoles();
+            logdebug.LogInfo("Resetting my role to null");
+            rolesManager.myRole = null;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
+        static void ResetRolesToNullOnRoundStart(StartOfRound __instance)
+        {
+            logdebug.LogInfo("Resetting my role to null");
+            rolesManager.myRole = null;
         }
 
 
