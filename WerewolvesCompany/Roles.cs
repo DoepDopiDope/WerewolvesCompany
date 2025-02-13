@@ -201,17 +201,12 @@ namespace WerewolvesCompany
 
             // If the role has no main action
 
-            //logdebug.LogInfo($"There is a main action: {hasMainAction}");
-            //logdebug.LogInfo($"There is a secondary action: {hasSecondaryAction}");
-
             if (!hasMainAction) { outMainTooltip = ""; }
             else { outMainTooltip = mainActionTooltip; }
-            //logdebug.LogInfo(outMainTooltip);
 
             // If the role has no secondary
             if (!hasSecondaryAction) { outSecondaryTooltip = ""; }
             else { outSecondaryTooltip = secondaryActionTooltip; }
-            //logdebug.LogInfo(outSecondaryTooltip);
 
             return $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
             
@@ -403,10 +398,6 @@ namespace WerewolvesCompany
 
 
         // ------ Main action success
-        //public virtual void NotifyMainActionSuccess(string targetPlayerName)
-        //{
-        //    HUDManager.Instance.DisplayTip(roleName, "Main action success");
-        //}
         // Alternative parameters inputs for the Seer
         public virtual void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
@@ -547,7 +538,7 @@ namespace WerewolvesCompany
         public override string roleShortDescription { get; set; } = "You have the ability to protect one player, and kill another one.";
         public override string mainActionName { get; set; } = "Poison";
         public override string secondaryActionName { get; set; } = "Protect";
-        public override string roleDescription { get; set; } = "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know he has been immunized, nor will he know he loses his immune status. The Witch cannot protect herself.";
+        public override string roleDescription { get; set; } = "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know they has been immunized, nor will they know they loses his immune status. The Witch cannot protect herself.";
 
         // Parameters
         public override NetworkVariable<float> interactRange => rolesManager.WitchInteractRange;
@@ -640,7 +631,7 @@ namespace WerewolvesCompany
         public override string roleName { get; set; } = "Wild Boy";
         public override int refInt { get; set; } = 4;
         public override string winCondition { get; set; } = "For now, you win with the village.";
-        public string _roleShortDescription = "You can idolize a player. If he dies, you become a werewolf.";
+        public string _roleShortDescription = "You can idolize a player. If they dies, you become a werewolf.";
         public override string roleShortDescription
         {
             get { return _roleShortDescription; }
@@ -676,9 +667,9 @@ namespace WerewolvesCompany
             logdebug.LogInfo("I have set my idolization mentor");
             string playerName = rolesManager.GetPlayerById(targetId).playerUsername;
 
-            roleShortDescription = $"You have idolized {playerName}. If he dies, you become a werewolf.";
+            roleShortDescription = $"You have idolized {playerName}. If they die, you become a werewolf.";
             logdebug.LogInfo("Displaying Idolization on HUD");
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If he dies, you will become a werewolf.");
+            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If they die, you will become a werewolf.");
         }
 
 

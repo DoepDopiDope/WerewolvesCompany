@@ -1,8 +1,10 @@
 # WerewolvesCompany
 
-Adds the Werewolves Game to Lethal Company.
+Adds a variant of the Werewolves Game to Lethal Company.
 
-#### For requests, contact me on Discord (doep) or on [github](https://github.com/DoepDopiDope/WerewolvesCompany)
+#### For requests, contact me on Discord ([doep](https://discord.com/users/238054619694104576)), on the dedicated [modding thread](https://discord.com/channels/1168655651455639582/1336122279863652454) or on [github](https://github.com/DoepDopiDope/WerewolvesCompany)
+
+
 
 ## General information
 
@@ -16,6 +18,10 @@ WerewolvesCompany brings a variant of this game to Lethal Company. Each round, p
 
 By default, the mod disables the tooltip for dropping a player body in the ship. You can enable it if you wish by setting the config parameter "Disable Body in Ship tooltip" to false.
 
+
+
+
+
 ## Objectives
 
 The game sets up random roles for all players. Each role is either part of the Village or the Werewolves. Your role is permanently displayed at the top of your screen. You can also bring the tooltip for your role by pressing **[M]**
@@ -24,19 +30,29 @@ The game sets up random roles for all players. Each role is either part of the V
 
 Members of the Village (the Villagers) should bring back a certain amount of scrap to the ship during the round. The lever is blocked as long as this daily quota is not met.
 
+
+
 ### Werewolves
 
 Werewolves (and their allies) should prevent the villagers from reaching the daily quota. Sincre the scraps are counted towards the quota when entering the ship, it is useless for werewolves to try and bring scraps out of the ship.
 
+
+
 ### Voting
 
 Players can open the vote menu (**[N]** key by default) and select a player that they want to kill. When a player reaches enough votes towards him (>50% of alive players), he is killed.
+
+
 
 ### Roles setup
 
 There are lots of roles to choose from, that will be distributed during the game. It is recommended that players try different configurations. The general recommendation is to have 1 Werewolves for every 3 to 4 Villagers, depending on how strong the Village is from his players powers (e.g., Witch, Seer, ...).
 
 Players can edit the roles setup from the ship's terminal. See section: Setup and parameters. Empty slots will be filled with regular Villagers.
+
+
+
+
 
 ## Setup and parameters
 
@@ -52,12 +68,20 @@ You can get informations on a role by typing:
 
 You can also shorten 'werewolves' with its alias 'wc'.
 
+
+
+
+
 ## KeyBinds
 
 - **[W]** Perform main action (Kill, Poison, Seer, Idolize)
 - **[V]** Perform secondary action (Make Immune)
 - **[M]** Display my role ToolTip
 - **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
+
+
+
+
 
 ## Roles
 
@@ -69,11 +93,15 @@ The Werewolf has the ability to kill another player (with cooldown).
 
 The Werewolves can see each other if the option is enabled (on by default). See the "Werewolves Know Each Other" config parameter.
 
+
+
 ### Villager
 
 The Villager shall find and kill the Werewolves before ship departure.
 
 The Villager can *patpat* others players.
+
+
 
 ### Witch
 
@@ -85,11 +113,15 @@ The Witch has two potions, and can do two things:
 
 Note that unlike the original Werewolves game, the Witch here does not revive a dead player. This change was made so that a killed-player cannot instantly reveal the Werewolf(ves) identity.
 
+
+
 ### Seer
 
 The Seer shall find and kill the Werewolves before ship departure.
 
 The Seer can seer another player's role.
+
+
 
 ### Wild Boy
 
@@ -97,11 +129,15 @@ The Wild Boy wins either with the Villagers or the Werewolves, depending on his 
 
 The Wild Boy can target a player who becomes his idol. If the idol dies, the Wild Boy becomes a Werewolf. As long as his idol is alive, he wins with the Villagers.
 
+
+
 ### Cupid
 
 Cupid wins with the village.
 
 Cupid can make two players fall in love. Their fate is linked: if one of them dies, their lover also dies. If they were both originally in the same team, they must win with that team. If they were originally in different teams, they now must be the only two survivors.
+
+
 
 ### Minion
 
@@ -109,11 +145,17 @@ The Minion wins with the werewolves.
 
 The Minion can see other Werewolves, but the Werewolves cannot see him.
 
+
+
 ### The Drunken Man
 
 The Drunken Man wins with the village
 
-The Drunken Man is so drunk that he is immune to the Witch poison.
+The Drunken Man is so drunk that he is immune to the Witch poison. He will be notified that an old lady has tried giving him a strong beverage. The Witch will also be notified that her potion has no effect.
+
+
+
+
 
 ## Debug
 
@@ -123,6 +165,10 @@ While they are mainly for my personal use during playtests, you can use debug co
 - wc debug distrib -> distribute roles. Alternative to the hold-P (5s) keybind
 - wc debug reset   -> reset state of every player current role to its initial state
 
+
+
+
+
 ## Planned updates
 
 Theses features are not implemented yet, but are planned:
@@ -131,6 +177,9 @@ Theses features are not implemented yet, but are planned:
 
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Maybe add a vote system for the ship departure. Will have to think about it.
+- Add a win/lose screen
+
+
 
 ### Minor possible updates
 
@@ -139,6 +188,8 @@ Theses features are not implemented yet, but are planned:
 - Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won
 - Make custom death messages for the end game recap. I'll have to look into Coroner ?
+
+
 
 ### New roles ideas
 
@@ -153,6 +204,10 @@ Theses features are not implemented yet, but are planned:
 - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
 - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
 
+
+
+
+
 ## Known issues
 
 Major:
@@ -163,6 +218,10 @@ Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
 - If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Mayeb it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
+
+
+
+
 
 ## Contact
 
