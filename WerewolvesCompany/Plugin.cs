@@ -46,59 +46,77 @@ namespace WerewolvesCompany
         public CooldownManager cooldownManager;
         public QuotaManager quotaManager;
 
-        public static ConfigEntry<bool>
-            // Global parameters
-            config_CanWerewolvesSeeEachOther,
-            config_DisableTooltipWhenBodyDroppedInShip;
 
-        public static ConfigEntry<float>
-            // Global parameters
-            config_VoteCooldown,
-            config_VoteAmount,
-            
-            // Default Role Parameters
-            config_DefaultInteractRange,
-            config_DefaultActionCoolDown,
-            config_DefaultStartOfRoundActionCoolDown,
 
-            // Werewolf parameters
-            config_WerewolfInteractRange,
-            config_WerewolfActionCoolDown,
-            config_WerewolfStartOfRoundActionCoolDown,
+        // Global parameters
+        public static ConfigEntry<bool> config_CanWerewolvesSeeEachOther;
+        public static ConfigEntry<bool> config_DisableTooltipWhenBodyDroppedInShip;
+        public static ConfigEntry<float> config_VoteCooldown;
+        public static ConfigEntry<float> config_VoteAmount;
 
-            // Villager parameters
-            config_VillagerInteractRange,
-            config_VillagerActionCoolDown,
-            config_VillagerStartOfRoundActionCoolDown,
+        // Quota parameters
+        public static ConfigEntry<float> config_QuotaMinMultiplier;
+        public static ConfigEntry<float> config_QuotaPlayersWeight;
+        public static ConfigEntry<int>   config_QuotaNplayersOffset;
+        public static ConfigEntry<float> config_QuotaMaxMultiplier;
 
-            // Witch parameters
-            config_WitchInteractRange,
-            config_WitchActionCoolDown,
-            config_WitchStartOfRoundActionCoolDown,
+        // Default Role Parameters
+        public static ConfigEntry<float> config_DefaultInteractRange;
+        public static ConfigEntry<float> config_DefaultActionCoolDown;
+        public static ConfigEntry<float> config_DefaultStartOfRoundActionCoolDown;
 
-            // Seer parameters
-            config_SeerInteractRange,
-            config_SeerActionCoolDown,
-            config_SeerStartOfRoundActionCoolDown,
+        // Werewolf Role Parameters
+        public static ConfigEntry<float> config_WerewolfInteractRange;
+        public static ConfigEntry<float> config_WerewolfActionCoolDown;
+        public static ConfigEntry<float> config_WerewolfStartOfRoundActionCoolDown;
 
-            // Wild Boy parameters
-            config_WildBoyInteractRange,
-            config_WildBoyActionCoolDown,
-            config_WildBoyStartOfRoundActionCoolDown,
+        // Villager Role Parameters
+        public static ConfigEntry<float> config_VillagerInteractRange;
+        public static ConfigEntry<float> config_VillagerActionCoolDown;
+        public static ConfigEntry<float> config_VillagerStartOfRoundActionCoolDown;
 
-            // Cupid parameters
-            config_CupidInteractRange,
-            config_CupidActionCoolDown,
-            config_CupidStartOfRoundActionCoolDown
-            ;
+        // Witch Role Parameters
+        public static ConfigEntry<float> config_WitchInteractRange;
+        public static ConfigEntry<float> config_WitchActionCoolDown;
+        public static ConfigEntry<float> config_WitchStartOfRoundActionCoolDown;
+
+        // Seer Role Parameters
+        public static ConfigEntry<float> config_SeerInteractRange;
+        public static ConfigEntry<float> config_SeerActionCoolDown;
+        public static ConfigEntry<float> config_SeerStartOfRoundActionCoolDown;
+
+        // Wild Boy Role Parameters
+        public static ConfigEntry<float> config_WildBoyInteractRange;
+        public static ConfigEntry<float> config_WildBoyActionCoolDown;
+        public static ConfigEntry<float> config_WildBoyStartOfRoundActionCoolDown;
+
+        // Cupid Role Parameters
+        public static ConfigEntry<float> config_CupidInteractRange;
+        public static ConfigEntry<float> config_CupidActionCoolDown;
+        public static ConfigEntry<float> config_CupidStartOfRoundActionCoolDown;
+        
+        
 
         private void ConfigSetup()
         {
+
+            // -----------------------------------------------
             // Global parameters
-            config_CanWerewolvesSeeEachOther           = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other?");
+
+            // Vote parameters
+            config_CanWerewolvesSeeEachOther = Config.Bind("Global Parameters", "Werewolves Know Each Other", true, "Do werewolves know each other?");
             config_DisableTooltipWhenBodyDroppedInShip = Config.Bind("Global Parameters", "Disable Body in Ship tooltip", true, "Prevents the display of the tooltip to all players when a body is dropped in the ship.");
             config_VoteCooldown                        = Config.Bind("Global Parameters", "Vote Kill Cooldown", 120f, "Cooldown for the next vote after someone has been vote-kicked.");
             config_VoteAmount                          = Config.Bind("Global Parameters", "Vote Kill Required Amount", 0.5f, "Which fraction of the alive players are required to vote kick someone.");
+
+            // Quota parameters
+            config_QuotaMinMultiplier = Config.Bind("Quota", "minMultiplier", 0.25f, "Minimum multiplier to the total level value.");
+            config_QuotaPlayersWeight  = Config.Bind("Quota", "playerWeight", 0.05f, "Multiplier weight of each player to the multiplier.");
+            config_QuotaNplayersOffset = Config.Bind("Quota", "NplayersMin", 3, "Number of players at which player Weight is counted positively.");
+            config_QuotaMaxMultiplier  = Config.Bind("Quota", "maxMultiplier", 0.5f, "Fraction of the total level value that the quota cannot exceed.");
+
+            // -----------------------------------------------
+            // Roles parameters
 
             // Default parameters
             config_DefaultInteractRange              = Config.Bind("Role: Default Role", "Default Interact Range", 1.5f, "How far the player can use his Action on another player.");

@@ -129,6 +129,13 @@ namespace WerewolvesCompany.Managers
                 VoteCooldown.Value = Plugin.config_VoteCooldown.Value;
                 VoteAmount.Value = Plugin.config_VoteAmount.Value;
 
+                // Quota parameter
+                quotaManager.quotaMinMultiplier.Value = Plugin.config_QuotaMinMultiplier.Value;
+                quotaManager.quotaPlayersWeight.Value  = Plugin.config_QuotaPlayersWeight.Value;
+                quotaManager.quotaNplayersOffset.Value = Plugin.config_QuotaNplayersOffset.Value;
+                quotaManager.quotaMaxMultiplier.Value  = Plugin.config_QuotaMaxMultiplier.Value;
+
+
                 // Default 
                 DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
                 DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;

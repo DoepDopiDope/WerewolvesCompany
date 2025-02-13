@@ -34,7 +34,28 @@ Members of the Village (the Villagers) should bring back a certain amount of scr
 
 ### Werewolves
 
-Werewolves (and their allies) should prevent the villagers from reaching the daily quota. Sincre the scraps are counted towards the quota when entering the ship, it is useless for werewolves to try and bring scraps out of the ship.
+Werewolves (and their allies) should prevent the villagers from reaching the daily quota. Since the scraps are counted towards the quota when entering the ship, it is useless for werewolves to try and bring scraps out of the ship.
+
+
+
+### Quota
+
+Villagers are required to meet a daily quota of by bringing scraps to the ship. The daily quota is computed as follows:
+
+`quota = totalLevelValue * (baseMultiplier + playerWeight * (Nplayers - NplayersOffset) )`, with default values being:
+- `baseMultiplier = 0.25`
+- `playerWeight = 0.05`
+- -`NplayersOffset = 3`.
+
+- This yields the default formula :
+
+`quota = totalLevelValue * (0.25 + 0.05 * (Nplayers-3) )`
+
+As a safeguard, the daily quota value can never reach a certain multiplier (default `maxMultiplier`) of the `totalLevelValue`. This can be edited from the config file.
+
+This formula was copied from what had been done for [Infected Company](https://thunderstore.io/c/lethal-company/p/InfectedCompany/InfectedCompany/). However, it included some game modifiers that affected the pace of the rounds. It is likely that this formula should be tweaked. All parameters can be edited from the Config File.
+
+
 
 
 
