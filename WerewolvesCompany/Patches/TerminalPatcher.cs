@@ -238,7 +238,7 @@ namespace WerewolvesCompany.Patches
 
                     else if (args[2].ToLower() == "quota")
                     {
-                        quotaManager.CheatValue();
+                        rolesManager.CheatQuotaServerRpc();
                     }
 
                     return false;

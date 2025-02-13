@@ -691,6 +691,18 @@ namespace WerewolvesCompany.Managers
             quotaManager.ResetScrapValue();
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void CheatQuotaServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            CheatQuotaClientRpc();
+        }
+
+        [ClientRpc]
+        public void CheatQuotaClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            quotaManager.CheatValue();
+            HUDManager.Instance.DisplayTip("Admin", "Daily Quota has been set to it's required value.");
+        }
 
 
 
