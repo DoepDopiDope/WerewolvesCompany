@@ -45,7 +45,7 @@ You can edit the roles configuration from the Ship's terminal. You can access th
 Once in the Werewolves menu, you can add or remove roles from the current setup by typing :
 - werewolves add Role_Name N - Add N (if provided, else 1) of the selected role
 - werewolves del Role_Name   - delete the role from the current list
-- werewolves del *           - deleletes all roles from the current list
+- werewolves del *           - deletes all roles from the current list
 
 You can get informations on a role by typing:
 - werewolves Role_Name
@@ -134,6 +134,7 @@ Theses features are not implemented yet, but are planned:
 
 ### Minor possible updates
 
+- Add a way for players to save custom roles setups
 - Icon for the roles to be displayed at the top of the screen
 - Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won
