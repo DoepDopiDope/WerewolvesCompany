@@ -136,16 +136,14 @@ Theses features are not implemented yet, but are planned:
 ### Major possible updates
 
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
-- Add a logic for pulling the lever (ship departure). There are multiple options:
-  - Either the players need to agree on leaving. They could vote on the lever, and if >50% of alive players agreed, then they can leave. Note that villagers still need to have killed all Werewolves. So if they leave while one of them is still alive, they loseQ
-  - There could be a requirement for pulling the lever, that all Werewolves are dead.
-  - I personally prefer the vote-to-leave, on top of a Daily quota requirement
+- Maybe add a vote system for the ship departure. Will have to think about it.
 
 ### Minor possible updates
 
 - Icon for the roles to be displayed at the top of the screen
 - Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won
+- Make custom death messages for the end game recap. I'll have to look into Coroner ?
 
 ### New roles ideas
 
@@ -167,7 +165,8 @@ Major:
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
 
 Minor:
-- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?)
+- It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
+- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Mayeb it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
 
 ## Contact
