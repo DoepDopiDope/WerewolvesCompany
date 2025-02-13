@@ -1,13 +1,15 @@
 ### [0.5.0]
 
 Main additions
-- New roles:
-  - The Minion. He wins with the Werewolves. He can see the werewolves, but the werewolves cannot see him.
-  - The Drunken Man. He is so drunk that he is immune to the Witch poison.
 - Added the vote-kill system. Players can vote to kill a player at any time (120s cd by default). When a player reaches over 50% votes of alive players, he is vote-killed. Press [N] to open the voting window.
+- Added a daily Quota. It scales from the number of players and the total scrap value of the map. It was copied from what was done for Infected Company. It will probably require tweaking.
+- New roles:
+  - The Minion: He wins with the Werewolves. He can see the werewolves, but the werewolves cannot see him.
+  - The Drunken Man: He is so drunk that he is immune to the Witch poison.
 
 Minor additions
-- Added colored roles when spectating
+- Added colored roles names when spectating
+- Added colored roles names in the terminal
 - Disables the mod HUD when dead
 - Disables the HUD when disconnecting from a game
 

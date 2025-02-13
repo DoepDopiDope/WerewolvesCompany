@@ -114,6 +114,7 @@ namespace WerewolvesCompany
 #nullable disable
         public string roleNameColored => GetRoleNameColored();
         public string terminalName => roleName.Replace(" ", "_");
+        public string terminalNameColored => GetTerminalRoleNameColored();
         public virtual int refInt { get; set; } = -1;
         public virtual string winCondition { get; set; } = "Role Win Condition";
         public virtual string roleShortDescription { get; set; } = "Role Short Description";
@@ -223,6 +224,15 @@ namespace WerewolvesCompany
                 return roleName;
             }
             return $"<color={roleNameColor}>{roleName}</color>";
+        }
+
+        public string GetTerminalRoleNameColored()
+        {
+            if (roleNameColor == null)
+            {
+                return terminalName;
+            }
+            return $"<color={roleNameColor}>{terminalName}</color>";
         }
 
         public void DisplayRolePopUp()

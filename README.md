@@ -22,6 +22,49 @@ Players can vote to kill another player. Press [N] to open the voting window. Wh
 
 By default, the mod disables the tooltip for dropping a player body in the ship. You can enable it if you wish by setting the config parameter "Disable Body in Ship tooltip" to false.
 
+## Objectives
+
+The game sets up random roles for all players. Each role is either part of the Village or the Werewolves.
+
+### Villagers
+
+Members of the Village (the Villagers) should bring back a certain amount of scrap to the ship during the round. The lever is blocked as long as this daily quota is not met.
+
+### Werewolves
+
+Werewolves (and their allies) should prevent the villagers from reaching the daily quota. Sincre the scraps are counted towards the quota when entering the ship, it is useless for werewolves to try and bring scraps out of the ship.
+
+### Voting
+
+Players can open the vote menu ([N] key by default) and select a player that they want to kill. When a player reaches enough votes towards him (>50% of alive players), he is killed.
+
+### Roles setup
+
+There are lots of roles to choose from, that will be distributed during the game. It is recommended that players try different configurations. The general recommendation is to have 1 Werewolves for every 3 to 4 Villagers, depending on how strong the Village is from his players powers (e.g., Witch, Seer, ...).
+
+Players can edit the roles setup from the ship's terminal. See section: Setup and parameters
+
+## Setup and parameters
+
+You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.
+
+Once in the Werewolves menu, you can add or remove roles from the current setup by typing :
+- werewolves add Role_Name N - Add N (if provided, else 1) of the selected role
+- werewolves del Role_Name   - delete the role from the current list
+- werewpmves del *           - deleletes all roles from the current list
+
+You can get informations on a role by typing:
+- werewolves Role_Name
+
+You can also shorten 'werewolves' with its alias 'wc'.
+
+## KeyBinds
+
+- **[W]** Perform main action (Kill, Poison, Seer, Idolize)
+- **[V]** Perform secondary action (Make Immune)
+- **[M]** Display my role ToolTip
+- **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
+
 ## Roles
 
 ### Werewolf
@@ -78,26 +121,6 @@ The Drunken Man wins with the village
 
 The Drunken Man is so drunk that he is immune to the Witch poison.
 
-## Setup and parameters
-
-You can edit the roles configuration from the Ship's terminal. You can access the configuration menu by typing 'werewolves'.
-
-Once in the Werewolves menu, you can add or remove roles from the current setup by typing :
-- werewolves add Role_Name
-- werewolves del Role_Name
-
-You can get informations on a role by typing:
-- werewolves Role_Name
-
-You can also shorten 'werewolves' with its alias 'wc'.
-
-## KeyBinds
-
-- **[W]** Perform main action (Kill, Poison, Seer, Idolize)
-- **[V]** Perform secondary action (Make Immune)
-- **[M]** Display my role ToolTip
-- **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
-
 ## Debug
 
 While they are mainly for my personal use during playtests, you can use debug commands from the terminal (mainly for my personal use when testing changes)
@@ -113,7 +136,6 @@ Theses features are not implemented yet, but are planned:
 ### Major possible updates
 
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
-- Make a daily quota for the Villagers, to incentivize them to go inside. There are multiple options for the quota.
 - Add a logic for pulling the lever (ship departure). There are multiple options:
   - Either the players need to agree on leaving. They could vote on the lever, and if >50% of alive players agreed, then they can leave. Note that villagers still need to have killed all Werewolves. So if they leave while one of them is still alive, they loseQ
   - There could be a requirement for pulling the lever, that all Werewolves are dead.

@@ -416,7 +416,7 @@ namespace WerewolvesCompany.Patches
                 replacementText += "Available Roles:\n";
                 foreach (var role in availableRoles)
                 {
-                    replacementText += role.terminalName + "\n";
+                    replacementText += role.terminalNameColored + "\n";
                 }
                 modifiedDisplayText = modifiedDisplayText.Replace(textToReplace, replacementText);
             }
@@ -434,12 +434,15 @@ namespace WerewolvesCompany.Patches
                 replacementText += "Current Roles Setup:\n";
                 foreach (var role in rolesManager.currentRolesSetup)
                 {
-                    replacementText += role.terminalName + "\n";
+                    replacementText += role.terminalNameColored + "\n";
                 }
                 replacementText += "\nRemaining slots will be filled with Villagers\n\n";
-                replacementText += "Add roles    -> werewolves add role_name\n";
-                replacementText += "Delete roles -> werewolves del role_name\n";
-                replacementText += "Check  roles -> werewolves role_name\n\n";
+                replacementText += "Add (N) roles    -> werewolves add role_name (N)\n";
+                replacementText += "Add roles        -> werewolves add role_name1 role_name2\n";
+                replacementText += "Delete role      -> werewolves del role_name\n";
+                replacementText += "Delete all roles -> werewolves del *\n";
+                replacementText += "Check role       -> werewolves role_name\n";
+                replacementText += "Debug commands   -> werewolves debug\n\n";
                 modifiedDisplayText = modifiedDisplayText.Replace(textToReplace, replacementText);
             }
 
