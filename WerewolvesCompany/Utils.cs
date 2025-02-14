@@ -68,6 +68,8 @@ namespace WerewolvesCompany
         {
             foreach (PlayerControllerB controller in StartOfRound.Instance.allPlayerScripts)
             {
+                if (!rolesManager.allRoles.ContainsKey(controller.OwnerClientId)) continue;
+
                 if (controller.IsSpawned && !controller.isPlayerDead && rolesManager.allRoles.ContainsKey(controller.OwnerClientId))
                 {
                     if (rolesManager.allRoles[controller.OwnerClientId].team == "Village")

@@ -1,6 +1,11 @@
 ### [0.5.2]
 
-Removed unusued "Default Role" parameters
+Minor additions:
+- Allows werewolves to depart the ship when there are no villagers alive, even if the quota is not met.
+
+Bug fixes:
+- Removed unusued "Default Role" parameters
+- 
 
 
 
