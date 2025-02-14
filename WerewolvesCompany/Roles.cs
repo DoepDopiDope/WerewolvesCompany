@@ -159,9 +159,9 @@ namespace WerewolvesCompany
 
 
         // Settings
-        public virtual NetworkVariable<float> interactRange => rolesManager.DefaultInteractRange;
-        public virtual NetworkVariable<float> baseActionCooldown => rolesManager.DefaultActionCoolDown;
-        public virtual NetworkVariable<float> startOfRoundActionCooldown => rolesManager.DefaultStartOfRoundActionCoolDown;
+        public virtual float interactRange => 0f;
+        public virtual float baseActionCooldown => 0f;
+        public virtual float startOfRoundActionCooldown => 0f;
 
 
         // Cooldowns
@@ -187,11 +187,11 @@ namespace WerewolvesCompany
         
         public virtual void InitiateCooldowns()
         {
-            baseMainActionCooldown = baseActionCooldown.Value;
-            baseSecondaryActionCooldown = baseActionCooldown.Value;
+            baseMainActionCooldown = baseActionCooldown;
+            baseSecondaryActionCooldown = baseActionCooldown;
 
-            currentMainActionCooldown = startOfRoundActionCooldown.Value;
-            currentSecondaryActionCooldown = startOfRoundActionCooldown.Value;
+            currentMainActionCooldown = startOfRoundActionCooldown;
+            currentSecondaryActionCooldown = startOfRoundActionCooldown;
         }
 
         public string GetRoleActionText()
@@ -467,9 +467,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Werewolves shall kill other players before ship departure.\nThe Werewolf has the ability to kill another player.";
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.WerewolfInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.WerewolfActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.WerewolfInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.WerewolfActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCoolDown.Value;
 
 
 
@@ -514,9 +514,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.VillagerInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.VillagerActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.VillagerInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.VillagerActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCoolDown.Value;
         
         public Villager() : base() { }
 
@@ -541,9 +541,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know they has been immunized, nor will they know they loses his immune status. The Witch cannot protect herself.";
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.WitchInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.WitchActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.WitchInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.WitchActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCoolDown.Value;
 
         public Witch() : base() { }
 
@@ -600,9 +600,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Seer is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Seer can seer another player's role.";
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.SeerInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.SeerActionCooldown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.SeerInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.SeerActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCoolDown.Value;
 
         public Seer() : base() { }
 
@@ -642,9 +642,9 @@ namespace WerewolvesCompany
         public ulong? idolizedId;
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.WildBoyInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.WildBoyActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.WildBoyInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.WildBoyActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCoolDown.Value;
 
 
         public WildBoy() : base() { }
@@ -713,19 +713,19 @@ namespace WerewolvesCompany
         public int romancedPlayersCallbackAmount = 0;
 
         // Parameters
-        public override NetworkVariable<float> interactRange => rolesManager.CupidInteractRange;
-        public override NetworkVariable<float> baseActionCooldown => rolesManager.CupidActionCoolDown;
-        public override NetworkVariable<float> startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCoolDown;
+        public override float interactRange => rolesManager.CupidInteractRange.Value;
+        public override float baseActionCooldown => rolesManager.CupidActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCoolDown.Value;
         
         
         public Cupid() : base() { }
 
         public override void InitiateCooldowns()
         {
-            baseMainActionCooldown = baseActionCooldown.Value;
+            baseMainActionCooldown = baseActionCooldown;
             //baseSecondaryActionCooldown = baseActionCooldown.Value;
 
-            currentMainActionCooldown = startOfRoundActionCooldown.Value;
+            currentMainActionCooldown = startOfRoundActionCooldown;
             //currentSecondaryActionCooldown = startOfRoundActionCooldown.Value;
         }
 

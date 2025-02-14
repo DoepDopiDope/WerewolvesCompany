@@ -205,6 +205,7 @@ Theses features are not implemented yet, but are planned:
 ### Minor possible updates
 
 - Add a way for players to save custom roles setups
+- Add a way for players to cahnge the role setup from LethalConfig
 - Icon for the roles to be displayed at the top of the screen
 - Randomize the roles list to avoid meta-game
 - End of game screen displaying which team won

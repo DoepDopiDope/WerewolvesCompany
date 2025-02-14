@@ -1,3 +1,11 @@
+### [0.5.2]
+
+Removed unusued "Default Role" parameters
+
+
+
+
+
 ### [0.5.1]
 
 I forgot to add the assetbundle in 0.5.0. I added it there.

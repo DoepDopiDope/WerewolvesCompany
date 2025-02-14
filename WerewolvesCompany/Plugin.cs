@@ -24,7 +24,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.5.1";
+        const string VERSION = "0.5.2";
 
         internal static InputsKeybinds InputActionsInstance;
 
@@ -59,11 +59,6 @@ namespace WerewolvesCompany
         public static ConfigEntry<float> config_QuotaPlayersWeight;
         public static ConfigEntry<int>   config_QuotaNplayersOffset;
         public static ConfigEntry<float> config_QuotaMaxMultiplier;
-
-        // Default Role Parameters
-        public static ConfigEntry<float> config_DefaultInteractRange;
-        public static ConfigEntry<float> config_DefaultActionCoolDown;
-        public static ConfigEntry<float> config_DefaultStartOfRoundActionCoolDown;
 
         // Werewolf Role Parameters
         public static ConfigEntry<float> config_WerewolfInteractRange;
@@ -117,11 +112,6 @@ namespace WerewolvesCompany
 
             // -----------------------------------------------
             // Roles parameters
-
-            // Default parameters
-            config_DefaultInteractRange              = Config.Bind("Role: Default Role", "Default Interact Range", 1.5f, "How far the player can use his Action on another player.");
-            config_DefaultActionCoolDown             = Config.Bind("Role: Default Role", "Default Role Action Cooldown", 120f, "How often can a player use his action (in seconds).");
-            config_DefaultStartOfRoundActionCoolDown = Config.Bind("Role: Default Role", "Default Start of Round Cooldown", 120f, "How soon after the start of a round has started a player can use his action (in seconds).");
 
             // Werewolf parameters
             config_WerewolfInteractRange              = Config.Bind("Role: Werewolf", "Kill Range", 1.5f, "How far a Werewolf can kill another player.");

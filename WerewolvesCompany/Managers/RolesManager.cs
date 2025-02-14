@@ -68,11 +68,6 @@ namespace WerewolvesCompany.Managers
         public NetworkVariable<float> VoteCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> VoteAmount = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-        // Default parameters
-        public NetworkVariable<float> DefaultInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> DefaultActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> DefaultStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
         // Werewolf parameters
         public NetworkVariable<float> WerewolfInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> WerewolfActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -134,12 +129,6 @@ namespace WerewolvesCompany.Managers
                 quotaManager.quotaPlayersWeight.Value  = Plugin.config_QuotaPlayersWeight.Value;
                 quotaManager.quotaNplayersOffset.Value = Plugin.config_QuotaNplayersOffset.Value;
                 quotaManager.quotaMaxMultiplier.Value  = Plugin.config_QuotaMaxMultiplier.Value;
-
-
-                // Default 
-                DefaultInteractRange.Value = Plugin.config_DefaultInteractRange.Value;
-                DefaultActionCoolDown.Value = Plugin.config_DefaultActionCoolDown.Value;
-                DefaultStartOfRoundActionCoolDown.Value = Plugin.config_DefaultStartOfRoundActionCoolDown.Value;
 
                 // Werewolf parameters
                 WerewolfInteractRange.Value = Plugin.config_WerewolfInteractRange.Value;
@@ -254,7 +243,7 @@ namespace WerewolvesCompany.Managers
             {
                 throw new Exception("myRole is null in CheckForPlayerInRange. This should have been caught earlier.");
             }
-            return CheckForPlayerInRange(myId, myRole.interactRange.Value);
+            return CheckForPlayerInRange(myId, myRole.interactRange);
         }
 
         public PlayerControllerB? CheckForPlayerInRange(ulong myId, float checkRange)
