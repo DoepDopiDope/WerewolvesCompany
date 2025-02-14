@@ -86,7 +86,7 @@ namespace WerewolvesCompany.Inputs
         static public void OnOpenCloseVotingWindowKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (rolesManager == null || roleHUD == null) return;
-            if (localController.inTerminalMenu || localController.isPlayerDead) return;
+            if ((myRole == null) || localController.inTerminalMenu || localController.isPlayerDead) return;
             logdebug.LogInfo("Toggling vote window On/Off");
             roleHUD.OpenCloseVoteTab();
         }
@@ -115,9 +115,8 @@ namespace WerewolvesCompany.Inputs
         static public void OnCastVoteKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (rolesManager == null || roleHUD == null) return;
-            if (rolesManager.allPlayersIds == null) return;
+            if ((rolesManager.allPlayersIds == null) || (roleHUD.voteWindowContainer == null)) return;
             if (rolesManager.isVoteOnCooldown || !roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
-
             if (roleHUD.voteCastedPlayer != roleHUD.voteWindowSelectedPlayer)
             {
                 roleHUD.voteCastedPlayer = roleHUD.voteWindowSelectedPlayer;
@@ -127,10 +126,12 @@ namespace WerewolvesCompany.Inputs
                 roleHUD.voteCastedPlayer = null;
             }
 
+            // if I just deselected a player, remove my vote server side as well
             if (roleHUD.voteCastedPlayer == null)
             {
                 rolesManager.CastVoteServerRpc();
             }
+            // else cast the vote
             else
             {
                 ulong castPlayerId = rolesManager.allPlayersIds[roleHUD.voteCastedPlayer.Value];

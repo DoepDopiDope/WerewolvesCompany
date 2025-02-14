@@ -61,6 +61,7 @@ namespace WerewolvesCompany.UI
                 Destroy(gameObject); // Prevent duplicate instances
             }
 
+            CreateRoleHUD();
             //logger.LogInfo("Manually Starting the RoleHUD");
             Start();
         }
@@ -98,9 +99,13 @@ namespace WerewolvesCompany.UI
         private void CreateRoleHUD()
         {
             // Create the canvas
-            canvas = new GameObject("RoleHUDCanvas").AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            DontDestroyOnLoad(canvas.gameObject);
+            if (canvas == null)
+            {
+                canvas = new GameObject("RoleHUDCanvas").AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                DontDestroyOnLoad(canvas.gameObject);
+            }
+            
 
             if (roleTextContainer == null)
             {
@@ -144,7 +149,7 @@ namespace WerewolvesCompany.UI
 
             roleText = textObject.AddComponent<Text>();
             roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
-            roleText.text = "Role: Unknown";
+            roleText.text = "";
             roleText.supportRichText = true;
             //roleText.alignment = TextAnchor.MiddleLeft;
             roleText.alignment = TextAnchor.UpperCenter;
