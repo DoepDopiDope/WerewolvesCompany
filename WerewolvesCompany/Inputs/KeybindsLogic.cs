@@ -115,6 +115,7 @@ namespace WerewolvesCompany.Inputs
         static public void OnCastVoteKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (rolesManager == null || roleHUD == null) return;
+            if (rolesManager.allPlayersIds == null) return;
             if (rolesManager.isVoteOnCooldown || !roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu || localController.isPlayerDead) return;
 
             if (roleHUD.voteCastedPlayer != roleHUD.voteWindowSelectedPlayer)

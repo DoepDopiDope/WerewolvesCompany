@@ -76,13 +76,18 @@ namespace WerewolvesCompany.UI
             //if (rolesManager == null)
             //{
             //    rolesManager = Utils.GetRolesManager();
-            //}
+            
+        }
 
+
+        public void UpdateHUD()
+        {
+            // This cannot be put into the regular Update() method, because it needs to run after PlayerControllerB.LateUpdate().
+            // Therefore, I'm not using the regular LateUpdate() method for RoleHUD because I'm not risking it running before the one of PlayerControllerB one.
+            // I'm calling this directly from the HarmonyPostfix Patched method LateUpdate() of PlayerControllerB
             UpdateRoleDisplay();
             UpdateToolTip();
             UpdateVoteWindowText();
-
-
         }
 
         void OnDestroy()
@@ -318,24 +323,19 @@ namespace WerewolvesCompany.UI
 
         public void UpdateToolTip()
         {
-            logdebug.LogInfo("=============");
-            logdebug.LogInfo("Reached A");
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
             if (localPlayer == null) return;
             if (rolesManager.myRole == null) return;
 
-            logdebug.LogInfo("Reached B");
 
             if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.mainActionName))
             {
                 localPlayer.cursorTip.text = "";
             }
 
-            logdebug.LogInfo("Reached C");
 
             if (localPlayer.isPlayerDead) return;
 
-            logdebug.LogInfo("Reached D");
 
             //logdebug.LogInfo("UpdateToolTip Grab my role");
             Role myRole = rolesManager.myRole;
@@ -345,7 +345,6 @@ namespace WerewolvesCompany.UI
             //logdebug.LogInfo("Check for targetInRangeId");
             if (!(rolesManager.myRole.targetInRangeId == null))
             {
-                logdebug.LogInfo("Reached E");
                 localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
             }
         }

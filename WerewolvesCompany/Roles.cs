@@ -211,7 +211,6 @@ namespace WerewolvesCompany
 
             string outString = $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
 
-            logdebug.LogInfo($"Out string was : {outString}");
             return outString;
 
 
