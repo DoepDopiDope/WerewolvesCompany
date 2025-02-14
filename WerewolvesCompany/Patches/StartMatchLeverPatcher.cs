@@ -43,6 +43,14 @@ namespace WerewolvesCompany.Patches
 
             if (!StartOfRound.Instance.shipHasLanded) return;
 
+            // If there are no villagers left, ignore the quota check
+            if (rolesManager.onlyWerewolvesALive)
+            {
+                __instance.triggerScript.interactable = true;
+                return;
+            }
+
+
             if (__instance.triggerScript.hoverTip.Contains("Start ship :"))
             {
                 if (!quotaManager.isQuotaMet)

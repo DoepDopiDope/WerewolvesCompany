@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Logging;
 using GameNetcodeStuff;
+using JetBrains.Annotations;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,8 +15,10 @@ namespace WerewolvesCompany
 {
     static class Utils
     {
-        static public ManualLogSource logger = Plugin.Instance.logger;
-        static public ManualLogSource logdebug = Plugin.Instance.logdebug;
+        static public ManualLogSource logger => Plugin.Instance.logger;
+        static public ManualLogSource logdebug => Plugin.Instance.logdebug;
+        static public RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static public PlayerControllerB localController => StartOfRound.Instance?.localPlayerController;
 
         static public void PrintDictionary<T1, T2>(Dictionary<T1, T2> dictionary)
         {
@@ -39,16 +42,13 @@ namespace WerewolvesCompany
 
         static public PlayerControllerB GetLocalPlayerControllerB()
         {
-            PlayerControllerB player = StartOfRound.Instance?.localPlayerController;
-            return player;
+            return StartOfRound.Instance?.localPlayerController;
+            //return localController;
         }
 
         static public RolesManager GetRolesManager()
         {
-            //RolesManager roleManagerObject = RolesManager.FindObjectOfType<RolesManager>();
-            //return roleManagerObject;
-
-            return Plugin.Instance.rolesManager;
+            return rolesManager;
         }
 
         static public void EditDeathMessage(string message = "[LIFE SUPPORT: OFFLINE]")
@@ -61,6 +61,22 @@ namespace WerewolvesCompany
         static public int Modulo(int a, int b)
         {
             return (a % b + b) % b;
+        }
+
+
+        static public bool AreThereAliveVillagers()
+        {
+            foreach (PlayerControllerB controller in StartOfRound.Instance.allPlayerScripts)
+            {
+                if (controller.IsSpawned && !controller.isPlayerDead && rolesManager.allRoles.ContainsKey(controller.OwnerClientId))
+                {
+                    if (rolesManager.allRoles[controller.OwnerClientId].team == "Village")
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false; 
         }
     }
 }

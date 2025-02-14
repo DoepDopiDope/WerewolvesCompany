@@ -61,6 +61,8 @@ namespace WerewolvesCompany.Managers
         public Role? myRole { get; set; }
 #nullable disable
 
+        public bool onlyWerewolvesALive => (!Utils.AreThereAliveVillagers());
+
 
         // Global parameters
         public NetworkVariable<bool> CanWerewolvesSeeEachOther = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);

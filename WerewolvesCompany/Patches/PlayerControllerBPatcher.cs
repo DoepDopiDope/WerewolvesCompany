@@ -39,11 +39,13 @@ namespace WerewolvesCompany.Patches
             // Check hit player
             if (hitPlayer == null)
             {
+                logdebug.LogInfo("hit player was null");
                 rolesManager.myRole.targetInRangeId = null;
                 rolesManager.myRole.targetInRangeName = null;
             }
             else
             {
+                logdebug.LogInfo($"hit player was {hitPlayer.playerUsername}");
                 rolesManager.myRole.targetInRangeId = hitPlayer.OwnerClientId;
                 rolesManager.myRole.targetInRangeName = hitPlayer.playerUsername;
             }

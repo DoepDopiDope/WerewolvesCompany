@@ -318,16 +318,24 @@ namespace WerewolvesCompany.UI
 
         public void UpdateToolTip()
         {
+            logdebug.LogInfo("=============");
+            logdebug.LogInfo("Reached A");
             PlayerControllerB localPlayer = Utils.GetLocalPlayerControllerB();
             if (localPlayer == null) return;
             if (rolesManager.myRole == null) return;
+
+            logdebug.LogInfo("Reached B");
 
             if (localPlayer.cursorTip.text.Contains(rolesManager.myRole.mainActionName))
             {
                 localPlayer.cursorTip.text = "";
             }
 
+            logdebug.LogInfo("Reached C");
+
             if (localPlayer.isPlayerDead) return;
+
+            logdebug.LogInfo("Reached D");
 
             //logdebug.LogInfo("UpdateToolTip Grab my role");
             Role myRole = rolesManager.myRole;
@@ -337,8 +345,8 @@ namespace WerewolvesCompany.UI
             //logdebug.LogInfo("Check for targetInRangeId");
             if (!(rolesManager.myRole.targetInRangeId == null))
             {
+                logdebug.LogInfo("Reached E");
                 localPlayer.cursorTip.text = rolesManager.myRole.roleActionText;
-
             }
         }
 

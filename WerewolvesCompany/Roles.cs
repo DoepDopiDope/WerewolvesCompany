@@ -116,13 +116,14 @@ namespace WerewolvesCompany
         public string terminalName => roleName.Replace(" ", "_");
         public string terminalNameColored => GetTerminalRoleNameColored();
         public virtual int refInt { get; set; } = -1;
+        public virtual string team { get; set; } = "NoTeam";
         public virtual string winCondition { get; set; } = "Role Win Condition";
         public virtual string roleShortDescription { get; set; } = "Role Short Description";
         public virtual string roleDescription { get; set; } = "Role Description";
         public virtual string rolePopUp  => $"{winCondition} {roleShortDescription}";
         public virtual Sprite roleIcon => null; // Default icon (null if none)
 
-
+        
 
 
         // Who's in range
@@ -208,8 +209,12 @@ namespace WerewolvesCompany
             if (!hasSecondaryAction) { outSecondaryTooltip = ""; }
             else { outSecondaryTooltip = secondaryActionTooltip; }
 
-            return $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
-            
+            string outString = $"{outMainTooltip}\n{outSecondaryTooltip}".Trim('\n');
+
+            logdebug.LogInfo($"Out string was : {outString}");
+            return outString;
+
+
         }
 
         public string GetRoleNameColored()
@@ -460,6 +465,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Werewolf";
         public override int refInt { get; set; }  = 0;
+        public override string team => "Werewolves";
         public override string roleNameColor { get; set; } = "red";
         public override string winCondition { get; set; } = "You win by killing all Villagers";
         public override string roleShortDescription { get; set; } = "You have the ability to kill other players";
@@ -507,6 +513,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Villager";
         public override int refInt { get; set; } = 1;
+        public override string team => "Village";
         public override string winCondition { get; set; } = "You win by killing the Werewolves.";
         public override string roleShortDescription { get; set; } = "You do not have any special ability.";
         public override string roleActionText { get; set; } = "";
@@ -534,6 +541,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Witch";
         public override int refInt { get; set; } = 2;
+        public override string team => "Village";
         public override string winCondition { get; set; } = "You win by killing the Werewolves.";
         public override string roleShortDescription { get; set; } = "You have the ability to protect one player, and kill another one.";
         public override string mainActionName { get; set; } = "Poison";
@@ -593,6 +601,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Seer";
         public override int refInt { get; set; } = 3;
+        public override string team => "Village";
         public override string winCondition { get; set; } = "You win by killing the Werewolves.";
         public override string roleShortDescription { get; set; } = "You have the ability to see a player's role.";
         public override string mainActionName { get; set; } = "Seer role";
@@ -630,6 +639,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Wild Boy";
         public override int refInt { get; set; } = 4;
+        public override string team => "Village";
         public override string winCondition { get; set; } = "For now, you win with the village.";
         public string _roleShortDescription = "You can idolize a player. If they dies, you become a werewolf.";
         public override string roleShortDescription
@@ -690,6 +700,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Cupid";
         public override int refInt { get; set; } = 5;
+        public override string team => "Village";
         public override string winCondition { get; set; }  = "You win with the village.";
         public override string roleShortDescription { get; set; }  = "You can make two players fall in love. They must win together. They also die together.";
         public override string roleDescription { get; set; } = "Cupid is able to make two players fall deeply in love.\nWhen one lover die, the other one also dies.\nThe lovers win together. If they're part of the same team, they win with their team. If they're part of different teams, they must be the only two survivors.";
@@ -851,6 +862,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Minion";
         public override int refInt { get; set; } = 6;
+        public override string team => "Werewolves";
         public override string roleNameColor { get; set; } = "red";
         public override string winCondition { get; set; } = "You win with the werewolves.";
         public override string roleShortDescription { get; set; } = "You can see the werewolves, they cannot see you.";
@@ -865,6 +877,7 @@ namespace WerewolvesCompany
     {
         public override string roleName { get; set; } = "Drunken Man";
         public override int refInt { get; set; } = 7;
+        public override string team => "Village";
         public override string winCondition { get; set; } = "You win with the village.";
         public override string roleShortDescription { get; set; } = "You've been drinking so much that you are immune to the Witch poison.";
         public override string roleDescription { get; set; } = "The Drunken Man has spent too much time at the local tavern. He has become immune to all kinds of poison, making him immune to the Witch poison.";
