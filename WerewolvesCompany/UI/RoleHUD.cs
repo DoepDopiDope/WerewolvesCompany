@@ -118,8 +118,6 @@ namespace WerewolvesCompany.UI
                 CreateVoteWindow();
             }
             
-            
-
         }
 
         public void CreateRoleText()
