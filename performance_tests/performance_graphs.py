@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+"""£µ
 Created on Sun Jan 26 11:33:48 2025
 
 @author: Dorian
@@ -25,7 +25,7 @@ for dire in os.listdir():
 
 alldirs = ['0.1.6','0.1.6.2_no_objects_calls','0.2.0','0.2.0_big_bundle','vanilla']
 # alldirs = ["0.2.0", "0.2.0_big_bundle","vanilla"]
-alldirs = ["0.5.0","0.4.0","vanilla"]
+alldirs = ["0.5.2","vanilla - 15-02-2025"]
 
 
 def getCycler(axes=None):
@@ -57,7 +57,7 @@ for dire in alldirs:
     types = ('FPS', '99th% FPS')
     color = next_color = axes[0]._get_lines.get_next_color()
     lsts = ('-', '--')
-    if dire == 'vanilla':
+    if 'vanilla' in dire:
         color = 'k'
     for typ,lst in zip(types,lsts):
         fps = df[typ]
@@ -70,6 +70,6 @@ axes[0].set_ylabel('FPS')
 
 for ax in axes:
     ax.legend(loc = 'upper right')
-plt.savefig(f'{basedir}/performance_0.5.0.png', dpi=300, bbox_inches = 'tight')
+plt.savefig(f'{basedir}/performance_0.5.2.png', dpi=300, bbox_inches = 'tight')
 plt.show()
 
