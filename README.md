@@ -199,7 +199,7 @@ Theses features are not implemented yet, but are planned:
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Maybe add a vote system for the ship departure. Will have to think about it.
 - Add a win/lose screen
-
+- Change the vote kill trigger (idea from glitched npc). Add something in the ship with a screen and a button/bell
 
 
 ### Minor possible updates

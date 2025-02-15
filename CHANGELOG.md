@@ -5,7 +5,7 @@ Minor additions:
 
 Bug fixes:
 - Fixed tooltip not showing up when aiming at a player (bug introduced in 0.5.0)
-- Removed unusued "Default Role" parameters
+- Removed unused "Default Role" parameters
 
 
 
