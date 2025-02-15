@@ -4,10 +4,40 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+  
 <PropertyGroup>
-    <PostBuildEvent>echo Copying DLL
-copy /Y "$(TargetDir)$(SolutionName).dll" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\WerewolvesCompany\$(SolutionName).dll"
+    <PostBuildEvent>echo Copy DLL to release-latest folder
+					copy /Y "$(TargetDir)$(SolutionName).dll" "$(SolutionDir)releases\latest\$(SolutionName)\$(SolutionName).dll"
+					
+					echo Copy CHANGELOG.md
+					copy /Y "$(SolutionDir)CHANGELOG.md" "$(SolutionDir)releases\latest\"
+					
+					echo Copy icon.png
+					copy /Y "$(SolutionDir)icon.png" "$(SolutionDir)releases\latest\"
+					
+					echo Copy LICENSE
+					copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)releases\latest\"
+					
+					echo Copy manifest.json
+					copy /Y "$(SolutionDir)manifest.json" "$(SolutionDir)releases\latest\"
+					
+					echo Copy README.md
+					copy /Y "$(SolutionDir)README.md" "$(SolutionDir)releases\latest\"
+					
+					echo Delete previous zip-file
+					del "$(SolutionDir)releases\latest\latest.zip"
+					
+					echo Make zip-file
+					7z a -tzip "$(SolutionDir)releases\latest\latest.zip" "$(SolutionDir)releases\latest\*"
+					
+					echo Copying release-latest folder to LethalCompany install-dir
+					xcopy /Y "$(SolutionDir)releases\latest\$(SolutionName)\" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(SolutionName)\"
+
+
 </PostBuildEvent>
+
+
+
   </PropertyGroup>
   <Target Name="NetcodePatch" BeforeTargets="PostBuildEvent">
     <Exec Command="netcode-patch -nv 1.5.2 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
