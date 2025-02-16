@@ -995,7 +995,7 @@ namespace WerewolvesCompany.Managers
             
             if (senderRole.IsAllowedToPerformMainAction()) // If can perform action, then perform it
             {
-                PerformMainActionClientRpc(clientRpcParams); 
+                PerformMainActionClientRpc(clientRpcParams);
             }
 
             else // Else, notify the sender that he cannot perform his action yet

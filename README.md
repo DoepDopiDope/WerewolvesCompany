@@ -235,6 +235,8 @@ Theses features are not implemented yet, but are planned:
 Major:
 - Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
+- Close range players got lots of error for using their action. I think it's because by the time the server allows them to do the action, the targetted player was out of range.
+- Quota is bugged, it would lift the quota restriction after only ~100value, even though it required 650 value.
 
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
