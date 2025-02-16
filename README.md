@@ -249,7 +249,6 @@ From glitch's stream
 - Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem
 - Players detection is too hard on the player, should increase the hitbox of the players, or something else. Basically the cast rays are too narrow it seems.
 - Quota is bugged, it would lift the quota restriction after only ~100value, even though it required 650 value.
-- Close range players got lots of error for using their action. I think it's because by the time the server allows them to do the action, the targetted player was out of range.
 
 
 
