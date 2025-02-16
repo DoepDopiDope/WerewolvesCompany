@@ -1452,7 +1452,6 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"Received a Cupid Romance command from the server. Cupid: {GetPlayerById(cupidId).playerUsername}");
 
-            myRole.amIRomanced = true;
 
             NotifyMainActionSuccessServerRpc(cupidId);
 

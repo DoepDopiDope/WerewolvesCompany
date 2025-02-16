@@ -178,7 +178,6 @@ namespace WerewolvesCompany
 
         // Interactions with others roles
         public bool isImmune = false;
-        public bool amIRomanced = false;
 
         public Role()
         {

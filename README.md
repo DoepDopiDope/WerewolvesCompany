@@ -235,7 +235,7 @@ Theses features are not implemented yet, but are planned:
 Major:
 - Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
-
+- Need to swap the isImmune from Roles to RolesManager, like I did for isInLoveWith
 
 
 Minor:
