@@ -978,41 +978,41 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Performing Main Action logic
 
-        [ServerRpc(RequireOwnership = false)]
-        public void PerformMainActionServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            ulong senderId = serverRpcParams.Receive.SenderClientId;
-            Role senderRole = allRoles[senderId];
-            logdebug.LogInfo($"Received action request from Player Id : {senderId}");
+        //[ServerRpc(RequireOwnership = false)]
+        //public void PerformMainActionServerRpc(ServerRpcParams serverRpcParams = default)
+        //{
+        //    ulong senderId = serverRpcParams.Receive.SenderClientId;
+        //    Role senderRole = allRoles[senderId];
+        //    logdebug.LogInfo($"Received action request from Player Id : {senderId}");
 
-            // Build the ClientRpcParams to answer to the caller
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { senderId }
-                }
-            };
+        //    // Build the ClientRpcParams to answer to the caller
+        //    ClientRpcParams clientRpcParams = new ClientRpcParams
+        //    {
+        //        Send = new ClientRpcSendParams
+        //        {
+        //            TargetClientIds = new ulong[] { senderId }
+        //        }
+        //    };
 
             
-            if (senderRole.IsAllowedToPerformMainAction()) // If can perform action, then perform it
-            {
-                PerformMainActionClientRpc(clientRpcParams);
-            }
+        //    if (senderRole.IsAllowedToPerformMainAction()) // If can perform action, then perform it
+        //    {
+        //        PerformMainActionClientRpc(clientRpcParams);
+        //    }
 
-            else // Else, notify the sender that he cannot perform his action yet
-            {
-                CannotPerformThisActionYetClientRpc(clientRpcParams); 
-            }
-        }
+        //    else // Else, notify the sender that he cannot perform his action yet
+        //    {
+        //        CannotPerformThisActionYetClientRpc(clientRpcParams); 
+        //    }
+        //}
 
 
-        [ClientRpc]
-        public void PerformMainActionClientRpc(ClientRpcParams clientRpcParams = default)
-        {
+        //[ClientRpc]
+        //public void PerformMainActionClientRpc(ClientRpcParams clientRpcParams = default)
+        //{
 
-            myRole.GenericPerformMainAction();
-        }
+        //    myRole.GenericPerformMainAction();
+        //}
 
 
         [ClientRpc]
@@ -1053,41 +1053,41 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Performing Secondary Action logic
 
-        [ServerRpc(RequireOwnership = false)]
-        public void PerformSecondaryActionServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            ulong senderId = serverRpcParams.Receive.SenderClientId;
-            Role senderRole = allRoles[senderId];
-            logdebug.LogInfo($"Received secondary action request from Player Id : {senderId}");
+        //[ServerRpc(RequireOwnership = false)]
+        //public void PerformSecondaryActionServerRpc(ServerRpcParams serverRpcParams = default)
+        //{
+        //    ulong senderId = serverRpcParams.Receive.SenderClientId;
+        //    Role senderRole = allRoles[senderId];
+        //    logdebug.LogInfo($"Received secondary action request from Player Id : {senderId}");
 
-            // Build the ClientRpcParams to answer to the caller
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[] { senderId }
-                }
-            };
-
-
-            if (senderRole.IsAllowedToPerformSecondaryAction()) // If can perform action, then perform it
-            {
-                PerformSecondaryActionClientRpc(clientRpcParams);
-            }
-
-            else // Else, notify the sender that he cannot perform his action yet
-            {
-                CannotPerformThisActionYetClientRpc(clientRpcParams);
-            }
-        }
+        //    // Build the ClientRpcParams to answer to the caller
+        //    ClientRpcParams clientRpcParams = new ClientRpcParams
+        //    {
+        //        Send = new ClientRpcSendParams
+        //        {
+        //            TargetClientIds = new ulong[] { senderId }
+        //        }
+        //    };
 
 
-        [ClientRpc]
-        public void PerformSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
-        {
+        //    if (senderRole.IsAllowedToPerformSecondaryAction()) // If can perform action, then perform it
+        //    {
+        //        PerformSecondaryActionClientRpc(clientRpcParams);
+        //    }
 
-            myRole.GenericPerformSecondaryAction();
-        }
+        //    else // Else, notify the sender that he cannot perform his action yet
+        //    {
+        //        CannotPerformThisActionYetClientRpc(clientRpcParams);
+        //    }
+        //}
+
+
+        //[ClientRpc]
+        //public void PerformSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
+        //{
+
+        //    myRole.GenericPerformSecondaryAction();
+        //}
 
 
 

@@ -44,7 +44,9 @@ namespace WerewolvesCompany.Inputs
 
             logdebug.LogInfo($"Pressed the key, performing main action for my role {myRole.roleName}");
 
-            rolesManager.PerformMainActionServerRpc();
+            myRole.GenericPerformMainAction();
+
+            //rolesManager.PerformMainActionServerRpc();
         }
 
         static public void OnRoleSecondaryKeyPressed(InputAction.CallbackContext keyContext)
@@ -63,8 +65,10 @@ namespace WerewolvesCompany.Inputs
             }
 
             logdebug.LogInfo($"Pressed the key, performing secondary action for my role {myRole.roleName}");
+            
+            myRole.GenericPerformSecondaryAction();
 
-            rolesManager.PerformSecondaryActionServerRpc();
+            //rolesManager.PerformSecondaryActionServerRpc();
         }
 
         static public void OnPopUpRoleActionKeyPressed(InputAction.CallbackContext keyContext)

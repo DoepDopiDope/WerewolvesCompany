@@ -261,15 +261,15 @@ namespace WerewolvesCompany
         }
 
 
-        public virtual bool IsAllowedToPerformMainAction()
-        {
-            return true;
-        }
+        //public virtual bool IsAllowedToPerformMainAction()
+        //{
+        //    return true;
+        //}
 
-        public virtual bool IsAllowedToPerformSecondaryAction()
-        {
-            return true;
-        }
+        //public virtual bool IsAllowedToPerformSecondaryAction()
+        //{
+        //    return true;
+        //}
 
         public void GenericPerformMainAction()
         {
@@ -293,6 +293,7 @@ namespace WerewolvesCompany
             }
 
         }
+
 
         public void GenericPerformSecondaryAction()
         {
@@ -447,8 +448,8 @@ namespace WerewolvesCompany
         {
             if (targetInRangeId == null)
             {
-                logger.LogError("targetInRange is null. It should have been caught earlier. Halting execution");
-                throw new Exception("targetInRange should not be null at this point");
+                logger.LogError("targetInRange is null. It should have been caught earlier. Halting execution.");
+                throw new Exception("targetInRange should not be null at this point.");
             }
             return targetInRangeId.Value;
         }
