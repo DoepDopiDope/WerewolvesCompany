@@ -52,7 +52,8 @@ namespace WerewolvesCompany.Patches
         {
             //quotaManager.AddScrapValue(GObject.scrapValue);
             logdebug.LogInfo($"Found scrap: {GObject.name} of value {GObject.scrapValue}");
-            rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
+            //rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
+            quotaManager.AddScrapValue(GObject.scrapValue);
         }
     }
 }

@@ -5,6 +5,7 @@ Bug fixes:
 - Fixed a bug where changing roles mid-round (e.g., Wild Boy) would reset the lovers status.
 - Fixed a bug where actions would failed to be performed due to some desync between clients and server. At least that's what I think is causing the issue, I could not test it locally.
 - Fixed a bug where the role HUD would not disappear at lobby.
+- Temporary fix for the quota bug
 
 
 
