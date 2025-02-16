@@ -59,7 +59,9 @@ namespace WerewolvesCompany.Managers
 
 #nullable enable
         public Role? myRole { get; set; }
+        public ulong? isInLoveWith = null;
 #nullable disable
+
 
         public bool onlyWerewolvesALive => (!Utils.AreThereAliveVillagers());
 
@@ -537,7 +539,6 @@ namespace WerewolvesCompany.Managers
 
 
             // Assign the player's role
-            //RolesManager roleManagerObject = FindObjectOfType<RolesManager>();
             myRole = role;
 
 
@@ -547,9 +548,8 @@ namespace WerewolvesCompany.Managers
             DisplayMyRolePopUp();
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
-            // Update my own role
-            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            string roleName = myRole.roleName;
+            // Reset my lover status
+            isInLoveWith = null;
 
 
             // Locate the RoleHUD and update it
@@ -566,6 +566,8 @@ namespace WerewolvesCompany.Managers
                 logger.LogError("Could not find the RoleHUD");
             }
 
+            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
+            string roleName = myRole.roleName;
             logdebug.LogInfo($"I am player {playerName} and I have fully completed and received the role {roleName}");
 
             // Reset death message to default
@@ -1399,9 +1401,9 @@ namespace WerewolvesCompany.Managers
             }
 
             // Check for lovers
-            if (myRole.isInLoveWith != null)
+            if (isInLoveWith != null)
             {
-                if (myRole.isInLoveWith.Value == deadId)
+                if (isInLoveWith.Value == deadId)
                 {
                     // Edit the death screen message
                     string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
@@ -1472,7 +1474,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
         {
-            myRole.isInLoveWith = myLoverId;
+            isInLoveWith = myLoverId;
             HUDManager.Instance.DisplayTip("Cupid put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
             AnswerToCupidServerRpc(cupidId);
         }

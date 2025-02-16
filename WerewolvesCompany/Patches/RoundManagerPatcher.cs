@@ -42,5 +42,6 @@ namespace WerewolvesCompany.Patches
 
             quotaManager.ComputeAndSetNewDailyQuota();
         }
+
     }
 }

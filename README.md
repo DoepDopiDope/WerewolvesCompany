@@ -95,7 +95,7 @@ You can also shorten 'werewolves' with its alias 'wc'.
 
 ## KeyBinds
 
-- **[W]** Perform main action (Kill, Poison, Seer, Idolize)
+- **[Z]** Perform main action (Kill, Poison, Seer, Idolize)
 - **[V]** Perform secondary action (Make Immune)
 - **[M]** Display my role ToolTip
 - **[P]** (hold for 5s) Distribute roles. Only exists in case the roles fail to be distributed at the beginning of the round
@@ -235,8 +235,8 @@ Theses features are not implemented yet, but are planned:
 Major:
 - Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
-- Close range players got lots of error for using their action. I think it's because by the time the server allows them to do the action, the targetted player was out of range.
-- Quota is bugged, it would lift the quota restriction after only ~100value, even though it required 650 value.
+
+
 
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
@@ -244,6 +244,12 @@ Minor:
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
 
 
+
+From glitch's stream
+- Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem
+- Players detection is too hard on the player, should increase the hitbox of the players, or something else. Basically the cast rays are too narrow it seems.
+- Quota is bugged, it would lift the quota restriction after only ~100value, even though it required 650 value.
+- Close range players got lots of error for using their action. I think it's because by the time the server allows them to do the action, the targetted player was out of range.
 
 
 

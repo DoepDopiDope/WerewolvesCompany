@@ -179,7 +179,6 @@ namespace WerewolvesCompany
         // Interactions with others roles
         public bool isImmune = false;
         public bool amIRomanced = false;
-        public ulong? isInLoveWith = null;
 
         public Role()
         {
@@ -685,6 +684,8 @@ namespace WerewolvesCompany
         public void BecomeWerewolf()
         {
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor, {rolesManager.GetPlayerById(idolizedId.Value).playerUsername}, is dead. You have become a werewolf.");
+
+            // Become Werewolf
             rolesManager.myRole = new Werewolf();
 
             // Update the roles list to all other clients

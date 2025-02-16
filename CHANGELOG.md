@@ -1,3 +1,13 @@
+### [0.5.3]
+
+
+Bug fixes:
+- Fixed a bug where changing roles mid-round (e.g., Wild Boy) would reset the lovers status.
+- 
+
+
+
+
 ### [0.5.2]
 
 Minor additions:
