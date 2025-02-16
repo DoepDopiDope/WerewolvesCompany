@@ -50,7 +50,8 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
         static void AddScrapValueToQuota(GrabbableObject GObject)
         {
-            quotaManager.AddScrapValue(GObject.scrapValue);
+            //quotaManager.AddScrapValue(GObject.scrapValue);
+            logdebug.LogInfo($"Found scrap: {GObject.name} of value {GObject.scrapValue}");
             rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
         }
     }
