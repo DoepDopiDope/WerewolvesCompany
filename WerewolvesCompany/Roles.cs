@@ -491,8 +491,8 @@ namespace WerewolvesCompany
 
         // Parameters
         public override float interactRange => rolesManager.WerewolfInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WerewolfActionCoolDown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCoolDown.Value;
+        public override float baseActionCooldown => rolesManager.WerewolfActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCooldown.Value;
 
 
 
@@ -539,8 +539,8 @@ namespace WerewolvesCompany
 
         // Parameters
         public override float interactRange => rolesManager.VillagerInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.VillagerActionCoolDown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCoolDown.Value;
+        public override float baseActionCooldown => rolesManager.VillagerActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCooldown.Value;
         
         public Villager() : base() { }
 
@@ -567,8 +567,8 @@ namespace WerewolvesCompany
 
         // Parameters
         public override float interactRange => rolesManager.WitchInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WitchActionCoolDown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCoolDown.Value;
+        public override float baseActionCooldown => rolesManager.WitchActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCooldown.Value;
 
         public Witch() : base() { }
 
@@ -628,7 +628,7 @@ namespace WerewolvesCompany
         // Parameters
         public override float interactRange => rolesManager.SeerInteractRange.Value;
         public override float baseActionCooldown => rolesManager.SeerActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCoolDown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCooldown.Value;
 
         public Seer() : base() { }
 
@@ -670,8 +670,8 @@ namespace WerewolvesCompany
 
         // Parameters
         public override float interactRange => rolesManager.WildBoyInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WildBoyActionCoolDown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCoolDown.Value;
+        public override float baseActionCooldown => rolesManager.WildBoyActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCooldown.Value;
 
 
         public WildBoy() : base() { }
@@ -704,12 +704,12 @@ namespace WerewolvesCompany
         {
             HUDManager.Instance.DisplayTip(roleNameColored, $"{rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a <color=red>Werewolf</color>.");
 
-            // Become Werewolf
-            //rolesManager.myRole = new Werewolf();
 
             rolesManager.BecomeRole("Werewolf", true);
-
+            
+            // Set role cd to 30s
             rolesManager.myRole.currentMainActionCooldown = 30f;
+
             // Update the roles list to all other clients
             rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
         }
@@ -747,8 +747,8 @@ namespace WerewolvesCompany
 
         // Parameters
         public override float interactRange => rolesManager.CupidInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.CupidActionCoolDown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCoolDown.Value;
+        public override float baseActionCooldown => rolesManager.CupidActionCooldown.Value;
+        public override float startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCooldown.Value;
         
         
         public Cupid() : base() { }

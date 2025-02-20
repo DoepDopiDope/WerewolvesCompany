@@ -61,33 +61,34 @@ namespace WerewolvesCompany
 
         // Werewolf Role Parameters
         public static ConfigEntry<float> config_WerewolfInteractRange;
-        public static ConfigEntry<float> config_WerewolfActionCoolDown;
-        public static ConfigEntry<float> config_WerewolfStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_WerewolfActionCooldown;
+        public static ConfigEntry<float> config_WerewolfStartOfRoundActionCooldown;
 
         // Villager Role Parameters
         public static ConfigEntry<float> config_VillagerInteractRange;
-        public static ConfigEntry<float> config_VillagerActionCoolDown;
-        public static ConfigEntry<float> config_VillagerStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_VillagerActionCooldown;
+        public static ConfigEntry<float> config_VillagerStartOfRoundActionCooldown;
 
         // Witch Role Parameters
         public static ConfigEntry<float> config_WitchInteractRange;
-        public static ConfigEntry<float> config_WitchActionCoolDown;
-        public static ConfigEntry<float> config_WitchStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_WitchActionCooldown;
+        public static ConfigEntry<float> config_WitchStartOfRoundActionCooldown;
 
         // Seer Role Parameters
         public static ConfigEntry<float> config_SeerInteractRange;
-        public static ConfigEntry<float> config_SeerActionCoolDown;
-        public static ConfigEntry<float> config_SeerStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_SeerActionCooldown;
+        public static ConfigEntry<float> config_SeerStartOfRoundActionCooldown;
 
         // Wild Boy Role Parameters
         public static ConfigEntry<float> config_WildBoyInteractRange;
-        public static ConfigEntry<float> config_WildBoyActionCoolDown;
-        public static ConfigEntry<float> config_WildBoyStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_WildBoyActionCooldown;
+        public static ConfigEntry<float> config_WildBoyStartOfRoundActionCooldown;
+        public static ConfigEntry<float> config_WildBoyActionCooldownOnTransform;
 
         // Cupid Role Parameters
         public static ConfigEntry<float> config_CupidInteractRange;
-        public static ConfigEntry<float> config_CupidActionCoolDown;
-        public static ConfigEntry<float> config_CupidStartOfRoundActionCoolDown;
+        public static ConfigEntry<float> config_CupidActionCooldown;
+        public static ConfigEntry<float> config_CupidStartOfRoundActionCooldown;
         
         
 
@@ -114,33 +115,34 @@ namespace WerewolvesCompany
 
             // Werewolf parameters
             config_WerewolfInteractRange              = Config.Bind("Role: Werewolf", "Kill Range", 1.5f, "How far a Werewolf can kill another player.");
-            config_WerewolfActionCoolDown             = Config.Bind("Role: Werewolf", "Kill Cooldown", 120f, "How often a Werewolf can kill another player (in seconds).");
-            config_WerewolfStartOfRoundActionCoolDown = Config.Bind("Role: Werewolf", "Kill Cooldown at start of round", 120f, "How soon after the start of a round a Werewolf can Kill someone (in seconds).");
+            config_WerewolfActionCooldown             = Config.Bind("Role: Werewolf", "Kill Cooldown", 120f, "How often a Werewolf can kill another player (in seconds).");
+            config_WerewolfStartOfRoundActionCooldown = Config.Bind("Role: Werewolf", "Kill Cooldown at start of round", 120f, "How soon after the start of a round a Werewolf can Kill someone (in seconds).");
 
             // Villager parameters
             config_VillagerInteractRange              = Config.Bind("Role: Villager", "PatPat Range", 1.5f, "Unused -- How far the player can use his Action on another player");
-            config_VillagerActionCoolDown             = Config.Bind("Role: Villager", "PatPat Cooldown", 0f, "Unused -- How often can a Villager use his action (in seconds).");
-            config_VillagerStartOfRoundActionCoolDown = Config.Bind("Role: Villager", "PatPat Cooldown at start of round", 0f, "How soon after a round has started a Villager can PatPat another villager (in seconds).");
+            config_VillagerActionCooldown             = Config.Bind("Role: Villager", "PatPat Cooldown", 0f, "Unused -- How often can a Villager use his action (in seconds).");
+            config_VillagerStartOfRoundActionCooldown = Config.Bind("Role: Villager", "PatPat Cooldown at start of round", 0f, "How soon after a round has started a Villager can PatPat another villager (in seconds).");
 
             // Witch parameters
             config_WitchInteractRange              = Config.Bind("Role: Witch", "Potion Range", 1.5f, "How far a Witch can use a potion on another.");
-            config_WitchActionCoolDown             = Config.Bind("Role: Witch", "Potion Cooldown", 9999f, "How often a Witch can use each potion (in seconds).");
-            config_WitchStartOfRoundActionCoolDown = Config.Bind("Role: Witch", "Potion Cooldown at start of round", 120f, "How soon after a round has started a Witch can use her potions (in seconds).");
+            config_WitchActionCooldown             = Config.Bind("Role: Witch", "Potion Cooldown", 9999f, "How often a Witch can use each potion (in seconds).");
+            config_WitchStartOfRoundActionCooldown = Config.Bind("Role: Witch", "Potion Cooldown at start of round", 120f, "How soon after a round has started a Witch can use her potions (in seconds).");
 
             // Seer parameters
             config_SeerInteractRange              = Config.Bind("Role: Seer", "Seer Range", 10f, "How far the Seer can seer another player role.");
-            config_SeerActionCoolDown             = Config.Bind("Role: Seer", "Seer Cooldown", 120f, "How often the Seer can seer another player role (in seconds).");
-            config_SeerStartOfRoundActionCoolDown = Config.Bind("Role: Seer", "Seer Cooldown at start of round", 120f, "How soon after a round has started a Seer can seer a player role (in seconds).");
+            config_SeerActionCooldown             = Config.Bind("Role: Seer", "Seer Cooldown", 120f, "How often the Seer can seer another player role (in seconds).");
+            config_SeerStartOfRoundActionCooldown = Config.Bind("Role: Seer", "Seer Cooldown at start of round", 120f, "How soon after a round has started a Seer can seer a player role (in seconds).");
 
             // Wild Boy parameters
             config_WildBoyInteractRange              = Config.Bind("Role: Wild Boy", "Idolize Range", 30f, "How far the Wild Boy can idolize another player.");
-            config_WildBoyActionCoolDown             = Config.Bind("Role: Wild Boy", "Idolize Cooldown", 9999f, "How often the Wild Boy can idolize another player (in seconds).");
-            config_WildBoyStartOfRoundActionCoolDown = Config.Bind("Role: Wild Boy", "Idolize Cooldown at start of round", 0f, "How soon after a round has started a WildBoy can idolize another player (in seconds).");
+            config_WildBoyActionCooldown             = Config.Bind("Role: Wild Boy", "Idolize Cooldown", 9999f, "How often the Wild Boy can idolize another player (in seconds).");
+            config_WildBoyStartOfRoundActionCooldown = Config.Bind("Role: Wild Boy", "Idolize Cooldown at start of round", 0f, "How soon after a round has started a WildBoy can idolize another player (in seconds).");
+            config_WildBoyActionCooldownOnTransform  = Config.Bind("Role: Wild Boy", "Werewolf Kill Cooldown on transform", 0f, "Cooldown of the Werewolf Kill action after transformation.");
 
             // Cupid parameters
             config_CupidInteractRange              = Config.Bind("Role: Cupid", "Romance Range", 30f, "How far Cupid can make someone fall in love.");
-            config_CupidActionCoolDown             = Config.Bind("Role: Cupid", "Romance Cooldown", 9999f, "How often Cupid can create lovers (in seconds).");
-            config_CupidStartOfRoundActionCoolDown = Config.Bind("Role: Cupid", "Romance Cooldown at start of round", 0f, "How soon after a round has started Cupid can create lovers (in seconds).");
+            config_CupidActionCooldown             = Config.Bind("Role: Cupid", "Romance Cooldown", 9999f, "How often Cupid can create lovers (in seconds).");
+            config_CupidStartOfRoundActionCooldown = Config.Bind("Role: Cupid", "Romance Cooldown at start of round", 0f, "How soon after a round has started Cupid can create lovers (in seconds).");
         }
 
 

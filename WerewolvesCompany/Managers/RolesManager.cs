@@ -72,33 +72,34 @@ namespace WerewolvesCompany.Managers
 
         // Werewolf parameters
         public NetworkVariable<float> WerewolfInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WerewolfActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WerewolfStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WerewolfActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WerewolfStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Villager parameters
         public NetworkVariable<float> VillagerInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VillagerActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VillagerStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> VillagerActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> VillagerStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Witch parameters
         public NetworkVariable<float> WitchInteractRange     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WitchActionCoolDown    = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WitchStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WitchActionCooldown    = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WitchStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Seer parameters
         public NetworkVariable<float> SeerInteractRange      = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> SeerActionCooldown     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> SeerStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> SeerStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Wild Boy parameters
         public NetworkVariable<float> WildBoyInteractRange   = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WildBoyActionCoolDown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WildBoyStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WildBoyActionCooldown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WildBoyStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> WildBoyActionCooldownOnTransform = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         // Wild Boy parameters
         public NetworkVariable<float> CupidInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> CupidActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> CupidStartOfRoundActionCoolDown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> CupidStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
 
 
@@ -134,33 +135,34 @@ namespace WerewolvesCompany.Managers
 
                 // Werewolf parameters
                 WerewolfInteractRange.Value = Plugin.config_WerewolfInteractRange.Value;
-                WerewolfActionCoolDown.Value = Plugin.config_WerewolfActionCoolDown.Value;
-                WerewolfStartOfRoundActionCoolDown.Value = Plugin.config_WerewolfStartOfRoundActionCoolDown.Value;
+                WerewolfActionCooldown.Value = Plugin.config_WerewolfActionCooldown.Value;
+                WerewolfStartOfRoundActionCooldown.Value = Plugin.config_WerewolfStartOfRoundActionCooldown.Value;
 
                 // Villager parameters
                 VillagerInteractRange.Value = Plugin.config_VillagerInteractRange.Value;
-                VillagerActionCoolDown.Value = Plugin.config_VillagerActionCoolDown.Value;
-                VillagerStartOfRoundActionCoolDown.Value = Plugin.config_VillagerStartOfRoundActionCoolDown.Value;
+                VillagerActionCooldown.Value = Plugin.config_VillagerActionCooldown.Value;
+                VillagerStartOfRoundActionCooldown.Value = Plugin.config_VillagerStartOfRoundActionCooldown.Value;
 
                 // Witch parameters
                 WitchInteractRange.Value = Plugin.config_WitchInteractRange.Value;
-                WitchActionCoolDown.Value = Plugin.config_WitchActionCoolDown.Value;
-                WitchStartOfRoundActionCoolDown.Value = Plugin.config_WitchStartOfRoundActionCoolDown.Value;
+                WitchActionCooldown.Value = Plugin.config_WitchActionCooldown.Value;
+                WitchStartOfRoundActionCooldown.Value = Plugin.config_WitchStartOfRoundActionCooldown.Value;
 
                 // Seer parameters
                 SeerInteractRange.Value = Plugin.config_SeerInteractRange.Value;
-                SeerActionCooldown.Value = Plugin.config_SeerActionCoolDown.Value;
-                SeerStartOfRoundActionCoolDown.Value = Plugin.config_SeerStartOfRoundActionCoolDown.Value;
+                SeerActionCooldown.Value = Plugin.config_SeerActionCooldown.Value;
+                SeerStartOfRoundActionCooldown.Value = Plugin.config_SeerStartOfRoundActionCooldown.Value;
 
                 // Wild Boy parameters
                 WildBoyInteractRange.Value = Plugin.config_WildBoyInteractRange.Value;
-                WildBoyActionCoolDown.Value = Plugin.config_WildBoyActionCoolDown.Value;
-                WildBoyStartOfRoundActionCoolDown.Value = Plugin.config_WildBoyStartOfRoundActionCoolDown.Value;
+                WildBoyActionCooldown.Value = Plugin.config_WildBoyActionCooldown.Value;
+                WildBoyStartOfRoundActionCooldown.Value = Plugin.config_WildBoyStartOfRoundActionCooldown.Value;
+                WildBoyActionCooldownOnTransform.Value = Plugin.config_WildBoyActionCooldownOnTransform.Value;
 
                 // Cupid parameters
                 CupidInteractRange.Value = Plugin.config_CupidInteractRange.Value;
-                CupidActionCoolDown.Value = Plugin.config_CupidActionCoolDown.Value;
-                CupidStartOfRoundActionCoolDown.Value = Plugin.config_CupidStartOfRoundActionCoolDown.Value;
+                CupidActionCooldown.Value = Plugin.config_CupidActionCooldown.Value;
+                CupidStartOfRoundActionCooldown.Value = Plugin.config_CupidStartOfRoundActionCooldown.Value;
             }
         }
 
