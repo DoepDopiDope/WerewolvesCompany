@@ -31,11 +31,14 @@ namespace WerewolvesCompany.Patches
         {
             if (__instance.IsHost)
             {
-                GameObject go = GameObject.Instantiate(Plugin.Instance.netManagerPrefab);
-                go.GetComponent<NetworkObject>().Spawn();
+                GameObject rolesManagerObject = GameObject.Instantiate(Plugin.Instance.rolesManagerPrefab);
+                rolesManagerObject.GetComponent<NetworkObject>().Spawn();
+
+                GameObject configManagerObject = GameObject.Instantiate(Plugin.Instance.configManagerPrefab);
+                configManagerObject.GetComponent<NetworkObject>().Spawn();
+
             }
         }
-
 
         [HarmonyPostfix]
         [HarmonyPatch("ReviveDeadPlayers")]

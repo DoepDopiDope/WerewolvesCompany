@@ -5,7 +5,7 @@ using BepInEx.Logging;
 using GameNetcodeStuff;
 using Unity.Netcode;
 using UnityEngine;
-using WerewolvesCompany.Managers;
+using WerewolvesCompany.Config;
 using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Managers
@@ -15,6 +15,7 @@ namespace WerewolvesCompany.Managers
         public QuotaManager Instance;
 
         public RolesManager rolesManager => Plugin.Instance.rolesManager;
+        public ConfigManager configManager => Plugin.Instance.configManager;
         public RoleHUD roleHUD => Plugin.Instance.roleHUD;
 
         public ManualLogSource logger = Plugin.Instance.logger;
@@ -77,9 +78,9 @@ namespace WerewolvesCompany.Managers
             // Quota from Infected Company, will require testing
             int levelTotalValue = Mathf.RoundToInt(RoundManager.Instance.totalScrapValueInLevel);
             int Nplayers = StartOfRound.Instance.connectedPlayersAmount;
-            float playersWeightedQuota = (float)Mathf.Max(0, Nplayers - rolesManager.quotaNplayersOffset.Value) * rolesManager.quotaPlayersWeight.Value;
-            float playersAndLevelWeightedQuota = (float)levelTotalValue * (rolesManager.quotaMinMultiplier.Value + playersWeightedQuota);
-            float finalQuota = Mathf.Min(playersAndLevelWeightedQuota, (float)levelTotalValue * rolesManager.quotaMaxMultiplier.Value);
+            float playersWeightedQuota = (float)Mathf.Max(0, Nplayers - configManager.quotaNplayersOffset.Value) * configManager.quotaPlayersWeight.Value;
+            float playersAndLevelWeightedQuota = (float)levelTotalValue * (configManager.quotaMinMultiplier.Value + playersWeightedQuota);
+            float finalQuota = Mathf.Min(playersAndLevelWeightedQuota, (float)levelTotalValue * configManager.quotaMaxMultiplier.Value);
 
             return (int)finalQuota;
         }

@@ -9,7 +9,6 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
-using WerewolvesCompany.Managers;
 
 using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
@@ -28,6 +27,7 @@ using DunGen.Graph;
 using UnityEngine.UIElements;
 using WerewolvesCompany.Inputs;
 using System.Numerics;
+using WerewolvesCompany.Config;
 
 
 
@@ -39,6 +39,7 @@ namespace WerewolvesCompany.Managers
         public RolesManager Instance;
         public RoleHUD roleHUD => Plugin.Instance.roleHUD;
         public QuotaManager quotaManager => Plugin.Instance.quotaManager;
+        public ConfigManager configManager => Plugin.Instance.configManager;
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
@@ -65,48 +66,7 @@ namespace WerewolvesCompany.Managers
         public bool onlyWerewolvesALive => (!Utils.AreThereAliveVillagers());
 
 
-        // Global parameters
-        public NetworkVariable<bool> CanWerewolvesSeeEachOther = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<bool> DisableTooltipWhenBodyDroppedInShip = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VoteCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VoteAmount = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Quota parameters
-        public NetworkVariable<float> quotaMinMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaPlayersWeight = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaNplayersOffset = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaMaxMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Werewolf parameters
-        public NetworkVariable<float> WerewolfInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WerewolfActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WerewolfStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Villager parameters
-        public NetworkVariable<float> VillagerInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VillagerActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> VillagerStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Witch parameters
-        public NetworkVariable<float> WitchInteractRange     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WitchActionCooldown    = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WitchStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Seer parameters
-        public NetworkVariable<float> SeerInteractRange      = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> SeerActionCooldown     = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> SeerStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Wild Boy parameters
-        public NetworkVariable<float> WildBoyInteractRange   = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WildBoyActionCooldown  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WildBoyStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> WildBoyActionCooldownOnTransform = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-        // Wild Boy parameters
-        public NetworkVariable<float> CupidInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> CupidActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> CupidStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        
 
 
 
@@ -126,51 +86,6 @@ namespace WerewolvesCompany.Managers
 
             logdebug.LogInfo("RolesManager NetworkSpawn");
 
-            if (IsServer)
-            {
-                // Global parameters
-                CanWerewolvesSeeEachOther.Value = Plugin.config_CanWerewolvesSeeEachOther.Value;
-                DisableTooltipWhenBodyDroppedInShip.Value = Plugin.config_DisableTooltipWhenBodyDroppedInShip.Value;
-                VoteCooldown.Value = Plugin.config_VoteCooldown.Value;
-                VoteAmount.Value = Plugin.config_VoteAmount.Value;
-
-                // Quota parameter
-                quotaMinMultiplier.Value = Plugin.config_QuotaMinMultiplier.Value;
-                quotaPlayersWeight.Value  = Plugin.config_QuotaPlayersWeight.Value;
-                quotaNplayersOffset.Value = Plugin.config_QuotaNplayersOffset.Value;
-                quotaMaxMultiplier.Value  = Plugin.config_QuotaMaxMultiplier.Value;
-
-                // Werewolf parameters
-                WerewolfInteractRange.Value = Plugin.config_WerewolfInteractRange.Value;
-                WerewolfActionCooldown.Value = Plugin.config_WerewolfActionCooldown.Value;
-                WerewolfStartOfRoundActionCooldown.Value = Plugin.config_WerewolfStartOfRoundActionCooldown.Value;
-
-                // Villager parameters
-                VillagerInteractRange.Value = Plugin.config_VillagerInteractRange.Value;
-                VillagerActionCooldown.Value = Plugin.config_VillagerActionCooldown.Value;
-                VillagerStartOfRoundActionCooldown.Value = Plugin.config_VillagerStartOfRoundActionCooldown.Value;
-
-                // Witch parameters
-                WitchInteractRange.Value = Plugin.config_WitchInteractRange.Value;
-                WitchActionCooldown.Value = Plugin.config_WitchActionCooldown.Value;
-                WitchStartOfRoundActionCooldown.Value = Plugin.config_WitchStartOfRoundActionCooldown.Value;
-
-                // Seer parameters
-                SeerInteractRange.Value = Plugin.config_SeerInteractRange.Value;
-                SeerActionCooldown.Value = Plugin.config_SeerActionCooldown.Value;
-                SeerStartOfRoundActionCooldown.Value = Plugin.config_SeerStartOfRoundActionCooldown.Value;
-
-                // Wild Boy parameters
-                WildBoyInteractRange.Value = Plugin.config_WildBoyInteractRange.Value;
-                WildBoyActionCooldown.Value = Plugin.config_WildBoyActionCooldown.Value;
-                WildBoyStartOfRoundActionCooldown.Value = Plugin.config_WildBoyStartOfRoundActionCooldown.Value;
-                WildBoyActionCooldownOnTransform.Value = Plugin.config_WildBoyActionCooldownOnTransform.Value;
-
-                // Cupid parameters
-                CupidInteractRange.Value = Plugin.config_CupidInteractRange.Value;
-                CupidActionCooldown.Value = Plugin.config_CupidActionCooldown.Value;
-                CupidStartOfRoundActionCooldown.Value = Plugin.config_CupidStartOfRoundActionCooldown.Value;
-            }
         }
 
         void Awake()
@@ -241,7 +156,7 @@ namespace WerewolvesCompany.Managers
         public override void OnDestroy()
         {
             base.OnDestroy();
-            logger.LogError($"{name} has been destroyed!");
+            logdebug.LogError($"{name} has been destroyed!");
         }
 
 
@@ -650,7 +565,7 @@ namespace WerewolvesCompany.Managers
             //logdebug.LogInfo("Check fo rvoted off player");
             foreach (var item in votesResults)
             {
-                if ((((float)item.Value) / ((float)votesResults.Count)) > VoteAmount.Value)
+                if ((((float)item.Value) / ((float)votesResults.Count)) > configManager.VoteAmount.Value)
                 {
                     return item.Key;
                 }
@@ -752,7 +667,7 @@ namespace WerewolvesCompany.Managers
 
         public void SetVoteKillOnCooldown()
         {
-            voteKillCurrentCooldown = VoteCooldown.Value;
+            voteKillCurrentCooldown = configManager.VoteCooldown.Value;
         }
 
         [ClientRpc]

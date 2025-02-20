@@ -19,6 +19,8 @@ using JetBrains.Annotations;
 using Unity.IO.LowLevel.Unsafe;
 using Unity.Netcode;
 using System.Drawing;
+using System.Runtime.CompilerServices;
+using WerewolvesCompany.Config;
 
 
 
@@ -122,7 +124,8 @@ namespace WerewolvesCompany
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
-        public RolesManager rolesManager = Utils.GetRolesManager();
+        public RolesManager rolesManager => Plugin.Instance.rolesManager;
+        public ConfigManager configManager => Plugin.Instance.configManager;
 
         public virtual string roleName { get; set; } = "Default Role Name";
 #nullable enable
@@ -490,9 +493,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Werewolves shall kill other players before ship departure.\nThe Werewolf has the ability to kill another player.";
 
         // Parameters
-        public override float interactRange => rolesManager.WerewolfInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WerewolfActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WerewolfStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.WerewolfInteractRange.Value;
+        public override float baseActionCooldown => configManager.WerewolfActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.WerewolfStartOfRoundActionCooldown.Value;
 
 
 
@@ -538,9 +541,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
 
         // Parameters
-        public override float interactRange => rolesManager.VillagerInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.VillagerActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.VillagerStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.VillagerInteractRange.Value;
+        public override float baseActionCooldown => configManager.VillagerActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.VillagerStartOfRoundActionCooldown.Value;
         
         public Villager() : base() { }
 
@@ -566,9 +569,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Witch is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Witch has two potions, and can do two things:\n- Poison another player and kill him (once per round)\n- Protect another player and make him immune once to a Werewolf attack (once per round). The immune player won't know they has been immunized, nor will they know they loses his immune status. The Witch cannot protect herself.";
 
         // Parameters
-        public override float interactRange => rolesManager.WitchInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WitchActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WitchStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.WitchInteractRange.Value;
+        public override float baseActionCooldown => configManager.WitchActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.WitchStartOfRoundActionCooldown.Value;
 
         public Witch() : base() { }
 
@@ -626,9 +629,9 @@ namespace WerewolvesCompany
         public override string roleDescription { get; set; } = "The Seer is part of the village. She shall find and kill the Werewolves before ship departure.\nThe Seer can seer another player's role.";
 
         // Parameters
-        public override float interactRange => rolesManager.SeerInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.SeerActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.SeerStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.SeerInteractRange.Value;
+        public override float baseActionCooldown => configManager.SeerActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.SeerStartOfRoundActionCooldown.Value;
 
         public Seer() : base() { }
 
@@ -669,9 +672,9 @@ namespace WerewolvesCompany
         public ulong? idolizedId;
 
         // Parameters
-        public override float interactRange => rolesManager.WildBoyInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.WildBoyActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.WildBoyStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.WildBoyInteractRange.Value;
+        public override float baseActionCooldown => configManager.WildBoyActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.WildBoyStartOfRoundActionCooldown.Value;
 
 
         public WildBoy() : base() { }
@@ -708,7 +711,7 @@ namespace WerewolvesCompany
             rolesManager.BecomeRole("Werewolf", true);
             
             // Set role cd to 30s
-            rolesManager.myRole.currentMainActionCooldown = rolesManager.WildBoyActionCooldownOnTransform.Value;
+            rolesManager.myRole.currentMainActionCooldown = configManager.WildBoyActionCooldownOnTransform.Value;
 
             // Update the roles list to all other clients
             rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
@@ -746,9 +749,9 @@ namespace WerewolvesCompany
         public int romancedPlayersCallbackAmount = 0;
 
         // Parameters
-        public override float interactRange => rolesManager.CupidInteractRange.Value;
-        public override float baseActionCooldown => rolesManager.CupidActionCooldown.Value;
-        public override float startOfRoundActionCooldown => rolesManager.CupidStartOfRoundActionCooldown.Value;
+        public override float interactRange => configManager.CupidInteractRange.Value;
+        public override float baseActionCooldown => configManager.CupidActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.CupidStartOfRoundActionCooldown.Value;
         
         
         public Cupid() : base() { }

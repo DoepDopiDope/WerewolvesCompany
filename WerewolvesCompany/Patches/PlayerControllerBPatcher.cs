@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using UnityEngine.Rendering;
 using TMPro;
+using WerewolvesCompany.Config;
 
 namespace WerewolvesCompany.Patches
 {
@@ -21,6 +22,7 @@ namespace WerewolvesCompany.Patches
         static private RoleHUD roleHUD = Plugin.Instance.roleHUD;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;
         static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
+        static private ConfigManager configManager => Plugin.Instance.configManager;
 
         [HarmonyPostfix]
         [HarmonyPatch("LateUpdate")]
@@ -87,10 +89,10 @@ namespace WerewolvesCompany.Patches
             //"<color=pink>lover</color>"
             string loverLine = " <color=#ff00ffff><3</color>";
             __instance.usernameBillboardText.text = __instance.usernameBillboardText.text.Replace(loverLine, "");
-            
+
 
             // Check if the player is a Werewolf, and should be displayed in red in case I'm also a Werewolf
-            if (rolesManager.CanWerewolvesSeeEachOther.Value)
+            if (configManager.CanWerewolvesSeeEachOther.Value)
             {
                 if (!(rolesManager.myRole == null))
                 {

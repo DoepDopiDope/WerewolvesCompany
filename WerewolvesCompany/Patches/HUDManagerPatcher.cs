@@ -4,6 +4,7 @@ using System.Text;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
+using WerewolvesCompany.Config;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;
 
@@ -18,6 +19,7 @@ namespace WerewolvesCompany.Patches
         static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
         static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;
+        static private ConfigManager configManager => Plugin.Instance.configManager;
 
 
         [HarmonyPostfix]
@@ -37,7 +39,7 @@ namespace WerewolvesCompany.Patches
         static bool PreventTooltipOnDropBodyInShip(GrabbableObject GObject)
         {
             // Check if object is a ragdoll, and therefore do not display the tooltip
-            if (Utils.GetRolesManager().DisableTooltipWhenBodyDroppedInShip.Value && GObject.name.ToLower().Contains("ragdoll"))
+            if (configManager.DisableTooltipWhenBodyDroppedInShip.Value && GObject.name.ToLower().Contains("ragdoll"))
             {
                 logdebug.LogInfo($"Skipped tooltip for item: {GObject.name}");
                 return false;
