@@ -19,7 +19,6 @@ namespace WerewolvesCompany.Inputs
 
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        static public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         static public bool IsHost => rolesManager.IsHost;
         static public PlayerControllerB localController => Utils.GetLocalPlayerControllerB();

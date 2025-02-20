@@ -19,7 +19,6 @@ namespace WerewolvesCompany.Managers
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         public int currentScrapValue = 0;
         public int requiredDailyQuota = 100;

@@ -17,7 +17,6 @@ namespace WerewolvesCompany.Patches
     {
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        static public ManualLogSource logupdate = Plugin.Instance.logupdate;
         
         static private RoleHUD roleHUD = Plugin.Instance.roleHUD;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;

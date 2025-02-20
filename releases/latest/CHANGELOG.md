@@ -1,4 +1,4 @@
-### [0.5.3]
+### [0.5.4]
 
 Minor Changes
 - When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s

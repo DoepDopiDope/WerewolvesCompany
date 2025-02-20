@@ -42,7 +42,6 @@ namespace WerewolvesCompany.Managers
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         public System.Random rng = Plugin.Instance.rng;
         public Dictionary<ulong, Role> allRoles;

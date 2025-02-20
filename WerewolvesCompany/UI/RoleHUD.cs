@@ -21,7 +21,6 @@ namespace WerewolvesCompany.UI
 
         public ManualLogSource logger = Plugin.Instance.logger;
         public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
         GUIStyle style = new GUIStyle();
 

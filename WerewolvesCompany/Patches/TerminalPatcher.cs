@@ -34,7 +34,6 @@ namespace WerewolvesCompany.Patches
 
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
-        static public ManualLogSource logupdate = Plugin.Instance.logupdate;
 
 
 

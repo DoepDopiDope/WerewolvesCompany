@@ -36,7 +36,6 @@ namespace WerewolvesCompany
 
         public ManualLogSource logger;
         public ManualLogSource logdebug;
-        public ManualLogSource logupdate;
 
         public System.Random rng;
         
@@ -152,12 +151,9 @@ namespace WerewolvesCompany
             // Setup logging
             logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID}");
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
-            logupdate = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- update");
             logger.LogInfo("Plugin is initializing...");
 
-
             //BepInEx.Logging.Logger.Sources.Remove(logdebug);
-            BepInEx.Logging.Logger.Sources.Remove(logupdate);
 
 
 
