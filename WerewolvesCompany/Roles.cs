@@ -708,7 +708,7 @@ namespace WerewolvesCompany
             rolesManager.BecomeRole("Werewolf", true);
             
             // Set role cd to 30s
-            rolesManager.myRole.currentMainActionCooldown = 30f;
+            rolesManager.myRole.currentMainActionCooldown = rolesManager.WildBoyActionCooldownOnTransform.Value;
 
             // Update the roles list to all other clients
             rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);

@@ -137,7 +137,7 @@ namespace WerewolvesCompany
             config_WildBoyInteractRange              = Config.Bind("Role: Wild Boy", "Idolize Range", 30f, "How far the Wild Boy can idolize another player.");
             config_WildBoyActionCooldown             = Config.Bind("Role: Wild Boy", "Idolize Cooldown", 9999f, "How often the Wild Boy can idolize another player (in seconds).");
             config_WildBoyStartOfRoundActionCooldown = Config.Bind("Role: Wild Boy", "Idolize Cooldown at start of round", 0f, "How soon after a round has started a WildBoy can idolize another player (in seconds).");
-            config_WildBoyActionCooldownOnTransform  = Config.Bind("Role: Wild Boy", "Werewolf Kill Cooldown on transform", 0f, "Cooldown of the Werewolf Kill action after transformation.");
+            config_WildBoyActionCooldownOnTransform  = Config.Bind("Role: Wild Boy", "Werewolf Kill Cooldown on transform", 30f, "Cooldown of the Werewolf Kill action after transformation.");
 
             // Cupid parameters
             config_CupidInteractRange              = Config.Bind("Role: Cupid", "Romance Range", 30f, "How far Cupid can make someone fall in love.");

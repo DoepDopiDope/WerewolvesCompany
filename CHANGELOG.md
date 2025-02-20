@@ -2,6 +2,7 @@
 
 Minor Changes
 - When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s
+- Wid Boy kill cooldown on transform can be edited from config file
 
 Bug fixes
 - Fixed a bug where the wild boy transformation would reset its lover status
