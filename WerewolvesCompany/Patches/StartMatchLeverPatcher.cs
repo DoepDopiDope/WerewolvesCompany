@@ -27,6 +27,8 @@ namespace WerewolvesCompany.Patches
         static void GetDefaultDisabledHoverTip(StartMatchLever __instance)
         {
             defaultDisabledHoverTip = __instance.triggerScript.disabledHoverTip;
+
+            rolesManager.hasAlreadyDistributedRolesThisRound = false;
         }
 
 

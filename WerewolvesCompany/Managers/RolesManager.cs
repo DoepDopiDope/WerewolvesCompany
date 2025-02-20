@@ -54,6 +54,7 @@ namespace WerewolvesCompany.Managers
 
         public float voteKillCurrentCooldown = 0f;
         public bool isVoteOnCooldown => (voteKillCurrentCooldown > 0);
+        public bool hasAlreadyDistributedRolesThisRound = false;
         //public Role spectatedPlayerRole;
 
 #nullable enable

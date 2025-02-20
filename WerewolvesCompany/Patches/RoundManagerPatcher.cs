@@ -37,10 +37,14 @@ namespace WerewolvesCompany.Patches
                 return;
             }
 
+            if (rolesManager.hasAlreadyDistributedRolesThisRound) return;
+
             logger.LogInfo("Providing roles");
             rolesManager.BuildAndSendRoles();
 
             quotaManager.ComputeAndSetNewDailyQuota();
+
+            rolesManager.hasAlreadyDistributedRolesThisRound = true;
         }
 
     }
