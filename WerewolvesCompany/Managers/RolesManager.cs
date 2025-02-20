@@ -59,7 +59,6 @@ namespace WerewolvesCompany.Managers
 
 #nullable enable
         public Role? myRole { get; set; }
-        public ulong? isInLoveWith = null;
 #nullable disable
 
 
@@ -517,7 +516,13 @@ namespace WerewolvesCompany.Managers
         }
 
 
-        
+        public void BecomeRole(string roleName, bool keepInteractions)
+        {
+            Role role = References.GetRoleByName(roleName);
+            RolesInteractions interactions = myRole.interactions;
+            myRole = role;
+            if (keepInteractions) myRole.interactions = interactions;
+        }
 
         public void DisplayMyRolePopUp()
         {
@@ -549,7 +554,7 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I have successfully displayed my Role tooltip");
 
             // Reset my lover status
-            isInLoveWith = null;
+            myRole.interactions.isInLoveWith = null;
 
 
             // Locate the RoleHUD and update it
@@ -1263,10 +1268,10 @@ namespace WerewolvesCompany.Managers
             if (myRole != null)
             {
                 // If player is immune, remove immunity and notify the werewolf
-                if (myRole.isImmune)
+                if (myRole.interactions.isImmune)
                 {
                     logdebug.LogInfo("I am immune, therefore I do not die and notify the server");
-                    myRole.isImmune = false;
+                    myRole.interactions.isImmune = false;
                     NotifyMainActionFailedServerRpc(werewolfId);
                     return;
                 }
@@ -1352,7 +1357,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         private void WitchImmunizePlayerClientRpc(ulong witchId, ClientRpcParams clientRpcParams = default)
         {
-            myRole.isImmune = true;
+            myRole.interactions.isImmune = true;
             NotifySecondaryActionSuccessServerRpc(witchId);
         }
 
@@ -1401,9 +1406,9 @@ namespace WerewolvesCompany.Managers
             }
 
             // Check for lovers
-            if (isInLoveWith != null)
+            if (myRole.interactions.isInLoveWith != null)
             {
-                if (isInLoveWith.Value == deadId)
+                if (myRole.interactions.isInLoveWith.Value == deadId)
                 {
                     // Edit the death screen message
                     string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
@@ -1473,7 +1478,7 @@ namespace WerewolvesCompany.Managers
         [ClientRpc]
         public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
         {
-            isInLoveWith = myLoverId;
+            myRole.interactions.isInLoveWith = myLoverId;
             HUDManager.Instance.DisplayTip("Cupid put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
             AnswerToCupidServerRpc(cupidId);
         }

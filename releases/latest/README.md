@@ -225,7 +225,7 @@ Theses features are not implemented yet, but are planned:
   - Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
 - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
 - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
-
+- **Alpha Werewolf ** - Can convert a villager to a werewolf
 
 
 
@@ -235,14 +235,14 @@ Theses features are not implemented yet, but are planned:
 Major:
 - Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
-
+- Need to swap the isImmune from Roles to RolesManager, like I did for isInLoveWith
 
 
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
-- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Mayeb it has to do with LateCompany or MoreCompany
+- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
-
+- Since I moved the roles-specific things (isinlovewith, ...), the wc debug reset does not reset it
 
 
 From glitch's stream

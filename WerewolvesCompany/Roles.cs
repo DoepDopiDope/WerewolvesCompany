@@ -101,6 +101,22 @@ namespace WerewolvesCompany
         }
     }
 
+
+    // Interactions with other roles
+    class RolesInteractions
+    {
+
+        public bool isImmune = false;
+        public ulong? isInLoveWith = null;
+
+        public RolesInteractions()
+        {
+
+        }
+    }
+
+
+
     class Role
     {
         public ManualLogSource logger = Plugin.Instance.logger;
@@ -177,7 +193,8 @@ namespace WerewolvesCompany
 
 
         // Interactions with others roles
-        public bool isImmune = false;
+        //public bool isImmune = false;
+        public RolesInteractions interactions = new RolesInteractions();
 
         public Role()
         {
@@ -452,6 +469,9 @@ namespace WerewolvesCompany
             }
             return targetInRangeId.Value;
         }
+
+        
+
     }
 
     // ----------------------------------------
@@ -686,8 +706,11 @@ namespace WerewolvesCompany
             HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor, {rolesManager.GetPlayerById(idolizedId.Value).playerUsername}, is dead. You have become a werewolf.");
 
             // Become Werewolf
-            rolesManager.myRole = new Werewolf();
+            //rolesManager.myRole = new Werewolf();
 
+            rolesManager.BecomeRole("Werewolf", true);
+
+            rolesManager.myRole.currentMainActionCooldown = 30f;
             // Update the roles list to all other clients
             rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
         }

@@ -1,3 +1,13 @@
+### [0.5.4]
+
+Minor Changes
+- When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s
+
+Bug fixes
+- Fixed a bug where the wild boy transformation would reset its lover status
+
+
+
 ### [0.5.3]
 
 Bug fixes:

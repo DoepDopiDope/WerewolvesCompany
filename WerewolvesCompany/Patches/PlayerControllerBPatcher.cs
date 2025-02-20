@@ -120,9 +120,9 @@ namespace WerewolvesCompany.Patches
             // Check if the player is the one I am in love with
             if (!(rolesManager.myRole == null))
             {
-                if (rolesManager.isInLoveWith != null)
+                if (rolesManager.myRole.interactions.isInLoveWith != null)
                 {
-                    if (__instance.OwnerClientId == rolesManager.isInLoveWith.Value)
+                    if (__instance.OwnerClientId == rolesManager.myRole.interactions.isInLoveWith.Value)
                     {
                         __instance.usernameBillboardText.text += loverLine;
                     }
