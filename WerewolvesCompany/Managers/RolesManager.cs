@@ -71,6 +71,12 @@ namespace WerewolvesCompany.Managers
         public NetworkVariable<float> VoteCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> VoteAmount = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+        // Quota parameters
+        public NetworkVariable<float> quotaMinMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> quotaPlayersWeight = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> quotaNplayersOffset = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        public NetworkVariable<float> quotaMaxMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
         // Werewolf parameters
         public NetworkVariable<float> WerewolfInteractRange  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public NetworkVariable<float> WerewolfActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -129,10 +135,10 @@ namespace WerewolvesCompany.Managers
                 VoteAmount.Value = Plugin.config_VoteAmount.Value;
 
                 // Quota parameter
-                quotaManager.quotaMinMultiplier.Value = Plugin.config_QuotaMinMultiplier.Value;
-                quotaManager.quotaPlayersWeight.Value  = Plugin.config_QuotaPlayersWeight.Value;
-                quotaManager.quotaNplayersOffset.Value = Plugin.config_QuotaNplayersOffset.Value;
-                quotaManager.quotaMaxMultiplier.Value  = Plugin.config_QuotaMaxMultiplier.Value;
+                quotaMinMultiplier.Value = Plugin.config_QuotaMinMultiplier.Value;
+                quotaPlayersWeight.Value  = Plugin.config_QuotaPlayersWeight.Value;
+                quotaNplayersOffset.Value = Plugin.config_QuotaNplayersOffset.Value;
+                quotaMaxMultiplier.Value  = Plugin.config_QuotaMaxMultiplier.Value;
 
                 // Werewolf parameters
                 WerewolfInteractRange.Value = Plugin.config_WerewolfInteractRange.Value;

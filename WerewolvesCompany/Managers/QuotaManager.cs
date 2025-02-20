@@ -25,11 +25,7 @@ namespace WerewolvesCompany.Managers
 
         public bool isQuotaMet => (currentScrapValue >= requiredDailyQuota);
 
-        // Quota parameters
-        public NetworkVariable<float> quotaMinMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaPlayersWeight  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaNplayersOffset = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        public NetworkVariable<float> quotaMaxMultiplier  = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        
 
 
         void Awake()
@@ -81,9 +77,9 @@ namespace WerewolvesCompany.Managers
             // Quota from Infected Company, will require testing
             int levelTotalValue = Mathf.RoundToInt(RoundManager.Instance.totalScrapValueInLevel);
             int Nplayers = StartOfRound.Instance.connectedPlayersAmount;
-            float playersWeightedQuota = (float)Mathf.Max(0, Nplayers - quotaNplayersOffset.Value) * quotaPlayersWeight.Value;
-            float playersAndLevelWeightedQuota = (float)levelTotalValue * (quotaMinMultiplier.Value + playersWeightedQuota);
-            float finalQuota = Mathf.Min(playersAndLevelWeightedQuota, (float)levelTotalValue * quotaMaxMultiplier.Value);
+            float playersWeightedQuota = (float)Mathf.Max(0, Nplayers - rolesManager.quotaNplayersOffset.Value) * rolesManager.quotaPlayersWeight.Value;
+            float playersAndLevelWeightedQuota = (float)levelTotalValue * (rolesManager.quotaMinMultiplier.Value + playersWeightedQuota);
+            float finalQuota = Mathf.Min(playersAndLevelWeightedQuota, (float)levelTotalValue * rolesManager.quotaMaxMultiplier.Value);
 
             return (int)finalQuota;
         }
