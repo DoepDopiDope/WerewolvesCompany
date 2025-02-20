@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.IO.Pipes;
-using System.Numerics;
-using System.Text;
 using BepInEx.Logging;
 using HarmonyLib;
-using UnityEngine;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;
-using static UnityEngine.EventSystems.EventTrigger;
 
 
 // Highly inspired from TooManyEmotes

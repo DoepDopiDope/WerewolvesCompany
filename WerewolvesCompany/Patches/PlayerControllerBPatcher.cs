@@ -1,14 +1,8 @@
 ﻿using BepInEx.Logging;
 using GameNetcodeStuff;
 using HarmonyLib;
-using JetBrains.Annotations;
 using WerewolvesCompany.Managers;
-using WerewolvesCompany;
 using WerewolvesCompany.UI;
-using System.Diagnostics;
-using System.Drawing;
-using UnityEngine.Rendering;
-using TMPro;
 using WerewolvesCompany.Config;
 
 namespace WerewolvesCompany.Patches

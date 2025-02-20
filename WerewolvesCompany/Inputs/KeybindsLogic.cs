@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
 using GameNetcodeStuff;
-using JetBrains.Annotations;
 using UnityEngine.InputSystem;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;

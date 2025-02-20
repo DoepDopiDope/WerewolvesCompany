@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using Unity.Netcode;
+﻿using BepInEx.Logging;
 using UnityEngine;
 using WerewolvesCompany.Config;
 using WerewolvesCompany.UI;

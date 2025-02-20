@@ -3,11 +3,7 @@ using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 using WerewolvesCompany.Managers;
-using System.Collections.Generic;
-using GameNetcodeStuff;
 using BepInEx.Logging;
-using System;
-using System.Collections;
 using WerewolvesCompany.UI;
 
 

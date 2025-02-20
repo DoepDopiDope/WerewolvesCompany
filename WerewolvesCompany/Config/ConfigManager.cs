@@ -1,8 +1,4 @@
-﻿
-
-
-
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
 using Unity.Netcode;
 
 namespace WerewolvesCompany.Config

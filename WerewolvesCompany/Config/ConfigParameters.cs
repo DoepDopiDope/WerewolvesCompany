@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 
 namespace WerewolvesCompany.Config
 {

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx.Logging;
-using GameNetcodeStuff;
+﻿using BepInEx.Logging;
 using HarmonyLib;
-using TMPro;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;
 

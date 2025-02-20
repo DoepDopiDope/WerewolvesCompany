@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx.Logging;
-using GameNetcodeStuff;
-using HarmonyLib.Tools;
+﻿using BepInEx.Logging;
 using Unity.Netcode;
-using UnityEngine;
-using WerewolvesCompany.UI;
+
 
 namespace WerewolvesCompany.Managers
 {

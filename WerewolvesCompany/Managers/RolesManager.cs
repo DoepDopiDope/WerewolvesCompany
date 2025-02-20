@@ -1,32 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BepInEx.Logging;
 using GameNetcodeStuff;
-using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
 
-using UnityEngine.InputSystem;
 using WerewolvesCompany.UI;
-using static UnityEngine.InputSystem.Layouts.InputControlLayout;
-using System.ComponentModel;
-using WerewolvesCompany.Patches;
-using System.Runtime.CompilerServices;
-using UnityEngine.Windows;
-using static UnityEngine.InputSystem.InputRemoting;
-using TMPro;
-using BepInEx;
-using BepInEx.Configuration;
-using System.Collections;
-using UnityEngine.InputSystem.HID;
-using DunGen.Graph;
-using UnityEngine.UIElements;
 using WerewolvesCompany.Inputs;
-using System.Numerics;
 using WerewolvesCompany.Config;
 
 

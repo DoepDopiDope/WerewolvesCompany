@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx.Logging;
+﻿using BepInEx.Logging;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using WerewolvesCompany.UI;
 
 namespace WerewolvesCompany.Managers
 {
