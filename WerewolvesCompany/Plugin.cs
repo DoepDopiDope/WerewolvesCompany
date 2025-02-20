@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 
 using WerewolvesCompany.Inputs;
 using WerewolvesCompany.Config;
+using System;
 
 
 
@@ -46,23 +47,8 @@ namespace WerewolvesCompany
         public QuotaManager quotaManager;
         
 
-
-
-
-        void Awake()
+        private void InitializeNetCodeStuff()
         {
-            
-
-            // Setup logging
-            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID}");
-            logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
-            logger.LogInfo("Plugin is initializing...");
-
-            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
-
-
-
-            // Does stuff for the netcode stuff
             var types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (var type in types)
             {
@@ -76,6 +62,22 @@ namespace WerewolvesCompany
                     }
                 }
             }
+        }
+
+        void Awake()
+        {
+            
+
+            // Setup logging
+            logger = BepInEx.Logging.Logger.CreateLogSource($"{GUID}");
+            logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
+            logger.LogInfo("Plugin is initializing...");
+
+            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
+
+
+            // Does stuff for the netcode stuff
+            InitializeNetCodeStuff();
 
             // Assign the plugin Instance
             Instance = this;
@@ -84,11 +86,7 @@ namespace WerewolvesCompany
             logdebug.LogInfo("Setting up the config");
             ConfigParameters.ConfigSetup();
 
-            // Initiate the Inputs class
-            //logdebug.LogInfo("Create the inputs class");
-            //InitiateInputsSystem();
-
-            // Patch the game using Harmony
+            // Harmony Patches
             logdebug.LogInfo("Harmony patching");
             harmony.PatchAll();
 
@@ -119,8 +117,7 @@ namespace WerewolvesCompany
             logger.LogInfo("ModManager GameObject created.");
 
 
-
-
+            // Create the ModManager Instance
             this.modManager = modManagerObject.GetComponent<ModManager>();
             // Run checks
             RunChecks();
@@ -129,17 +126,24 @@ namespace WerewolvesCompany
 
         private void RunChecks()
         {
-            References.CheckIndividualRefInt();
-
+            logdebug.LogInfo("============= Checks =============");
+            logdebug.LogInfo("Checking for duplicate refInts");
+            try
+            {
+                References.CheckIndividualRefInt();
+                logdebug.LogInfo("--> OK");
+            }
+            catch (Exception e)
+            {
+                logdebug.LogError("There are duplicate roles refInts");
+                logdebug.LogError(e);
+            }
         }
 
         public void InitiateInputsSystem()
         {
             InputActionsInstance = new InputsKeybinds();
         }
-
-
-        
 
     }
 
@@ -187,7 +191,7 @@ namespace WerewolvesCompany
         {
             logdebug.LogInfo($"Scene loaded: {scene.name}. Reinitializing HUD components...");
             InitializeHUD();
-            InitializeCooldownManager();
+            //InitializeCooldownManager();
             InitializeQuotaManager();
             //InitializeRolesManager();
         }
@@ -227,16 +231,16 @@ namespace WerewolvesCompany
             }
         }
         
-        private void InitializeCooldownManager()
-        {
-            if (FindObjectOfType<CooldownManager>() == null)
-            {
-                GameObject cooldownManagerObject = new GameObject("CooldownManager");
-                cooldownManagerObject.AddComponent<CooldownManager>();
-                logdebug.LogWarning("CooldownManager has been recreated.");
-                Plugin.Instance.cooldownManager = cooldownManagerObject.GetComponent<CooldownManager>();
-            }
-        }
+        //private void InitializeCooldownManager()
+        //{
+        //    if (FindObjectOfType<CooldownManager>() == null)
+        //    {
+        //        GameObject cooldownManagerObject = new GameObject("CooldownManager");
+        //        cooldownManagerObject.AddComponent<CooldownManager>();
+        //        logdebug.LogWarning("CooldownManager has been recreated.");
+        //        Plugin.Instance.cooldownManager = cooldownManagerObject.GetComponent<CooldownManager>();
+        //    }
+        //}
 
         private void InitializeQuotaManager()
         {
