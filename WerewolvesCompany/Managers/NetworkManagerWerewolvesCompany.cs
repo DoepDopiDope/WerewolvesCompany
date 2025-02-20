@@ -24,21 +24,5 @@ namespace WerewolvesCompany.Managers
         {
             Instance = this;
         }
-
-
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SimpleTipDisplayServerRpc()
-        {
-            SimpleTipDisplayClientRpc();
-        }
-
-        [ClientRpc]
-        public void SimpleTipDisplayClientRpc()
-        {
-            logdebug.LogInfo("Displaying a simple tip");
-            HUDManager.Instance.DisplayTip("Test Header", "Test Text");
-            logdebug.LogInfo("Displayed a simple tip");
-        }
     }
 }

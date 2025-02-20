@@ -1286,7 +1286,6 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("I am not immune, therefore I run the kill command");
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
-            //HUDManager.Instance.DisplayTip("You were mawled", $"You died from a werewolf: {GetPlayerById(werewolfId).playerUsername}", true);
 
             
 
@@ -1324,7 +1323,6 @@ namespace WerewolvesCompany.Managers
 
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
-            //HUDManager.Instance.DisplayTip("You were poisoned", $"You were poisoned by a witch: {GetPlayerById(witchId).playerUsername}", true);
             NotifyMainActionSuccessServerRpc(witchId);
         }
 
@@ -1479,7 +1477,7 @@ namespace WerewolvesCompany.Managers
         public void CupidSendLoversTheirLoverClientRpc(ulong cupidId, ulong myLoverId, ClientRpcParams clientRpcParams = default)
         {
             myRole.interactions.isInLoveWith = myLoverId;
-            HUDManager.Instance.DisplayTip("Cupid put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
+            HUDManager.Instance.DisplayTip("<color=#ff00ffff>Cupid</color> put its fate upon you", $"You fell deeply in love with <color=#ff00ffff>{GetPlayerById(myLoverId).playerUsername}</color>. You must win together");
             AnswerToCupidServerRpc(cupidId);
         }
 

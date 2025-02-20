@@ -252,8 +252,7 @@ namespace WerewolvesCompany
         public void DisplayRolePopUp()
         {
             logdebug.LogInfo("Display the role PopUp");
-            HUDManager.Instance.DisplayTip($"{roleNameColored}", rolePopUp); 
-            //HUDManager.Instance.DisplayTip($"Test <color=red>red</color>", "Test <color=blue>blue</color>");
+            HUDManager.Instance.DisplayTip(roleNameColored, rolePopUp);
         }
 
         public virtual bool IsLocallyAllowedToPerformMainAction()
@@ -298,7 +297,7 @@ namespace WerewolvesCompany
             }
             catch (Exception e)
             {
-                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Main Action");
+                HUDManager.Instance.DisplayTip("<color=red>Error</color>", "Failed to perform my Main Action");
                 logger.LogError("Failed to perform my role action");
                 logger.LogError(e);
             }
@@ -322,7 +321,7 @@ namespace WerewolvesCompany
             }
             catch (Exception e)
             {
-                HUDManager.Instance.DisplayTip("Error", "Failed to perform my Secondary Action");
+                HUDManager.Instance.DisplayTip("<color=red>Error</color>", "Failed to perform my Secondary Action");
                 logger.LogError("Failed to perform my secondary action");
                 logger.LogError(e);
             }
@@ -433,29 +432,29 @@ namespace WerewolvesCompany
         // ------ Secondary action success
         public virtual void NotifySecondaryActionSuccess(string targetPlayerName)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
+            HUDManager.Instance.DisplayTip(roleNameColored, "Secondary action success");
         }
         public virtual void NotifySecondaryActionSuccess(ulong targetId)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
+            HUDManager.Instance.DisplayTip(roleNameColored, "Secondary action success");
         }
         public virtual void NotifySecondaryActionSuccess()
         {
-            HUDManager.Instance.DisplayTip(roleName, "Secondary action success");
+            HUDManager.Instance.DisplayTip(roleNameColored, "Secondary action success");
         }
 
 
         // ------ Main action failed
         public virtual void NotifyMainActionFailed(string targetPlayerName)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Main action failed");
+            HUDManager.Instance.DisplayTip(roleNameColored, "Main action failed");
         }
 
 
         // ------ Secondary action failed
         public virtual void NotifySecondaryActionFailed(string targetPlayerName)
         {
-            HUDManager.Instance.DisplayTip(roleName, "Secondary action failed");
+            HUDManager.Instance.DisplayTip(roleNameColored, "Secondary action failed");
         }
 
 
@@ -514,13 +513,13 @@ namespace WerewolvesCompany
             string targetPlayerName = rolesManager.GetPlayerById(targetId).playerUsername;
 
             logger.LogInfo($"Successfully killed {targetPlayerName}.");
-            HUDManager.Instance.DisplayTip($"{roleName}", $"You killed {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"You killed {targetPlayerName}.");
         }
 
         public override void NotifyMainActionFailed(string targetPlayerName)
         {
             logger.LogInfo($"Failed to kill {targetPlayerName}, he was immune");
-            HUDManager.Instance.DisplayTip($"{roleName}", $"{targetPlayerName} was immune");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{targetPlayerName} was immune");
         }
     }
 
@@ -548,7 +547,7 @@ namespace WerewolvesCompany
         public override void PerformMainAction()
         {
             logger.LogInfo($"The {roleName} is staying safe.");
-            HUDManager.Instance.DisplayTip($"{roleName}", "*pat pat*");
+            HUDManager.Instance.DisplayTip(roleNameColored, "*pat pat*");
         }
     }
 
@@ -597,7 +596,7 @@ namespace WerewolvesCompany
             string targetPlayerName = rolesManager.GetPlayerById(targetId).playerUsername;
 
             logger.LogInfo($"Successfully poisoned {targetPlayerName}.");
-            HUDManager.Instance.DisplayTip($"{roleName}", $"You poisoned {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"You poisoned {targetPlayerName}.");
         }
 
         public override void NotifyMainActionFailed(string targetPlayerName)
@@ -608,7 +607,7 @@ namespace WerewolvesCompany
         public override void NotifySecondaryActionSuccess(string targetPlayerName)
         {
             logger.LogInfo($"Successfully immunized {targetPlayerName}.");
-            HUDManager.Instance.DisplayTip($"{roleName}", $"You immunized {targetPlayerName}.");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"You immunized {targetPlayerName}.");
         }
     }
 
@@ -646,7 +645,7 @@ namespace WerewolvesCompany
         public override void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
             logdebug.LogInfo("Displaying Checked role on HUD");
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"{targetPlayerName} is a {role.roleNameColored}");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{targetPlayerName} is a {role.roleNameColored}");
         }
     }
 
@@ -697,13 +696,13 @@ namespace WerewolvesCompany
 
             roleShortDescription = $"You have idolized {playerName}. If they die, you become a werewolf.";
             logdebug.LogInfo("Displaying Idolization on HUD");
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"You have idolized {playerName}. If they die, you will become a werewolf.");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"You have idolized {playerName}. If they die, you will become a werewolf.");
         }
 
 
         public void BecomeWerewolf()
         {
-            HUDManager.Instance.DisplayTip($"Dear {roleName}", $"Your mentor, {rolesManager.GetPlayerById(idolizedId.Value).playerUsername}, is dead. You have become a werewolf.");
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a <color=red>Werewolf</color>.");
 
             // Become Werewolf
             //rolesManager.myRole = new Werewolf();
@@ -813,7 +812,7 @@ namespace WerewolvesCompany
             if (!AreBothTargetsRomanced)
             {
                 logdebug.LogInfo("Only one target is romanced. Notifying Cupid");
-                HUDManager.Instance.DisplayTip($"{roleName}", $"<color=#ff00ffff>{rolesManager.GetPlayerById(targetId).playerUsername}</color> will be romanced.");
+                HUDManager.Instance.DisplayTip(roleNameColored, $"<color=#ff00ffff>{rolesManager.GetPlayerById(targetId).playerUsername}</color> will be romanced.");
                 
             }
             else // If both targets are now romanced, we have a couple. Send them that they are now romanced.
@@ -851,7 +850,7 @@ namespace WerewolvesCompany
         {
             if (TargetIsAlreadyRomanced)
             {
-                HUDManager.Instance.DisplayTip($"{roleName}", $"{targetInRangeName} is already romanced.");
+                HUDManager.Instance.DisplayTip(roleNameColored, $"{targetInRangeName} is already romanced.");
                 return false;
             }
             return true;
@@ -868,7 +867,7 @@ namespace WerewolvesCompany
             }
             if (AmIAlreadyRomanced)
             {
-                HUDManager.Instance.DisplayTip($"{roleName}", $"You are already romanced.");
+                HUDManager.Instance.DisplayTip(roleNameColored, $"You are already romanced.");
                 return false;
             }
             return true;
