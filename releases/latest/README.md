@@ -239,12 +239,12 @@ Major:
 
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
-- If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany
+- If someone leaves the game and does not rejoin, the roles distribution may fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
 
 From glitch's stream
-- Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem
-- Players detection is too hard on the player, should increase the hitbox of the players, or something else. Basically the cast rays are too narrow it seems.
+- Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem. I could not reproduce the issue.
+- Some mod in Glitch's pack seems to be interfering with the roles range. I cannot run the pack in local instances, only through R2ModMan. After removing some mods from the pack, I was able to run a local instance, but everything seemed fine to me, I'll have to ask someone for help testing the full pack.
 
 
 

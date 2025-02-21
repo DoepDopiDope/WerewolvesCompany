@@ -277,6 +277,7 @@ namespace WerewolvesCompany.Managers
 
             allRoles = finalRoles;
             logdebug.LogInfo("Stored all roles in RolesManager.");
+            
 
             // Initiate the votes
             ResetVotes();

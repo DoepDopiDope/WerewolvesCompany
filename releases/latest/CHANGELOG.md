@@ -1,9 +1,9 @@
 ### [0.5.4]
 
 Minor changes
-- When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s
-- Wid Boy kill cooldown on transform can be edited from config file
 - Added support for LethalConfig. All parameters can now be edited in game through the LethalConfig menu, without a restart (host only).
+- When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s
+- Wild Boy kill cooldown on transform can be edited from config file
 
 Bug fixes
 - Fixed a bug where the wild boy transformation would reset its lover status
@@ -12,6 +12,8 @@ Bug fixes
 - Fixed a bug where a daily quota would be required at the company building
 - Properly disables role HUD on round end
 
+
+- 
 ### [0.5.3]
 
 Bug fixes:
