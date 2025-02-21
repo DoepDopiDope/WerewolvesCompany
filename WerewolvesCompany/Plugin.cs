@@ -19,6 +19,7 @@ namespace WerewolvesCompany
 
     [BepInPlugin(GUID, NAME, VERSION)]
     [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("ainavt.lc.lethalconfig")]
     class Plugin : BaseUnityPlugin
     {
         const string GUID = "doep.WerewolvesCompany";

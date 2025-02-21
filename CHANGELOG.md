@@ -1,6 +1,9 @@
 ### [0.5.4]
 
-Minor Changes
+Major changes
+- Added support for LethalConfig. All parameters can now be edited in game through the LethalConfig menu, without a restart (host only).
+
+Minor changes
 - When the wild boy transforms, he now only has 30s on his werewolf cooldown, instead of the base 120s
 - Wid Boy kill cooldown on transform can be edited from config file
 

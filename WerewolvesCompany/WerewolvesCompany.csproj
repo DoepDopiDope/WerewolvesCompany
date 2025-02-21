@@ -56,6 +56,9 @@
     <Reference Include="LethalCompanyInputUtils">
       <HintPath>..\..\LethalCompanyInputUtils\plugins\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
     </Reference>
+    <Reference Include="LethalConfig">
+      <HintPath>..\..\LethalConfig\LethalConfig.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.InputSystem">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.InputSystem.dll</HintPath>
     </Reference>

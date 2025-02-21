@@ -1,4 +1,13 @@
 ﻿using BepInEx.Configuration;
+using LethalConfig;
+using LethalConfig.ConfigItems.Options;
+using LethalConfig.ConfigItems;
+using Unity.Netcode;
+using UnityEngine.UI;
+using System;
+//using System;
+//using System.Collections.Generic;
+//using System.Text;
 
 namespace WerewolvesCompany.Config
 {
@@ -50,7 +59,15 @@ namespace WerewolvesCompany.Config
 
         public static void ConfigSetup()
         {
+            Plugin.Instance.logdebug.LogInfo("Config bepinex binds");
+            ConfigBepInExBinds();
+            Plugin.Instance.logdebug.LogInfo("Config LethalConfig");
+            ConfigLethalConfig();
+        }
 
+
+        public static void ConfigBepInExBinds()
+        {
             // -----------------------------------------------
             // Global parameters
 
@@ -99,6 +116,53 @@ namespace WerewolvesCompany.Config
             config_CupidInteractRange = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Range", 30f, "How far Cupid can make someone fall in love.");
             config_CupidActionCooldown = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Cooldown", 9999f, "How often Cupid can create lovers (in seconds).");
             config_CupidStartOfRoundActionCooldown = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Cooldown at start of round", 0f, "How soon after a round has started Cupid can create lovers (in seconds).");
+        }
+
+        public static void ConfigLethalConfig()
+        {
+            foreach (var field in typeof(ConfigParameters).GetFields())
+            {
+                var type = field.GetType();
+                BaseConfigItem configItem;
+                // Check for Float
+                if (field.FieldType == typeof(ConfigEntry<float>))
+                {
+                    var configEntry = (ConfigEntry<float>)(field.GetValue(null));
+                    configEntry.SettingChanged += (obj, args) => OnSettingChangedPushChanges(obj, args);
+                    configItem = new FloatInputFieldConfigItem(configEntry, requiresRestart: false);
+                    Plugin.Instance.logdebug.LogInfo($"Adding {field.Name} of type : float");
+                }
+
+                // Check for bool
+                else if (field.FieldType == typeof(ConfigEntry<bool>))
+                {
+                    var configEntry = (ConfigEntry<bool>)(field.GetValue(null));
+                    configEntry.SettingChanged += (obj, args) => OnSettingChangedPushChanges(obj, args);
+                    configItem = new BoolCheckBoxConfigItem(configEntry, requiresRestart: false);
+                    Plugin.Instance.logdebug.LogInfo($"Adding {field.Name} of type : bool");
+                }
+
+                // Check for int
+                else if (field.FieldType == typeof(ConfigEntry<int>))
+                {
+                    var configEntry = (ConfigEntry<int>)(field.GetValue(null));
+                    configEntry.SettingChanged += (obj, args) => OnSettingChangedPushChanges(obj, args);
+                    configItem = new IntInputFieldConfigItem(configEntry, requiresRestart: false);
+                    Plugin.Instance.logdebug.LogInfo($"Adding {field.Name} of type : int");
+                }
+                else
+                {
+                    continue;
+                }
+
+                LethalConfigManager.AddConfigItem(configItem);
+            }
+        }
+
+        public static void OnSettingChangedPushChanges(object sender, EventArgs e)
+        {
+            Plugin.Instance.logdebug.LogInfo($"Parameters changed: sender = {sender}, event = {e}");
+            Plugin.Instance.configManager.UpdateConfigValues();
         }
     }
 }
