@@ -10,7 +10,7 @@ Minor changes
 Bug fixes
 - Fixed a bug where the wild boy transformation would reset its lover status
 - Added a check on automated roles distribution, to avoid distributing roles multiple times per round. This is to prevent some external mods from interferring with Werewolves Company
-
+- Fixed a bug where the daily quota could be reset to 0 due to interferences with other mods
 
 
 ### [0.5.3]

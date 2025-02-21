@@ -23,7 +23,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("SyncScrapValuesClientRpc")]
         static void SendPlayersTheirRoleAndSetNewQuota(RoundManager __instance)
         {
-
+            if (rolesManager.hasAlreadyDistributedRolesThisRound) return;
             quotaManager.ResetScrapValue();
 
             // Only host can send roles
@@ -32,7 +32,7 @@ namespace WerewolvesCompany.Patches
                 return;
             }
 
-            if (rolesManager.hasAlreadyDistributedRolesThisRound) return;
+            
 
             logger.LogInfo("Providing roles");
             rolesManager.BuildAndSendRoles();

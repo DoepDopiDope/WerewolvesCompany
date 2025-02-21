@@ -192,7 +192,7 @@ While they are mainly for my personal use during playtests, you can use debug co
 
 ## Planned updates
 
-Theses features are not implemented yet, but are planned:
+Theses features may be added in the future:
 
 ### Major possible updates
 
