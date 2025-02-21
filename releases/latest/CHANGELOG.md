@@ -10,6 +10,7 @@ Bug fixes
 - Added a check on automated roles distribution, to avoid distributing roles multiple times per round. This is to prevent some external mods from interferring with Werewolves Company
 - Fixed a bug where the daily quota could be reset to 0 due to interferences with other mods
 - Fixed a bug where a daily quota would be required at the company building
+- Properly disables role HUD on round end
 
 ### [0.5.3]
 

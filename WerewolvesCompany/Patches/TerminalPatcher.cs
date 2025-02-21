@@ -58,7 +58,7 @@ namespace WerewolvesCompany.Patches
                     if (insertIndex != -1)
                     {
                         insertIndex += keyword.Length;
-                        string addText = "\n\n[Werewolves Company]\nType \"Werewolves\" for a list of commands.";
+                        string addText = "\n\n[Werewolves Company]\nType \"Werewolves\" or \"wc\" for a list of commands.";
                         node.displayText = node.displayText.Insert(insertIndex, addText);
                     }
                     else
@@ -429,12 +429,12 @@ namespace WerewolvesCompany.Patches
                     replacementText += role.terminalNameColored + "\n";
                 }
                 replacementText += "\nRemaining slots will be filled with Villagers\n\n";
-                replacementText += "Add (N) roles    -> werewolves add role_name (N)\n";
-                replacementText += "Add roles        -> werewolves add role_name1 role_name2\n";
-                replacementText += "Delete role      -> werewolves del role_name\n";
-                replacementText += "Delete all roles -> werewolves del *\n";
-                replacementText += "Check role       -> werewolves role_name\n";
-                replacementText += "Debug commands   -> werewolves debug\n\n";
+                replacementText += "wc add role_name (N) -> Add (N) roles\n";
+                replacementText += "wc add role1 role2   -> Add roles\n";
+                replacementText += "wc del role_name     -> Delete role\n";
+                replacementText += "wc del *             -> Delete all roles\n";
+                replacementText += "wc role_name         -> Check role informations\n";
+                replacementText += "wc debug             -> Debug commands\n\n";
                 modifiedDisplayText = modifiedDisplayText.Replace(textToReplace, replacementText);
             }
 
@@ -445,7 +445,7 @@ namespace WerewolvesCompany.Patches
                 
                 if (modifiedDisplayText.Contains(thisRoleInformationPlaceHolder))
                 {
-                    modifiedDisplayText = modifiedDisplayText.Replace(thisRoleInformationPlaceHolder, role.roleDescription);
+                    modifiedDisplayText = modifiedDisplayText.Replace(thisRoleInformationPlaceHolder, $"-> {role.roleName}\n{role.roleDescription}");
                 }
                 
             }
