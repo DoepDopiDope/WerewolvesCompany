@@ -128,7 +128,7 @@ namespace WerewolvesCompany.Patches
                 }
 
                 // if the add keyword was provided, add a role to the list
-                else if (args[1].ToLower() == "add")
+                else if (args[1] == "add")
                 {
                     // If number of roles were provided
                     if (args.Length == 4)
@@ -169,7 +169,7 @@ namespace WerewolvesCompany.Patches
                 }
 
                 // if the delete keyword was provided, add a role to the list
-                else if ((args[1].ToLower() == "delete") || (args[1].ToLower() == "del"))
+                else if ((args[1] == "delete") || (args[1] == "del"))
                 {
                     if (args.Length > 3)
                     {
@@ -205,7 +205,7 @@ namespace WerewolvesCompany.Patches
                     }
                 }
                 // Debug inputs
-                else if (args[1].ToLower() == "debug")
+                else if (args[1] == "debug")
                 {
                     __result = BuildTerminalNodeDebug();
 
@@ -214,21 +214,21 @@ namespace WerewolvesCompany.Patches
                         return false;
                     }
 
-                    else if (args[2].ToLower() == "cd")
+                    else if (args[2] == "cd")
                     {
                         rolesManager.ResetAllCooldownsServerRpc();
                     }
-                    else if ((args[2].ToLower() == "distrib") || args[2].ToLower() == "distribute")
+                    else if ((args[2] == "distrib") || args[2] == "distribute")
                     {
                         rolesManager.BuildAndSendRolesServerRpc();
                     }
 
-                    else if (args[2].ToLower() == "reset")
+                    else if (args[2] == "reset")
                     {
                         rolesManager.ResetRolesServerRpc();
                     }
 
-                    else if (args[2].ToLower() == "quota")
+                    else if (args[2] == "quota")
                     {
                         rolesManager.CheatQuotaServerRpc();
                     }
