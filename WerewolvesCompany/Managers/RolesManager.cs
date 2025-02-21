@@ -46,10 +46,6 @@ namespace WerewolvesCompany.Managers
         public bool onlyWerewolvesALive => (!Utils.AreThereAliveVillagers());
 
 
-        
-
-
-
 
         public override void OnNetworkSpawn()
         {
@@ -63,7 +59,8 @@ namespace WerewolvesCompany.Managers
                 logdebug.LogInfo("Making default roles");
                 MakeDefaultRoles();
             }
-            QueryCurrentRolesServerRpc();
+
+            QueryCurrentRolesServerRpc(); 
         }
 
         void Awake()
@@ -292,8 +289,9 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo("Sent allRoles to all players");
 
             logger.LogInfo("Finished sending roles to each player");
+            hasAlreadyDistributedRolesThisRound = true;
 
-            
+
         }
 
         
@@ -478,6 +476,7 @@ namespace WerewolvesCompany.Managers
 
             // Reset death message to default
             Utils.EditDeathMessage();
+            hasAlreadyDistributedRolesThisRound = true;
         }
 
 

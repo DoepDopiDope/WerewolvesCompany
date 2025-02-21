@@ -45,7 +45,7 @@ namespace WerewolvesCompany.Patches
 
             quotaManager.ComputeAndSetNewDailyQuota();
 
-            rolesManager.hasAlreadyDistributedRolesThisRound = true;
+
         }
     }
 }

@@ -31,7 +31,7 @@
 					7z a -tzip "$(SolutionDir)releases\latest\latest.zip" "$(SolutionDir)releases\latest\*"
 					
 					echo Copying release-latest folder to LethalCompany install-dir
-					xcopy /Y "$(SolutionDir)releases\latest\$(SolutionName)\" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(SolutionName)\"
+					xcopy /Y "$(SolutionDir)releases\latest\$(SolutionName)\" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\Doep-$(SolutionName)\"
 
 
 </PostBuildEvent>

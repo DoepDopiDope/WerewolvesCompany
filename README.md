@@ -237,7 +237,6 @@ Major:
   - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
   - This seems not to be a bug anymore?
 
-
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
 - If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany

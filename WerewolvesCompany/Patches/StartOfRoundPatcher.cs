@@ -42,6 +42,7 @@ namespace WerewolvesCompany.Patches
         {
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
+            roleHUD.roleTextContainer.SetActive(false);
         }
 
         [HarmonyPrefix]
