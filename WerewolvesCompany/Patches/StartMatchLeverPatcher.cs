@@ -37,7 +37,7 @@ namespace WerewolvesCompany.Patches
                 return;
             }
 
-            if (!StartOfRound.Instance.shipHasLanded) return;
+            if (!rolesManager.hasAlreadyDistributedRolesThisRound || !StartOfRound.Instance.shipHasLanded) return;
 
             // If there are no villagers left, ignore the quota check
             if (rolesManager.onlyWerewolvesALive)

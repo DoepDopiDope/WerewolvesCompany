@@ -242,12 +242,10 @@ Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
 - If someone leaves the game and does not rejoin, the roles distribution will fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
-- There's a quota at the company building, or maybe it's just with glitch's pack
 
 From glitch's stream
 - Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem
 - Players detection is too hard on the player, should increase the hitbox of the players, or something else. Basically the cast rays are too narrow it seems.
-- Quota is bugged, it would lift the quota restriction after only ~100value, even though it required 650 value.
 
 
 

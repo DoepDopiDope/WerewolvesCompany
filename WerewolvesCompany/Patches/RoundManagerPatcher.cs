@@ -24,6 +24,14 @@ namespace WerewolvesCompany.Patches
         static void SendPlayersTheirRoleAndSetNewQuota(RoundManager __instance)
         {
             if (rolesManager.hasAlreadyDistributedRolesThisRound) return;
+            
+            if (RoundManager.Instance.currentLevel.name == "CompanyBuildingLevel")
+            {
+                quotaManager.CheatValue();
+                return;
+            }
+
+            // Reset daily quota to 0 for everyone
             quotaManager.ResetScrapValue();
 
             // Only host can send roles
@@ -32,8 +40,6 @@ namespace WerewolvesCompany.Patches
                 return;
             }
 
-            
-
             logger.LogInfo("Providing roles");
             rolesManager.BuildAndSendRoles();
 
@@ -41,6 +47,5 @@ namespace WerewolvesCompany.Patches
 
             rolesManager.hasAlreadyDistributedRolesThisRound = true;
         }
-
     }
 }

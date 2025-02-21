@@ -53,6 +53,7 @@ namespace WerewolvesCompany.Managers
 
         public override void OnNetworkSpawn()
         {
+            logdebug.LogInfo("RolesManager NetworkSpawn");
             logger.LogInfo("Setup Keybinds CallBacks");
             SetupKeybindCallbacks();
 
@@ -63,9 +64,6 @@ namespace WerewolvesCompany.Managers
                 MakeDefaultRoles();
             }
             QueryCurrentRolesServerRpc();
-
-            logdebug.LogInfo("RolesManager NetworkSpawn");
-
         }
 
         void Awake()
