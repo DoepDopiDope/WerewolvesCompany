@@ -6,35 +6,39 @@
   </PropertyGroup>
   
 <PropertyGroup>
-    <PostBuildEvent>echo Copy DLL to release-latest folder
-					copy /Y "$(TargetDir)$(SolutionName).dll" "$(SolutionDir)releases\latest\$(SolutionName)\$(SolutionName).dll"
-					
-					echo Copy CHANGELOG.md
-					copy /Y "$(SolutionDir)CHANGELOG.md" "$(SolutionDir)releases\latest\"
-					
-					echo Copy icon.png
-					copy /Y "$(SolutionDir)icon.png" "$(SolutionDir)releases\latest\"
-					
-					echo Copy LICENSE
-					copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)releases\latest\"
-					
-					echo Copy manifest.json
-					copy /Y "$(SolutionDir)manifest.json" "$(SolutionDir)releases\latest\"
-					
-					echo Copy README.md
-					copy /Y "$(SolutionDir)README.md" "$(SolutionDir)releases\latest\"
-					
-					echo Delete previous zip-file
-					del "$(SolutionDir)releases\latest\latest.zip"
-					
-					echo Make zip-file
-					7z a -tzip "$(SolutionDir)releases\latest\latest.zip" "$(SolutionDir)releases\latest\*"
-					
-					echo Copying release-latest folder to LethalCompany install-dir
-					xcopy /Y "$(SolutionDir)releases\latest\$(SolutionName)\" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\Doep-$(SolutionName)\"
+    <PostBuildEvent>
+		echo Copy DLL to release-latest folder
+		copy /Y "$(TargetDir)$(SolutionName).dll" "$(SolutionDir)releases\latest\$(SolutionName)\$(SolutionName).dll"
+
+		echo Copy CHANGELOG.md
+		copy /Y "$(SolutionDir)CHANGELOG.md" "$(SolutionDir)releases\latest\"
+
+		echo Copy icon.png
+		copy /Y "$(SolutionDir)icon.png" "$(SolutionDir)releases\latest\"
+
+		echo Copy LICENSE
+		copy /Y "$(SolutionDir)LICENSE" "$(SolutionDir)releases\latest\"
+
+		echo Copy manifest.json
+		copy /Y "$(SolutionDir)manifest.json" "$(SolutionDir)releases\latest\"
+
+		echo Copy README.md
+		copy /Y "$(SolutionDir)README.md" "$(SolutionDir)releases\latest\"
+
+		echo Copy Strings_en-us_doep-wc.xml
+		copy /Y "$(SolutionDir)\$(SolutionName)\Strings_en-us_doep-wc.xml" "$(SolutionDir)releases\latest\"
+
+		echo Delete previous zip-file
+		del "$(SolutionDir)releases\latest\latest.zip"
+
+		echo Copying release-latest folder to LethalCompany install-dir
+		xcopy /S "$(SolutionDir)releases\latest\" "G:\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\plugins\Doep-$(SolutionName)\"
+
+		echo Make zip-file
+		7z a -tzip "$(SolutionDir)releases\latest\latest.zip" "$(SolutionDir)releases\latest\*"
 
 
-</PostBuildEvent>
+	</PostBuildEvent>
 
 
 
@@ -52,6 +56,9 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\Gotta Go Fast\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Coroner">
+      <HintPath>..\..\Coroner\Coroner.dll</HintPath>
     </Reference>
     <Reference Include="LethalCompanyInputUtils">
       <HintPath>..\..\LethalCompanyInputUtils\plugins\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>

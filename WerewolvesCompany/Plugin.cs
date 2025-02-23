@@ -20,11 +20,12 @@ namespace WerewolvesCompany
     [BepInPlugin(GUID, NAME, VERSION)]
     [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("ainavt.lc.lethalconfig")]
+    [BepInDependency("com.elitemastereric.coroner")]
     class Plugin : BaseUnityPlugin
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.5.4";
+        const string VERSION = "0.5.5";
 
         internal static InputsKeybinds InputActionsInstance;
 
@@ -64,7 +65,7 @@ namespace WerewolvesCompany
                 }
             }
         }
-
+        
         void Awake()
         {
             

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<base>
+    <tags>
+        <tag language="en-us" />
+    </tags>
+
+    <strings>
+        <!-- NOTE: If SeriousDeathNotes is turned on, it displays only the first entry, so make the first entry literal! -->
+        <DeathWerewolf text="Was mawled by a Werewolf." />
+	    <DeathWitch text="Was poisoned by a Witch." />
+	    <DeathLover text="Couldn't bear their lover's death." />
+    </strings>
+</base>

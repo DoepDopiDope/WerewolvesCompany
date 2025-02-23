@@ -1,3 +1,9 @@
+### [0.5.5]
+
+Added custom death messages (Coroner)
+
+
+
 ### [0.5.4]
 
 Minor changes
@@ -13,7 +19,7 @@ Bug fixes
 - Properly disables role HUD on round end
 
 
-- 
+
 ### [0.5.3]
 
 Bug fixes:

@@ -8,6 +8,7 @@ using UnityEngine;
 using WerewolvesCompany.UI;
 using WerewolvesCompany.Inputs;
 using WerewolvesCompany.Config;
+using Coroner;
 
 
 
@@ -596,6 +597,7 @@ namespace WerewolvesCompany.Managers
         {
             quotaManager.ResetScrapValue();
         }
+
 
         [ServerRpc(RequireOwnership = false)]
         public void CheatQuotaServerRpc(ServerRpcParams serverRpcParams = default)
