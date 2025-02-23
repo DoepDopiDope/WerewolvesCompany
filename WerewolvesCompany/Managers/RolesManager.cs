@@ -8,6 +8,8 @@ using UnityEngine;
 using WerewolvesCompany.UI;
 using WerewolvesCompany.Inputs;
 using WerewolvesCompany.Config;
+using Coroner;
+using System.Numerics;
 
 
 
@@ -597,6 +599,7 @@ namespace WerewolvesCompany.Managers
             quotaManager.ResetScrapValue();
         }
 
+
         [ServerRpc(RequireOwnership = false)]
         public void CheatQuotaServerRpc(ServerRpcParams serverRpcParams = default)
         {
@@ -959,41 +962,6 @@ namespace WerewolvesCompany.Managers
         // ------------------------------------------------------------------------------------
         // Performing Secondary Action logic
 
-        //[ServerRpc(RequireOwnership = false)]
-        //public void PerformSecondaryActionServerRpc(ServerRpcParams serverRpcParams = default)
-        //{
-        //    ulong senderId = serverRpcParams.Receive.SenderClientId;
-        //    Role senderRole = allRoles[senderId];
-        //    logdebug.LogInfo($"Received secondary action request from Player Id : {senderId}");
-
-        //    // Build the ClientRpcParams to answer to the caller
-        //    ClientRpcParams clientRpcParams = new ClientRpcParams
-        //    {
-        //        Send = new ClientRpcSendParams
-        //        {
-        //            TargetClientIds = new ulong[] { senderId }
-        //        }
-        //    };
-
-
-        //    if (senderRole.IsAllowedToPerformSecondaryAction()) // If can perform action, then perform it
-        //    {
-        //        PerformSecondaryActionClientRpc(clientRpcParams);
-        //    }
-
-        //    else // Else, notify the sender that he cannot perform his action yet
-        //    {
-        //        CannotPerformThisActionYetClientRpc(clientRpcParams);
-        //    }
-        //}
-
-
-        //[ClientRpc]
-        //public void PerformSecondaryActionClientRpc(ClientRpcParams clientRpcParams = default)
-        //{
-
-        //    myRole.GenericPerformSecondaryAction();
-        //}
 
 
 
@@ -1036,7 +1004,6 @@ namespace WerewolvesCompany.Managers
             ulong targetPlayerId = targettedPlayer.OwnerClientId;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
             NotifyMainActionSuccessClientRpc(targetPlayerId, clientRpcParams);
-
         }
 
         [ClientRpc]
@@ -1105,7 +1072,21 @@ namespace WerewolvesCompany.Managers
 
 
 
+        [ServerRpc(RequireOwnership = false)]
+        [SerializeField]
+        public void NotifyDeathServerRpc(string causeOfDeathName, ServerRpcParams serverRpcParams = default)
+        {
+            NotifyDeathClientRpc(serverRpcParams.Receive.SenderClientId, causeOfDeathName);
+        }
 
+
+        [ClientRpc]
+        [SerializeField]
+        public void NotifyDeathClientRpc(ulong deadId, string causeOfDeathName, ClientRpcParams clientRpcParams = default)
+        {
+            Coroner.API.SetCauseOfDeath(GetPlayerById(deadId), CustomDeaths.references[causeOfDeathName]);
+            
+        }
 
         // ------------------------------------------------------------------------------------
         // Specific Roles Actions
@@ -1188,9 +1169,9 @@ namespace WerewolvesCompany.Managers
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
 
-            
-
             NotifyMainActionSuccessServerRpc(werewolfId);
+            NotifyDeathServerRpc(CustomDeaths.WEREWOLF_KEY);
+            
 
         }
 
@@ -1225,6 +1206,7 @@ namespace WerewolvesCompany.Managers
             PlayerControllerB controller = Utils.GetLocalPlayerControllerB();
             controller.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
             NotifyMainActionSuccessServerRpc(witchId);
+            NotifyDeathServerRpc(CustomDeaths.WITCH_KEY);
         }
 
 
@@ -1313,8 +1295,10 @@ namespace WerewolvesCompany.Managers
                     string message = $"<color=#ff00ffff>{GetPlayerById(deadId).playerUsername.ToUpper()}</color>\nHAS DIED";
                     Utils.EditDeathMessage(message);
 
+                    Utils.localController.KillPlayer(new UnityEngine.Vector3(0, 0, 0));
+                    NotifyDeathServerRpc(CustomDeaths.LOVER_KEY);
 
-                    Utils.GetLocalPlayerControllerB().KillPlayer(new UnityEngine.Vector3(0, 0, 0));
+
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using TMPro;
@@ -76,4 +77,7 @@ namespace WerewolvesCompany
             return false; 
         }
     }
+
+
+
 }
