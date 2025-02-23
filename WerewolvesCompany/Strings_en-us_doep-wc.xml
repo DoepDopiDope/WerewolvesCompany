@@ -6,8 +6,8 @@
 
     <strings>
         <!-- NOTE: If SeriousDeathNotes is turned on, it displays only the first entry, so make the first entry literal! -->
-        <DeathWerewolf text="Was mawled by a Werewolf." />
-	    <DeathWitch text="Was poisoned by a Witch." />
-	    <DeathLover text="Couldn't bear their lover's death." />
+        <Werewolf text="Was devoured by a Werewolf." />
+	    <Witch text="Was poisoned by a Witch." />
+	    <Lover text="Couldn't bear their lover's death." />
     </strings>
 </base>
