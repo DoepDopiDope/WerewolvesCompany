@@ -52,6 +52,7 @@ namespace WerewolvesCompany.Patches
         {
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
+            rolesManager.hasAlreadyDistributedRolesThisRound = false;
             roleHUD.roleTextContainer.SetActive(false);
         }
 

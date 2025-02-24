@@ -62,11 +62,13 @@ namespace WerewolvesCompany
 
         static public bool AreThereAliveVillagers()
         {
+            logdebug.LogInfo("======================================");
             foreach (PlayerControllerB controller in StartOfRound.Instance.allPlayerScripts)
             {
+                if (!controller.isPlayerControlled) continue;
                 if (!rolesManager.allRoles.ContainsKey(controller.OwnerClientId)) continue;
 
-                if (controller.IsSpawned && !controller.isPlayerDead && rolesManager.allRoles.ContainsKey(controller.OwnerClientId))
+                if (controller.IsSpawned && !controller.isPlayerDead)
                 {
                     if (rolesManager.allRoles[controller.OwnerClientId].team == "Village")
                     {
