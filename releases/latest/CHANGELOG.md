@@ -2,7 +2,7 @@
 
 - Added custom death messages (Coroner)
 - Now displays the winning team on the performance report
-
+- Fixed the targetting issue from Glitch's stream. It was due to a conflict with OpenBodyCams.
 
 
 ### [0.5.4]

@@ -140,6 +140,27 @@ namespace WerewolvesCompany.Managers
         }
 
 
+        public void DisplayWinningTeam()
+        {
+            var components = HUDManager.Instance.endgameStatsAnimator.gameObject.GetComponentsInChildren<TextMeshProUGUI>();
+            foreach (var comp in components)
+            {
+                if (comp.name == "HeaderText")
+                {
+                    if (onlyWerewolvesALive)
+                    {
+                        comp.text = "WEREWOLVES HAVE WON";
+                    }
+                    else
+                    {
+                        comp.text = "VILLAGERS HAVE WON";
+                    }
+                    return;
+                }   
+            }
+            throw new Exception("Did not find the Header Text");
+        }
+
         
 
 #nullable enable
