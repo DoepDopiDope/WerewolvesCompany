@@ -198,7 +198,6 @@ Theses features may be added in the future:
 
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
 - Maybe add a vote system for the ship departure. Will have to think about it.
-- Add a win/lose screen
 - Change the vote kill trigger (idea from glitched npc). Add something in the ship with a screen and a button/bell
 
 
@@ -208,7 +207,6 @@ Theses features may be added in the future:
 - Add a way for players to change the role setup from LethalConfig
 - Icon for the roles to be displayed at the top of the screen
 - Randomize the roles list to avoid meta-game
-- End of game screen displaying which team won
 
 
 
@@ -240,6 +238,10 @@ Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.
 - If someone leaves the game and does not rejoin, the roles distribution may fail (only happened once with friends, I could not reproduce the issue?). Maybe it has to do with LateCompany or MoreCompany
 - I got my pop up to stop working at some point. It was only a visual bug as the roles actions were still working properly. I got it working again after rejoining the game. No idea why this happens.
+- With Glitch's pack, while testing, as the only werewolf, I could not depart.
+- With Glitch's pack, the roles are not distributed
+- With Glitch's pack, the quota seems really really bugged
+
 
 From glitch's stream
 - Some incompatibility with NightOfLTheLivingMimics only in the lobby, so that's not too much of a problem. I could not reproduce the issue.

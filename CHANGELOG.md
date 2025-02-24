@@ -1,6 +1,7 @@
 ### [0.5.5]
 
-Added custom death messages (Coroner)
+- Added custom death messages (Coroner)
+- Now displays the winning team on the performance report
 
 
 

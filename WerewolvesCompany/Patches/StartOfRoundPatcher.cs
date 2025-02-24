@@ -5,6 +5,7 @@ using UnityEngine;
 using WerewolvesCompany.Managers;
 using BepInEx.Logging;
 using WerewolvesCompany.UI;
+using GameNetcodeStuff;
 
 
 namespace WerewolvesCompany.Patches
@@ -36,9 +37,18 @@ namespace WerewolvesCompany.Patches
             }
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch("ReviveDeadPlayers")]
-        static void ResetRolesToNullOnRoundEnd(StartOfRound __instance)
+        //[HarmonyPostfix]
+        //[HarmonyPatch("ReviveDeadPlayers")]
+        //static void ResetRolesToNullOnRoundEnd(StartOfRound __instance)
+        //{
+        //    logdebug.LogInfo("Resetting my role to null");
+        //    rolesManager.myRole = null;
+        //    roleHUD.roleTextContainer.SetActive(false);
+        //}
+
+        [HarmonyPrefix]
+        [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
+        static void ResetRolesToNullOnRoundStart(StartOfRound __instance)
         {
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
@@ -46,9 +56,13 @@ namespace WerewolvesCompany.Patches
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
-        static void ResetRolesToNullOnRoundStart(StartOfRound __instance)
+        [HarmonyPatch("EndOfGameClientRpc")]
+        static void EndGameLogic(PlayerControllerB __instance)
         {
+            // Display winning team
+            rolesManager.DisplayWinningTeam();
+
+            // Reset roleHUD
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
             roleHUD.roleTextContainer.SetActive(false);

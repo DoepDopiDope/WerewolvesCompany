@@ -10,6 +10,9 @@ using WerewolvesCompany.Inputs;
 using WerewolvesCompany.Config;
 using Coroner;
 using System.Numerics;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
+using TMPro;
 
 
 
@@ -181,8 +184,17 @@ namespace WerewolvesCompany.Managers
             //logdebug.LogInfo($"============================");
             foreach (RaycastHit hit in allHits)
             {
+                GameObject checkedObject = hit.transform.gameObject;
+
+                if (checkedObject.transform.parent.name.Contains("Player"))
+                {
+                    //logdebug.LogInfo($"Found something contained in a player: {checkedObject.name}");
+                    checkedObject = checkedObject.transform.parent.gameObject;
+                }
+
+
                 // Skip own player object
-                if (hit.transform.gameObject == playerObject)
+                if (checkedObject == playerObject)
                 {
                     continue;
                 }
@@ -194,15 +206,16 @@ namespace WerewolvesCompany.Managers
                     continue;
                 }
 
-                
-                if (hit.transform.gameObject.layer == playerObject.layer)
+
+
+                if (checkedObject.layer == playerObject.layer)
                 {
-                    return hit.transform.gameObject.GetComponent<PlayerControllerB>();
+                    return checkedObject.GetComponent<PlayerControllerB>();
                 }
 
                 // Now skip for non-rendered objects.
                 // The playercontroller object was not rendered, so it was not possible to move this check above
-                Renderer renderer = hit.transform.gameObject.GetComponent<Renderer>();
+                Renderer renderer = checkedObject.GetComponent<Renderer>();
                 if ( renderer == null )
                 {
                     continue;
@@ -213,6 +226,7 @@ namespace WerewolvesCompany.Managers
                     continue;
                 }
 
+                //logdebug.LogInfo($"Skipped object {checkedObject.name}");
                 return null;
 
             }
