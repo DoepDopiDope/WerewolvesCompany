@@ -1,0 +1,12 @@
+{
+    "name": "WerewolvesCompany",
+    "version_number": "0.5.5",
+    "website_url": "https://github.com/DoepDopiDope/WerewolvesCompany",
+    "description": "Brings the Werewolves game to Lethal Company.",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2100",
+        "Rune580-LethalCompany_InputUtils-0.7.7",
+        "AinaVT-LethalConfig-1.4.6",
+        "EliteMasterEric-Coroner-2.2.0"
+    ]
+}

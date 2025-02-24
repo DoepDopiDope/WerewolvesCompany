@@ -4,9 +4,9 @@ Minor additions:
 - Added custom death messages (Coroner)
 - Now displays the winning team on the performance report
 
-- Bug fixes:
+Bug fixes:
 - Fixed the targetting issue from Glitch's stream. It was due to a conflict with OpenBodyCams.
-- Fixed a bug on detecting whether only werewolves are left.
+- Fixed a bug on detecting when only werewolves are left, that was preventing werewolves to ignore the daily quota.
 
 ### [0.5.4]
 

@@ -75,7 +75,7 @@ namespace WerewolvesCompany
             logdebug = BepInEx.Logging.Logger.CreateLogSource($"{GUID} -- debug");
             logger.LogInfo("Plugin is initializing...");
 
-            //BepInEx.Logging.Logger.Sources.Remove(logdebug);
+            BepInEx.Logging.Logger.Sources.Remove(logdebug);
 
 
             // Does stuff for the netcode stuff
