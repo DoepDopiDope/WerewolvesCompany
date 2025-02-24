@@ -48,13 +48,14 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
-        static void ResetRolesToNullOnRoundStart(StartOfRound __instance)
+        static void OnRoundStart(StartOfRound __instance)
         {
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
             rolesManager.hasAlreadyDistributedRolesThisRound = false;
             roleHUD.roleTextContainer.SetActive(false);
         }
+        
 
         [HarmonyPrefix]
         [HarmonyPatch("EndOfGameClientRpc")]
