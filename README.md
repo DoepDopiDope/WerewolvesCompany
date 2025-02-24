@@ -185,7 +185,7 @@ While they are mainly for my personal use during playtests, you can use debug co
 - wc debug cd      -> set all cooldowns to 0
 - wc debug distrib -> distribute roles. Alternative to the hold-P (5s) keybind
 - wc debug reset   -> reset state of every player current role to its initial state
-
+- wc debug quota   -> bypass the current daily quota
 
 
 

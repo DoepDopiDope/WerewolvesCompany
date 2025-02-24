@@ -310,7 +310,7 @@ namespace WerewolvesCompany.Patches
                               "wc debug cd      -> set all players cooldowns to 0\n" +
                               "wc debug distrib -> distribute roles\n" +
                               "wc debug reset   -> reset all players roles to their initial state\n" +
-                              "wc debug quota   -> set the current daily quota to max\n\n",
+                              "wc debug quota   -> bypass the current daily quota\n\n",
                 clearPreviousText = true,
                 acceptAnything = false
             };
