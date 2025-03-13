@@ -20,6 +20,7 @@ namespace WerewolvesCompany.Config
         public static ConfigEntry<float> config_VoteAmount;
 
         // Quota parameters
+        public static ConfigEntry<bool> config_UseQuota;
         public static ConfigEntry<float> config_QuotaMinMultiplier;
         public static ConfigEntry<float> config_QuotaPlayersWeight;
         public static ConfigEntry<int> config_QuotaNplayersOffset;
@@ -78,6 +79,7 @@ namespace WerewolvesCompany.Config
             config_VoteAmount = Plugin.Instance.Config.Bind("Global Parameters", "Vote Kill Required Amount", 0.5f, "Which fraction of the alive players are required to vote kick someone.");
 
             // Quota parameters
+            config_UseQuota          = Plugin.Instance.Config.Bind("Quota", "Use Quota", true, "Whether to use the daily quota feature or not.");
             config_QuotaMinMultiplier = Plugin.Instance.Config.Bind("Quota", "minMultiplier", 0.25f, "Minimum multiplier to the total level value.");
             config_QuotaPlayersWeight = Plugin.Instance.Config.Bind("Quota", "playerWeight", 0.05f, "Multiplier weight of each player to the multiplier.");
             config_QuotaNplayersOffset = Plugin.Instance.Config.Bind("Quota", "NplayersMin", 3, "Number of players at which player Weight is counted positively.");

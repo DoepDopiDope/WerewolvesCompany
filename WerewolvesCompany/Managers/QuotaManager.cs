@@ -21,7 +21,10 @@ namespace WerewolvesCompany.Managers
 
         public bool isQuotaMet => (currentScrapValue >= requiredDailyQuota);
 
-        
+        public bool useQuota => configManager.useQuota.Value;
+
+
+
 
 
         void Awake()
@@ -64,6 +67,11 @@ namespace WerewolvesCompany.Managers
 
         public void SetNewDailyQuota(int quotaValue)
         {
+            //if (!useQuota)
+            //{
+            //    quotaValue = 0;
+            //}
+
             logger.LogInfo($"Set new daily quota to {quotaValue}");
             requiredDailyQuota = quotaValue;
         }

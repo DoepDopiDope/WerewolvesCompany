@@ -19,6 +19,7 @@ namespace WerewolvesCompany.Config
         public NetworkVariable<float> VoteAmount = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         // Quota parameters
+        public NetworkVariable<bool> useQuota = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaMinMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaPlayersWeight = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaNplayersOffset = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -90,6 +91,7 @@ namespace WerewolvesCompany.Config
             VoteAmount.Value = ConfigParameters.config_VoteAmount.Value;
 
             // Quota parameter
+            useQuota.Value = ConfigParameters.config_UseQuota.Value;
             quotaMinMultiplier.Value = ConfigParameters.config_QuotaMinMultiplier.Value;
             quotaPlayersWeight.Value = ConfigParameters.config_QuotaPlayersWeight.Value;
             quotaNplayersOffset.Value = ConfigParameters.config_QuotaNplayersOffset.Value;

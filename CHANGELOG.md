@@ -1,3 +1,8 @@
+### [0.5.6]
+
+- Added the option to disable the quota from the LethalConfig menu
+
+
 ### [0.5.5]
 
 Minor additions:

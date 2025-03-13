@@ -45,7 +45,7 @@ Villagers are required to meet a daily quota of by bringing scraps to the ship. 
 `quota = totalLevelValue * (baseMultiplier + playerWeight * (Nplayers - NplayersOffset) )`, with default values being:
 - `baseMultiplier = 0.25`
 - `playerWeight = 0.05`
-- -`NplayersOffset = 3`.
+- `NplayersOffset = 3`.
 
 - This yields the default formula :
 
@@ -185,7 +185,7 @@ While they are mainly for my personal use during playtests, you can use debug co
 - wc debug cd      -> set all cooldowns to 0
 - wc debug distrib -> distribute roles. Alternative to the hold-P (5s) keybind
 - wc debug reset   -> reset state of every player current role to its initial state
-
+- wc debug quota   -> bypass the current daily quota
 
 
 
