@@ -245,9 +245,7 @@ Theses features may be added in the future:
 ## Known issues
 
 Major:
-- Sometimes, the roles of everyone may be reset at random. It happened many times during Online games, but I could not reproduce it in LAN local testing games. I changed what I think causes the bug, but since I cannot reproduce it, I don't know if it is really fixed. Will have to see in future games.
-  - At some point I thought it was the Wild Boy transformation that triggered it, but it also happened when the Wild Boy did not transform. I really have no idea...
-  - This seems not to be a bug anymore?
+- No major bugs have been reported yet
 
 Minor:
 - It is possible to die before the roles distribution has happened, as it waits for all scraps to be placed. Please don't jump off the ship while it's moving, you may die.

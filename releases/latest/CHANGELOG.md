@@ -10,6 +10,8 @@ Minor additions and changes
 Bug fixes
 - Fixed a bug that would prevent closing the vote window at the lobby
 
+
+
 ### [0.5.5]
 
 Minor additions:
@@ -19,6 +21,8 @@ Minor additions:
 Bug fixes:
 - Fixed the targetting issue from Glitch's stream. It was due to a conflict with OpenBodyCams.
 - Fixed a bug on detecting when only werewolves are left, that was preventing werewolves to ignore the daily quota.
+
+
 
 ### [0.5.4]
 
