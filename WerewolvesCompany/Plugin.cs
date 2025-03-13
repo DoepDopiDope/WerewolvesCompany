@@ -25,7 +25,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.5.6";
+        const string VERSION = "0.6.0";
 
         internal static InputsKeybinds InputActionsInstance;
 

@@ -1,12 +1,14 @@
-### [0.5.6]
+### [0.6.0]
 
 New roles:
 - Alpha Werewolf: Can turn other players into werewolves
-
+- Fake Seer: she only has a 50% chance of guessing the actual player's role
 
 Minor additions and changes
 - Added the option to disable the quota from the LethalConfig menu
 
+Bug fixes
+- Fixed a bug that would prevent closing the vote window at the lobby
 
 ### [0.5.5]
 

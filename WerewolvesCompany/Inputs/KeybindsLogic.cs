@@ -84,7 +84,12 @@ namespace WerewolvesCompany.Inputs
         static public void OnOpenCloseVotingWindowKeyPressed(InputAction.CallbackContext keyContext)
         {
             if (rolesManager == null || roleHUD == null) return;
-            if ((myRole == null) || localController.inTerminalMenu || localController.isPlayerDead) return;
+
+            if (!roleHUD.voteWindowContainer.activeSelf)
+            {
+                if ((myRole == null) || localController.inTerminalMenu || localController.isPlayerDead) return;
+            }
+            
             logdebug.LogInfo("Toggling vote window On/Off");
             roleHUD.OpenCloseVoteTab();
         }
