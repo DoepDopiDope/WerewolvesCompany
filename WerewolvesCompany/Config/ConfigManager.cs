@@ -56,6 +56,14 @@ namespace WerewolvesCompany.Config
         public NetworkVariable<float> CupidActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> CupidStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+        // Alpha Werewolf parameters
+        public NetworkVariable<float> AlphaWerewolfInteractRange = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> AlphaWerewolfActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> AlphaWerewolfStartOfRoundActionCooldown = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> AlphaWerewolfCooldownAfterTransform = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+
+
         void Awake()
         {
             if (Instance == null)
@@ -127,6 +135,12 @@ namespace WerewolvesCompany.Config
             CupidInteractRange.Value = ConfigParameters.config_CupidInteractRange.Value;
             CupidActionCooldown.Value = ConfigParameters.config_CupidActionCooldown.Value;
             CupidStartOfRoundActionCooldown.Value = ConfigParameters.config_CupidStartOfRoundActionCooldown.Value;
+
+            // Alpha Werewolf parameters
+            AlphaWerewolfInteractRange.Value = ConfigParameters.config_AlphaWerewolfInteractRange.Value;
+            AlphaWerewolfActionCooldown.Value = ConfigParameters.config_AlphaWerewolfActionCooldown.Value;
+            AlphaWerewolfStartOfRoundActionCooldown.Value = ConfigParameters.config_AlphaWerewolfStartOfRoundActionCooldown.Value;
+            AlphaWerewolfCooldownAfterTransform.Value = ConfigParameters.config_AlphaWerewolfCooldownAfterTransform.Value;
         }
 
         public override void OnDestroy()

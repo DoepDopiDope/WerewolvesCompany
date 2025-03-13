@@ -222,7 +222,6 @@ Theses features may be added in the future:
   - Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
 - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
 - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
-- **Alpha Werewolf** - Can convert a villager to a werewolf
 
 
 

@@ -23,6 +23,7 @@ namespace WerewolvesCompany
             roles.Add(new Cupid());
             roles.Add(new Minion());
             roles.Add(new DrunkenMan());
+            roles.Add(new AlphaWerewolf());
 
             return roles;
         }
@@ -690,7 +691,6 @@ namespace WerewolvesCompany
         {
             HUDManager.Instance.DisplayTip(roleNameColored, $"{rolesManager.GetPlayerById(idolizedId.Value).playerUsername} is dead. You have become a <color=red>Werewolf</color>.");
 
-
             rolesManager.BecomeRole("Werewolf", true);
             
             // Set role cd to 30s
@@ -881,6 +881,8 @@ namespace WerewolvesCompany
 
     }
 
+
+    // Drunken Man
     class DrunkenMan : Role
     {
         public override string roleName { get; set; } = "Drunken Man";
@@ -900,6 +902,51 @@ namespace WerewolvesCompany
         }
 
     }
+
+
+
+    // Alpha Werewolf
+    class AlphaWerewolf : Role
+    {
+        public override string roleName { get; set; } = "Alpha Werewolf";
+        public override int refInt { get; set; } = 8;
+        public override string team => "Werewolves";
+        public override string roleNameColor { get; set; } = "red";
+        public override string winCondition { get; set; } = "You win with the werewolves.";
+        public override string mainActionName { get; set; } = "Transform";
+        public override string roleShortDescription { get; set; } = "You can transform players into werewolves.";
+        public override string roleDescription { get; set; } = "The Alpha Werewolf can turn players into werewolves.";
+
+
+        public override float interactRange => configManager.AlphaWerewolfInteractRange.Value;
+        public override float baseActionCooldown => configManager.AlphaWerewolfActionCooldown.Value;
+        public override float startOfRoundActionCooldown => configManager.AlphaWerewolfStartOfRoundActionCooldown.Value;
+
+
+
+        public AlphaWerewolf() : base() { }
+
+
+        public override void PerformMainAction()
+        {
+            logger.LogInfo($"The {roleName} is a big boss.");
+            logger.LogInfo("Turning someone into a werewolf");
+
+            ulong targetId = GrabTargetPlayer();
+            rolesManager.AlphaWerewolfTransformToWerewolfServerRpc(targetId);
+        }
+
+        public override void NotifyMainActionSuccess(ulong targetId)
+        {
+            logdebug.LogInfo("I am running the Werewolf Transformation Confirmation");
+            string playerName = rolesManager.GetPlayerById(targetId).playerUsername;
+            HUDManager.Instance.DisplayTip(roleNameColored, $"You have successfuly turned {playerName} into a <color=red>Werewolf</color>.");
+        }
+
+
+    }
+
+
 }
 
 

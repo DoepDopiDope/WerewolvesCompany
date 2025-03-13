@@ -13,6 +13,7 @@ using System.Numerics;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using TMPro;
+using System.Drawing;
 
 
 
@@ -1317,7 +1318,7 @@ namespace WerewolvesCompany.Managers
             {
                 if (deadId == ((WildBoy)myRole).idolizedId.Value)
                 {
-                    BecomeWerewolfServerRpc();
+                    BecomeWerewolfServerRpc(myRole.roleName);
                 }
             }
 
@@ -1340,20 +1341,24 @@ namespace WerewolvesCompany.Managers
 
 
         [ServerRpc(RequireOwnership = false)]
-        public void BecomeWerewolfServerRpc(ServerRpcParams serverRpcParams = default)
+        public void BecomeWerewolfServerRpc(string reason, ServerRpcParams serverRpcParams = default)
         {
             allRoles[serverRpcParams.Receive.SenderClientId] = new Werewolf();
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
-            BecomeWerewolfClientRpc(clientRpcParams);
-
-            // Update the roleslist for everyone
+            BecomeWerewolfClientRpc(reason, clientRpcParams);
 
         }
 
         [ClientRpc]
-        public void BecomeWerewolfClientRpc(ClientRpcParams clientRpcParams = default)
+        public void BecomeWerewolfClientRpc(string reason, ClientRpcParams clientRpcParams = default)
         {
-            ((WildBoy)myRole).BecomeWerewolf();
+            if (reason == "Wild Boy")
+            {
+                if (myRole.roleName == "Wild Boy")
+                {
+                    ((WildBoy)myRole).BecomeWerewolf();
+                }
+            }
         }
 
 
@@ -1413,6 +1418,35 @@ namespace WerewolvesCompany.Managers
         {
             ((Cupid)myRole).CheckForCallBackOfLover();
         }
+
+
+
+        // Alpha Werewolf actions
+        [ServerRpc(RequireOwnership =false)]
+        public void AlphaWerewolfTransformToWerewolfServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
+        {
+            ulong alphaId = serverRpcParams.Receive.SenderClientId;
+            ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
+            allRoles[targetId] = new Werewolf();
+            AlphaWerewolfTransformToWerewolfClientRpc(alphaId, clientRpcParams);
+        }
+        
+        [ClientRpc]
+        public void AlphaWerewolfTransformToWerewolfClientRpc(ulong alphaId, ClientRpcParams clientRpcParams = default)
+        {
+            HUDManager.Instance.DisplayTip("<color=red>Werewolf</color>", $"The Alpha Werewolf has turned you into a <color=red>Werewolf</color>.");
+
+            BecomeRole("Werewolf", true);
+
+            // Set role cd to 30s
+            myRole.currentMainActionCooldown = configManager.AlphaWerewolfCooldownAfterTransform.Value;
+
+            // Update the roles list to all other clients
+            QueryAllRolesServerRpc(sendToAllPlayers: true);
+
+            NotifyMainActionSuccessServerRpc(alphaId);
+        }
+
 
     }
        

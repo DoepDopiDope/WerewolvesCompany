@@ -1,5 +1,10 @@
 ### [0.5.6]
 
+New roles:
+- Alpha Werewolf: Can turn other players into werewolves
+
+
+Minor additions and changes
 - Added the option to disable the quota from the LethalConfig menu
 
 

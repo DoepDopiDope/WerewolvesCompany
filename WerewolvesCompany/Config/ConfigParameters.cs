@@ -56,6 +56,12 @@ namespace WerewolvesCompany.Config
         public static ConfigEntry<float> config_CupidInteractRange;
         public static ConfigEntry<float> config_CupidActionCooldown;
         public static ConfigEntry<float> config_CupidStartOfRoundActionCooldown;
+        
+        // Alpha Werewolf parameters
+        public static ConfigEntry<float> config_AlphaWerewolfInteractRange;
+        public static ConfigEntry<float> config_AlphaWerewolfActionCooldown;
+        public static ConfigEntry<float> config_AlphaWerewolfStartOfRoundActionCooldown;
+        public static ConfigEntry<float> config_AlphaWerewolfCooldownAfterTransform;
 
 
         public static void ConfigSetup()
@@ -118,6 +124,13 @@ namespace WerewolvesCompany.Config
             config_CupidInteractRange = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Range", 30f, "How far Cupid can make someone fall in love.");
             config_CupidActionCooldown = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Cooldown", 9999f, "How often Cupid can create lovers (in seconds).");
             config_CupidStartOfRoundActionCooldown = Plugin.Instance.Config.Bind("Role: Cupid", "Romance Cooldown at start of round", 0f, "How soon after a round has started Cupid can create lovers (in seconds).");
+
+            // Alpah Werewolf parameters
+            config_AlphaWerewolfInteractRange = Plugin.Instance.Config.Bind("Role: Alpha Werewolf", "Transform Range", 1.5f, "How far the Alpha Werewolf can turn someone into a werewolf.");
+            config_AlphaWerewolfActionCooldown = Plugin.Instance.Config.Bind("Role: Alpha Werewolf", "Transform Cooldown", 9999f, "How often the Alpha Werewolf can turn someone into a werewolf (in seconds).");
+            config_AlphaWerewolfStartOfRoundActionCooldown = Plugin.Instance.Config.Bind("Role: Alpha Werewolf", "Transform Cooldown at start of round", 0f, "How soon after a round has started the Alpha Werewolf can create werewolves (in seconds).");
+            config_AlphaWerewolfCooldownAfterTransform = Plugin.Instance.Config.Bind("Role: Alpha Werewolf", "Cooldown after transformation", 30f, "Cooldown of werewolves after transformation (in seconds).");
+
         }
 
         public static void ConfigLethalConfig()
