@@ -116,6 +116,12 @@ The Werewolves can see each other if the option is enabled (on by default). See 
 
 
 
+### Alpha Werewolf
+
+The Alpha Werewolf is part of the werewolves team. However, he cannot kill players. Instead, he has the ability to turn players into werewolves.
+
+
+
 ### Villager
 
 The Villager shall find and kill the Werewolves before ship departure.
@@ -141,6 +147,16 @@ Note that unlike the original Werewolves game, the Witch here does not revive a 
 The Seer shall find and kill the Werewolves before ship departure.
 
 The Seer can seer another player's role.
+
+
+
+### Fake Seer
+
+Similarly to the regular Seer, the Fake Seer can check a player's role. However, She only has a 50% chance of guessing the target player's role.
+
+The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer.
+
+To be used simultaneously with the actual Seer.
 
 
 
@@ -214,7 +230,7 @@ Theses features may be added in the future:
 
 - **The Bounty Hunter** - Each round, his goal is to kill a random player
 - **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
-- **The Fake Seer** - She only has a 50% chance of guessing the target player's role. The role is given to her as Seer, so she does not know whether she is a Seer or a Fake Seer. To be used simultaneously with the actual Seer.
+
 - **The Hunter** - He can kill another player within a few seconds of his death
 - **The Flute Player** - He can charm people. His goal is to charm all other players.
 - **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:

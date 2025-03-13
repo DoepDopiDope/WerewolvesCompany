@@ -15,15 +15,16 @@ namespace WerewolvesCompany
         {
             var roles = new List<Role>();
 
-            roles.Add(new Werewolf());
-            roles.Add(new Villager());
-            roles.Add(new Witch());
-            roles.Add(new Seer());
-            roles.Add(new WildBoy());
-            roles.Add(new Cupid());
-            roles.Add(new Minion());
-            roles.Add(new DrunkenMan());
-            roles.Add(new AlphaWerewolf());
+            roles.Add(new Werewolf());      // 0
+            roles.Add(new Villager());      // 1
+            roles.Add(new Witch());         // 2
+            roles.Add(new Seer());          // 3
+            roles.Add(new WildBoy());       // 4
+            roles.Add(new Cupid());         // 5
+            roles.Add(new Minion());        // 6
+            roles.Add(new DrunkenMan());    // 7
+            roles.Add(new AlphaWerewolf()); // 8
+            roles.Add(new FakeSeer());      // 9
 
             return roles;
         }
@@ -116,7 +117,7 @@ namespace WerewolvesCompany
         public virtual string? roleNameColor { get; set; }  = null;
 #nullable disable
         public string roleNameColored => GetRoleNameColored();
-        public string terminalName => roleName.Replace(" ", "_");
+        public virtual string terminalName => roleName.Replace(" ", "_");
         public string terminalNameColored => GetTerminalRoleNameColored();
         public virtual int refInt { get; set; } = -1;
         public virtual string team { get; set; } = "NoTeam";
@@ -617,6 +618,8 @@ namespace WerewolvesCompany
         public override float baseActionCooldown => configManager.SeerActionCooldown.Value;
         public override float startOfRoundActionCooldown => configManager.SeerStartOfRoundActionCooldown.Value;
 
+        public bool isFakeSeer = false;
+
         public Seer() : base() { }
 
         public override void PerformMainAction()
@@ -632,11 +635,46 @@ namespace WerewolvesCompany
         public override void NotifyMainActionSuccess(string targetPlayerName, Role role)
         {
             logdebug.LogInfo("Displaying Checked role on HUD");
-            HUDManager.Instance.DisplayTip(roleNameColored, $"{targetPlayerName} is a {role.roleNameColored}");
+
+            Role displayedRole;
+            if (isFakeSeer)
+            {
+                logdebug.LogInfo("Is a Fake Seer");
+                // 50% chance to see to true role
+                int c = rolesManager.rng.Next(2);
+                if (c == 0)
+                {
+                    displayedRole = role;
+                }
+                else
+                {
+                    // Randomizes the displayed role
+                    List<Role> rolesList = rolesManager.currentRolesSetup;
+                    int k = rolesManager.rng.Next(rolesList.Count);
+                    displayedRole = rolesList[k];
+                }
+            }
+            else
+            {
+                logdebug.LogInfo("Is not a Fake Seer");
+                displayedRole = role;
+            }
+
+            HUDManager.Instance.DisplayTip(roleNameColored, $"{targetPlayerName} is a {displayedRole.roleNameColored}");
+
         }
     }
 
+    class FakeSeer : Seer
+    {
+        public override int refInt { get; set; } = 9;
+        public override string terminalName => "Fake_Seer";
 
+        public FakeSeer() : base()
+        {
+            isFakeSeer = true;
+        }
+    }
 
     // Role: Wild Boy
     class WildBoy : Role
