@@ -213,9 +213,10 @@ Theses features may be added in the future:
 ### Major possible updates
 
 - Change the Witch poison to actually poison the target. The poisoned player would start losing HP (after some time, to avoid revealing the Witch identity)
+- Change the Witch protection : Witch protection can be like the Totem of undying from Chillax scraps, it saves you from 1 insta kill, or from 1 fatal damage for 0.5s then you can die normally
 - Maybe add a vote system for the ship departure. Will have to think about it.
 - Change the vote kill trigger (idea from glitched npc). Add something in the ship with a screen and a button/bell
-
+-
 
 ### Minor possible updates
 
@@ -223,14 +224,13 @@ Theses features may be added in the future:
 - Add a way for players to change the role setup from LethalConfig
 - Icon for the roles to be displayed at the top of the screen
 - Randomize the roles list to avoid meta-game
-
+- Some default roles setups depending on the number of player
 
 
 ### New roles ideas
 
 - **The Bounty Hunter** - Each round, his goal is to kill a random player
 - **The Apprentice Seer** - As long as the Seer is alive, she does not have any power. Once the Seer dies, she becomes the new Seer.
-
 - **The Hunter** - He can kill another player within a few seconds of his death
 - **The Flute Player** - He can charm people. His goal is to charm all other players.
 - **The Little Girl** - I'm not fully sure how to adapt her from the original game, as even a glimpse of a werewolf would provide too much of an information. A few ideas, where she could get hints on who is a werewolf:
@@ -238,7 +238,7 @@ Theses features may be added in the future:
   - Once every cooldown-time, she can play Mastermind to try and guess a werewolf name (that sounds a bit too strong to me, as she could simply write an actual player name, making her a stronger Seer).
 - **The Sisters** - They are both part of the Village. They know each other's role, and therefore know they can trust each other.
 - **The Rusted Sword Knight** - If he is killed by a Werewolf, that werewolf is doomed and will die after some time (poison? or instant death after some time?).
-
+- **Werewolf who cannot kill but can resurect** - A werewolf who cannot kill, but can resurrect once
 
 
 
