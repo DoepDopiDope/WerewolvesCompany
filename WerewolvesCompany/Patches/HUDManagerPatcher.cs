@@ -25,6 +25,7 @@ namespace WerewolvesCompany.Patches
         {
             logdebug.LogInfo("Called SetSpectatingTextToPlayer");
             RolesManager rolesManager = Utils.GetRolesManager();
+            if (rolesManager == null || rolesManager.allRoles == null || !rolesManager.allRoles.ContainsKey(playerScript.OwnerClientId)) return;
             rolesManager.QueryAllRolesServerRpc();
             string displayText = $"(Spectating: {playerScript.playerUsername} - <b>{rolesManager.allRoles[playerScript.OwnerClientId].roleNameColored}</b>)";
             logdebug.LogInfo($"Displaying Spectating text: {displayText}");
@@ -35,6 +36,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
         static bool PreventTooltipOnDropBodyInShip(GrabbableObject GObject)
         {
+            if (configManager == null) return true;
             // Check if object is a ragdoll, and therefore do not display the tooltip
             if (configManager.DisableTooltipWhenBodyDroppedInShip.Value && GObject.name.ToLower().Contains("ragdoll"))
             {
@@ -48,10 +50,10 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch(typeof(HUDManager), "AddNewScrapFoundToDisplay")]
         static void AddScrapValueToQuota(GrabbableObject GObject)
         {
-            //quotaManager.AddScrapValue(GObject.scrapValue);
+            if (quotaManager == null || rolesManager == null || !rolesManager.IsServer) return;
+            if (!quotaManager.TryRegisterScrap(GObject)) return;
             logdebug.LogInfo($"Found scrap: {GObject.name} of value {GObject.scrapValue}");
-            //rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
-            quotaManager.AddScrapValue(GObject.scrapValue);
+            rolesManager.AddQuotaValueServerRpc(GObject.scrapValue);
         }
     }
 }

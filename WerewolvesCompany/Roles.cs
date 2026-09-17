@@ -11,22 +11,47 @@ namespace WerewolvesCompany
 {
     class References
     {
+        private static readonly Dictionary<int, Func<Role>> RoleFactories = new Dictionary<int, Func<Role>>
+        {
+            { 0, () => new Werewolf() },
+            { 1, () => new Villager() },
+            { 2, () => new Witch() },
+            { 3, () => new Seer() },
+            { 4, () => new WildBoy() },
+            { 5, () => new Cupid() },
+            { 6, () => new Minion() },
+            { 7, () => new DrunkenMan() },
+            { 8, () => new AlphaWerewolf() },
+            { 9, () => new FakeSeer() }
+        };
+        private static readonly int[] RoleOrder = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
         public static List<Role> GetAllRoles()
         {
             var roles = new List<Role>();
-
-            roles.Add(new Werewolf());      // 0
-            roles.Add(new Villager());      // 1
-            roles.Add(new Witch());         // 2
-            roles.Add(new Seer());          // 3
-            roles.Add(new WildBoy());       // 4
-            roles.Add(new Cupid());         // 5
-            roles.Add(new Minion());        // 6
-            roles.Add(new DrunkenMan());    // 7
-            roles.Add(new AlphaWerewolf()); // 8
-            roles.Add(new FakeSeer());      // 9
-
+            foreach (int refInt in RoleOrder)
+            {
+                roles.Add(RoleFactories[refInt]());
+            }
             return roles;
+        }
+
+        public static bool TryCreateRole(int refInt, out Role role)
+        {
+            if (RoleFactories.TryGetValue(refInt, out Func<Role> factory))
+            {
+                role = factory();
+                return true;
+            }
+
+            role = null;
+            return false;
+        }
+
+        public static Role CreateRole(int refInt)
+        {
+            if (TryCreateRole(refInt, out Role role)) return role;
+            throw new ArgumentOutOfRangeException(nameof(refInt), refInt, "Unknown role reference.");
         }
 
         // Checks whether I have duplicates in the refInts for each role.
@@ -54,30 +79,29 @@ namespace WerewolvesCompany
 
         public static Dictionary<int, Role> references()
         {
-            List<Role> roles = GetAllRoles();
             Dictionary<int, Role> dic = new Dictionary<int, Role>();
-            foreach (Role role in roles)
+            foreach (KeyValuePair<int, Func<Role>> entry in RoleFactories)
             {
-                dic.Add(role.refInt, role);
+                dic.Add(entry.Key, entry.Value());
             }
             return dic;
         }
 
         public static Role GetRoleByName(string roleName)
         {
-            foreach (var entry in references())
+            foreach (Func<Role> factory in RoleFactories.Values)
             {
-                Role role = entry.Value;
-                if (role.roleName.ToLower() == roleName.ToLower())
+                Role role = factory();
+                if (string.Equals(role.roleName, roleName, StringComparison.OrdinalIgnoreCase))
                 {
                     return role;
                 }
             }
 
-            foreach (var entry in references())
+            foreach (Func<Role> factory in RoleFactories.Values)
             {
-                Role role = entry.Value;
-                if (role.terminalName.ToLower() == roleName.ToLower())
+                Role role = factory();
+                if (string.Equals(role.terminalName, roleName, StringComparison.OrdinalIgnoreCase))
                 {
                     return role;
                 }
@@ -153,11 +177,7 @@ namespace WerewolvesCompany
         public virtual string secondaryActionText => $"{secondaryActionName} {targetInRangeName}";
         //public virtual string secondaryActionTooltip { get { return $"[{secondaryActionKey}] {secondaryActionText} {GetCurrentSecondaryActionCooldownText()}".Trim(); } }
         public virtual string secondaryActionTooltip => GetSecondaryActionTooltip();
-        public virtual string roleActionText
-{
-            get { return GetRoleActionText(); } 
-            set { roleActionText = value; }
-        }
+        public virtual string roleActionText => GetRoleActionText();
 
 
 
@@ -186,7 +206,9 @@ namespace WerewolvesCompany
 
         public Role()
         {
-            InitiateCooldowns();
+            // Role metadata is also created before joining a lobby (for validation
+            // and terminal menus). Cooldowns are initialized explicitly once the
+            // synchronized ConfigManager is available.
         }
         
         public virtual void InitiateCooldowns()
@@ -250,7 +272,7 @@ namespace WerewolvesCompany
 
         public virtual bool IsLocallyAllowedToPerformSecondaryAction()
         {
-            return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformMainActionRoleSpecific());
+            return (!IsSecondaryActionOnCooldown && !(targetInRangeId == null) && IsLocallyAllowedToPerformSecondaryActionRoleSpecific());
         }
 
         public virtual bool IsLocallyAllowedToPerformMainActionRoleSpecific()
@@ -521,7 +543,7 @@ namespace WerewolvesCompany
         public override string team => "Village";
         public override string winCondition { get; set; } = "You win by killing the Werewolves.";
         public override string roleShortDescription { get; set; } = "You do not have any special ability.";
-        public override string roleActionText { get; set; } = "";
+        public override string roleActionText => "";
         public override string mainActionName { get; set; } = "patpat";
         public override string roleDescription { get; set; } = "The Villager shall find and kill the Werewolves before ship departure.\nThe Villager can patpat others players.";
 
@@ -734,8 +756,6 @@ namespace WerewolvesCompany
             // Set role cd to 30s
             rolesManager.myRole.currentMainActionCooldown = configManager.WildBoyActionCooldownOnTransform.Value;
 
-            // Update the roles list to all other clients
-            rolesManager.QueryAllRolesServerRpc(sendToAllPlayers: true);
         }
     }
 

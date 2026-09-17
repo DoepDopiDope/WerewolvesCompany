@@ -1,3 +1,27 @@
 .vs/
 **/bin/
 **/obj/
+
+# Local AI assistant instructions and metadata
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
+GEMINI.md
+**/GEMINI.md
+copilot-instructions.md
+**/copilot-instructions.md
+.agents/
+**/.agents/
+.codex/
+**/.codex/
+.claude/
+**/.claude/
+.cursor/
+**/.cursor/
+.windsurf/
+**/.windsurf/
+.cursorrules
+**/.cursorrules
+.windsurfrules
+**/.windsurfrules

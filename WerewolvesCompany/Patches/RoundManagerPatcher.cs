@@ -23,20 +23,21 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("SyncScrapValuesClientRpc")]
         static void SendPlayersTheirRoleAndSetNewQuota(RoundManager __instance)
         {
+            if (rolesManager == null || quotaManager == null) return;
             if (rolesManager.hasAlreadyDistributedRolesThisRound) return;
-            
-            if (RoundManager.Instance.currentLevel.name == "CompanyBuildingLevel")
-            {
-                quotaManager.CheatValue();
-                return;
-            }
-
-            // Reset daily quota to 0 for everyone
-            quotaManager.ResetScrapValue();
 
             // Only host can send roles
             if (!(__instance.IsHost || __instance.IsServer))
             {
+                return;
+            }
+
+            quotaManager.ResetTrackedScrap();
+            rolesManager.ResetCurrentQuotaValueServerRpc();
+
+            if (RoundManager.Instance.currentLevel.name == "CompanyBuildingLevel")
+            {
+                rolesManager.CheatQuotaServerRpc();
                 return;
             }
 

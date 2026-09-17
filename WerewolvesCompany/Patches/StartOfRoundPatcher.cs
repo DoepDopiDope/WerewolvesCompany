@@ -28,12 +28,19 @@ namespace WerewolvesCompany.Patches
         {
             if (__instance.IsHost)
             {
-                GameObject rolesManagerObject = GameObject.Instantiate(Plugin.Instance.rolesManagerPrefab);
-                rolesManagerObject.GetComponent<NetworkObject>().Spawn();
+                // Roles read synchronized settings while they initialize, so the
+                // configuration object must be spawned first on every peer.
+                if (Config.ConfigManager.Instance == null)
+                {
+                    GameObject configManagerObject = GameObject.Instantiate(Plugin.Instance.configManagerPrefab);
+                    configManagerObject.GetComponent<NetworkObject>().Spawn();
+                }
 
-                GameObject configManagerObject = GameObject.Instantiate(Plugin.Instance.configManagerPrefab);
-                configManagerObject.GetComponent<NetworkObject>().Spawn();
-
+                if (RolesManager.Instance == null)
+                {
+                    GameObject rolesManagerObject = GameObject.Instantiate(Plugin.Instance.rolesManagerPrefab);
+                    rolesManagerObject.GetComponent<NetworkObject>().Spawn();
+                }
             }
         }
 
@@ -48,8 +55,9 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch("ResetPlayersLoadedValueClientRpc")]
-        static void OnRoundStart(StartOfRound __instance)
+        static void OnRoundStart()
         {
+            if (rolesManager == null || roleHUD == null) return;
             logdebug.LogInfo("Resetting my role to null");
             rolesManager.myRole = null;
             rolesManager.hasAlreadyDistributedRolesThisRound = false;
@@ -59,8 +67,9 @@ namespace WerewolvesCompany.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch("EndOfGameClientRpc")]
-        static void EndGameLogic(PlayerControllerB __instance)
+        static void EndGameLogic()
         {
+            if (rolesManager == null || roleHUD == null) return;
             // Display winning team
             rolesManager.DisplayWinningTeam();
 

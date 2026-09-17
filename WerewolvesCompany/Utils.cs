@@ -11,6 +11,7 @@ namespace WerewolvesCompany
 {
     static class Utils
     {
+        private static TextMeshProUGUI deathMessageText;
         static public ManualLogSource logger => Plugin.Instance.logger;
         static public ManualLogSource logdebug => Plugin.Instance.logdebug;
         static public RolesManager rolesManager => Plugin.Instance.rolesManager;
@@ -49,9 +50,16 @@ namespace WerewolvesCompany
 
         static public void EditDeathMessage(string message = "[LIFE SUPPORT: OFFLINE]")
         {
-            GameObject val = GameObject.Find("Systems/UI/Canvas/DeathScreen/GameOverText");
-            TextMeshProUGUI component = val.GetComponent<TextMeshProUGUI>();
-            ((TMP_Text)component).text = message;
+            if (deathMessageText == null)
+            {
+                GameObject deathMessageObject = GameObject.Find("Systems/UI/Canvas/DeathScreen/GameOverText");
+                if (deathMessageObject == null || !deathMessageObject.TryGetComponent(out deathMessageText))
+                {
+                    logdebug.LogWarning("Could not locate the death-screen message text.");
+                    return;
+                }
+            }
+            deathMessageText.text = message;
         }
 
         static public int Modulo(int a, int b)
@@ -62,7 +70,7 @@ namespace WerewolvesCompany
 
         static public bool AreThereAliveVillagers()
         {
-            logdebug.LogInfo("======================================");
+            if (StartOfRound.Instance == null || rolesManager == null || rolesManager.allRoles == null) return false;
             foreach (PlayerControllerB controller in StartOfRound.Instance.allPlayerScripts)
             {
                 if (!controller.isPlayerControlled) continue;

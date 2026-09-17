@@ -3,6 +3,7 @@ using HarmonyLib;
 using WerewolvesCompany.Config;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;
+using UnityEngine;
 
 namespace WerewolvesCompany.Patches
 {
@@ -12,12 +13,14 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
 
-        static private RoleHUD roleHUD = Plugin.Instance.roleHUD;
+        static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;
         static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
         static private ConfigManager configManager => Plugin.Instance.configManager;
 
         static public string defaultDisabledHoverTip = "";
+        static private float nextAliveTeamCheck;
+        static private bool cachedOnlyWerewolvesAlive;
 
         [HarmonyPostfix]
         [HarmonyPatch("Start")]
@@ -25,7 +28,10 @@ namespace WerewolvesCompany.Patches
         {
             defaultDisabledHoverTip = __instance.triggerScript.disabledHoverTip;
 
-            rolesManager.hasAlreadyDistributedRolesThisRound = false;
+            if (rolesManager != null)
+            {
+                rolesManager.hasAlreadyDistributedRolesThisRound = false;
+            }
         }
 
 
@@ -33,7 +39,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("Update")]
         static void HoverLeverCheckForQuotaRequirement(StartMatchLever __instance)
         {
-
+            if (rolesManager == null || quotaManager == null || configManager == null) return;
 
             if (StartOfRound.Instance.shipIsLeaving)
             {
@@ -50,10 +56,17 @@ namespace WerewolvesCompany.Patches
 
             if (!rolesManager.hasAlreadyDistributedRolesThisRound || !StartOfRound.Instance.shipHasLanded) return;
 
+            if (Time.unscaledTime >= nextAliveTeamCheck)
+            {
+                cachedOnlyWerewolvesAlive = rolesManager.onlyWerewolvesALive;
+                nextAliveTeamCheck = Time.unscaledTime + 0.25f;
+            }
+
             // If there are no villagers left, ignore the quota check
-            if (rolesManager.onlyWerewolvesALive)
+            if (cachedOnlyWerewolvesAlive)
             {
                 __instance.triggerScript.interactable = true;
+                __instance.triggerScript.disabledHoverTip = defaultDisabledHoverTip;
                 return;
             }
 
@@ -68,6 +81,7 @@ namespace WerewolvesCompany.Patches
                 else
                 {
                     __instance.triggerScript.interactable = true;
+                    __instance.triggerScript.disabledHoverTip = defaultDisabledHoverTip;
                 }
             }
         }

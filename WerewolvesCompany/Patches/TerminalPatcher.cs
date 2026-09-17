@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BepInEx.Logging;
 using HarmonyLib;
+using UnityEngine;
 using WerewolvesCompany.Managers;
 using WerewolvesCompany.UI;
 
@@ -105,19 +106,19 @@ namespace WerewolvesCompany.Patches
 
             //string input = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).ToLower();
             string input = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded).ToLower();
-            string[] args = input.Split(' ');
+            string[] args = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             logdebug.LogInfo($"Parsing sentence {input}");
             logdebug.LogInfo($"Input: {input}, with args: {args.ToString()} of length {args.Length.ToString()}");
 
-            if (!(input.StartsWith("werewolves") || input.StartsWith("wc")))
+            if (args.Length == 0 || !(args[0] == "werewolves" || args[0] == "wc"))
             {
                 logdebug.LogInfo("Not a werewolves command");
                 return true;
             }
 
             // Enter the werewolves Menu
-            if (input.StartsWith("werewolves") || input.StartsWith("wc"))
+            if (args[0] == "werewolves" || args[0] == "wc")
             {
                 logdebug.LogInfo("werewolves command was invoked");
                 // if werewolves command was invoked
@@ -130,6 +131,11 @@ namespace WerewolvesCompany.Patches
                 // if the add keyword was provided, add a role to the list
                 else if (args[1] == "add")
                 {
+                    if (rolesManager == null || !rolesManager.IsHost)
+                    {
+                        __result = CreateTerminalNode("[Werewolves Company]\n\nOnly the host can edit the role setup.\n");
+                        return false;
+                    }
                     // If number of roles were provided
                     if (args.Length == 4)
                     {
@@ -138,16 +144,18 @@ namespace WerewolvesCompany.Patches
                         {
                             logger.LogInfo($"Cannot add the role {roleName}, it is not part of the available roles");
                             __result = BuildRoleNotAvailableNode(roleName);
+                            return false;
                         }
 
-                        int N;
-                        if (int.TryParse(args[3], out N))
+                        if (int.TryParse(args[3], out int N) && N >= 1 && N <= 100)
                         {
                             AddNewRole(roleName,N);
                             // Refresh the window
                             __result = BuildTerminalNodeHome();
                             return false;
                         }
+                        __result = CreateTerminalNode("[Werewolves Company]\n\nRole count must be between 1 and 100.\n");
+                        return false;
                     }
 
                     for (int i = 2; i < args.Length; i++)
@@ -171,6 +179,16 @@ namespace WerewolvesCompany.Patches
                 // if the delete keyword was provided, add a role to the list
                 else if ((args[1] == "delete") || (args[1] == "del"))
                 {
+                    if (rolesManager == null || !rolesManager.IsHost)
+                    {
+                        __result = CreateTerminalNode("[Werewolves Company]\n\nOnly the host can edit the role setup.\n");
+                        return false;
+                    }
+                    if (args.Length < 3)
+                    {
+                        __result = CreateTerminalNode("[Werewolves Company]\n\nSpecify a role to delete, or use 'wc del *'.\n");
+                        return false;
+                    }
                     if (args.Length > 3)
                     {
                         logger.LogInfo($"Can only delete roles one at a time");
@@ -211,6 +229,12 @@ namespace WerewolvesCompany.Patches
 
                     if (args.Length == 2)
                     {
+                        return false;
+                    }
+
+                    if (rolesManager == null || !rolesManager.IsHost)
+                    {
+                        __result = CreateTerminalNode("[Werewolves Company]\n\nOnly the host can run debug commands.\n");
                         return false;
                     }
 
@@ -260,11 +284,10 @@ namespace WerewolvesCompany.Patches
 
         private static void AddNewRole(string roleName, int N = 1)
         {
-            Role roleToAdd = References.GetRoleByName(roleName);
-            logger.LogInfo($"Adding role x{N} {roleToAdd.roleName} to the list");
+            logger.LogInfo($"Adding role x{N} {roleName} to the list");
             for (int i = 0; i < N; i++)
             {
-                rolesManager.currentRolesSetup.Add(roleToAdd);
+                rolesManager.currentRolesSetup.Add(References.GetRoleByName(roleName));
             }
             rolesManager.UpdateCurrentRolesServerRpc(rolesManager.WrapRolesList(rolesManager.currentRolesSetup));
         }
@@ -298,11 +321,18 @@ namespace WerewolvesCompany.Patches
 
         }
 
+        private static TerminalNode CreateTerminalNode(string displayText)
+        {
+            TerminalNode node = ScriptableObject.CreateInstance<TerminalNode>();
+            node.displayText = displayText;
+            node.clearPreviousText = true;
+            node.acceptAnything = false;
+            return node;
+        }
+
         private static TerminalNode BuildTerminalNodeDebug()
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                               "------------------------------\n" +
                               "Debug commands\n" +
                               "------------------------------\n" +
@@ -310,81 +340,46 @@ namespace WerewolvesCompany.Patches
                               "wc debug cd      -> set all players cooldowns to 0\n" +
                               "wc debug distrib -> distribute roles\n" +
                               "wc debug reset   -> reset all players roles to their initial state\n" +
-                              "wc debug quota   -> bypass the current daily quota\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            return homeTerminalNode;
+                              "wc debug quota   -> bypass the current daily quota\n\n");
         }
 
         private static TerminalNode BuildTerminalNodeHome()
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                     "------------------------------\n" +
                     "[[[availableRoles]]]\n" +
                     "------------------------------\n" +
-                    "[[[currentRolesSetup]]]\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            rolesManager.QueryCurrentRolesServerRpc();
-            return homeTerminalNode;
+                    "[[[currentRolesSetup]]]\n\n");
         }
 
         private static TerminalNode BuildRoleInformationNode(string roleName)
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                               "------------------------------\n" +
-                              $"[[[{roleName.ToLower()}]]]\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            return homeTerminalNode;
+                              $"[[[{roleName.ToLower()}]]]\n\n");
         }
 
         private static TerminalNode BuildRoleNotAvailableNode(string roleName)
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                     "------------------------------\n" +
-                    $"The role '{roleName}' is not available\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            return homeTerminalNode;
+                    $"The role '{roleName}' is not available\n\n");
         }
 
 
         private static TerminalNode BuildRoleNotInPlayNode(string roleName)
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                     "------------------------------\n" +
-                    $"The role '{roleName}' is not part of the current roles\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            return homeTerminalNode;
+                    $"The role '{roleName}' is not part of the current roles\n\n");
         }
 
 
         private static TerminalNode BuilDeleteRolesOnceAtATimeNode()
         {
-            TerminalNode homeTerminalNode = new TerminalNode
-            {
-                displayText = "[Werewolves Company]\n\n" +
+            return CreateTerminalNode("[Werewolves Company]\n\n" +
                    "------------------------------\n" +
-                   $"Please remove roles one at a time\n\n",
-                clearPreviousText = true,
-                acceptAnything = false
-            };
-            return homeTerminalNode;
+                   "Please remove roles one at a time\n\n");
         }
 
         [HarmonyPrefix]

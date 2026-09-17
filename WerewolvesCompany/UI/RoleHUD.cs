@@ -8,7 +8,7 @@ namespace WerewolvesCompany.UI
 {
     internal class RoleHUD : MonoBehaviour
     {
-        public RoleHUD Instance;
+        public static RoleHUD Instance { get; private set; }
 
         public RolesManager rolesManager => Utils.GetRolesManager();
 
@@ -37,6 +37,19 @@ namespace WerewolvesCompany.UI
         public int voteWindowSelectedPlayer = 0;
         public int? voteCastedPlayer = null;
 
+        private Role lastDisplayedRole;
+        private ulong? lastDisplayedTarget;
+        private int lastMainCooldownSecond = int.MinValue;
+        private int lastSecondaryCooldownSecond = int.MinValue;
+        private bool lastMainCooldownActive;
+        private bool lastSecondaryCooldownActive;
+        private string lastVoteTitle;
+        private int lastVoteCooldownSecond = int.MinValue;
+        private bool lastVoteCooldownActive;
+        private int lastVoteListHash;
+        private int lastVoteSelection = int.MinValue;
+        private int? lastCastedVote = int.MinValue;
+
         //public Image roleIcon;
         //public Text toolTipText;
 
@@ -46,11 +59,13 @@ namespace WerewolvesCompany.UI
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
+                Plugin.Instance.roleHUD = this;
             }
             else
             {
                 logger.LogInfo("Duplicate detected, delted the just-created RoleHUD");
                 Destroy(gameObject); // Prevent duplicate instances
+                return;
             }
 
             CreateRoleHUD();
@@ -78,14 +93,19 @@ namespace WerewolvesCompany.UI
             // This cannot be put into the regular Update() method, because it needs to run after PlayerControllerB.LateUpdate().
             // Therefore, I'm not using the regular LateUpdate() method for RoleHUD because I'm not risking it running before the one of PlayerControllerB one.
             // I'm calling this directly from the HarmonyPostfix Patched method LateUpdate() of PlayerControllerB
+            UpdateVoteWindowText();
             UpdateRoleDisplay();
             UpdateToolTip();
-            UpdateVoteWindowText();
         }
 
         void OnDestroy()
         {
-            //logger.LogError($"{name} has been destroyed!");
+            if (Instance != this) return;
+            Instance = null;
+            if (Plugin.Instance != null && Plugin.Instance.roleHUD == this)
+                Plugin.Instance.roleHUD = null;
+            if (canvas != null)
+                Destroy(canvas.gameObject);
         }
 
         private void CreateRoleHUD()
@@ -138,7 +158,7 @@ namespace WerewolvesCompany.UI
             textObject.transform.SetParent(roleTextContainer.transform);
 
             roleText = textObject.AddComponent<Text>();
-            roleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            roleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             roleText.text = "";
             roleText.supportRichText = true;
             //roleText.alignment = TextAnchor.MiddleLeft;
@@ -237,7 +257,7 @@ namespace WerewolvesCompany.UI
             windowTitleObject.transform.SetParent(bckgObject.transform);
 
             voteTitleText = windowTitleObject.AddComponent<Text>();
-            voteTitleText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            voteTitleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             voteTitleText.text = "Vote Window";
             voteTitleText.supportRichText = true;
             voteTitleText.alignment = TextAnchor.UpperCenter;
@@ -261,7 +281,7 @@ namespace WerewolvesCompany.UI
 
 
             voteText = playersListObject.AddComponent<Text>();
-            voteText.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); // Use a default font
+            voteText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             voteWindowPlayersText = "Doep\nBananonymous\nPawaeca\nAlmerit\nCookynou\nSynaeh";
             
             voteText.text = voteWindowFullText;
@@ -302,6 +322,29 @@ namespace WerewolvesCompany.UI
             }
 
             Role myRole = rolesManager.myRole;
+
+            int mainCooldownSecond = (int)myRole.currentMainActionCooldown;
+            int secondaryCooldownSecond = (int)myRole.currentSecondaryActionCooldown;
+            bool mainCooldownActive = myRole.currentMainActionCooldown > 0;
+            bool secondaryCooldownActive = myRole.currentSecondaryActionCooldown > 0;
+            if (lastDisplayedRole == myRole &&
+                lastDisplayedTarget == myRole.targetInRangeId &&
+                lastMainCooldownSecond == mainCooldownSecond &&
+                lastSecondaryCooldownSecond == secondaryCooldownSecond &&
+                lastMainCooldownActive == mainCooldownActive &&
+                lastSecondaryCooldownActive == secondaryCooldownActive &&
+                lastVoteTitle == voteTitleText.text)
+            {
+                return;
+            }
+
+            lastDisplayedRole = myRole;
+            lastDisplayedTarget = myRole.targetInRangeId;
+            lastMainCooldownSecond = mainCooldownSecond;
+            lastSecondaryCooldownSecond = secondaryCooldownSecond;
+            lastMainCooldownActive = mainCooldownActive;
+            lastSecondaryCooldownActive = secondaryCooldownActive;
+            lastVoteTitle = voteTitleText.text;
 
             if (roleText != null)
             {
@@ -344,15 +387,48 @@ namespace WerewolvesCompany.UI
             }
         }
 
-        public void UpdateVoteWindowText()
+        public void UpdateVoteWindowText(bool forcePlayersRefresh = false)
         {
-            if (rolesManager.myRole == null) return;
+            if (rolesManager.myRole == null || rolesManager.allPlayersList == null || rolesManager.allPlayersIds == null) return;
+
+            float currentCooldown = rolesManager.voteKillCurrentCooldown;
+            int voteCooldownSecond = (int)currentCooldown;
+            bool voteCooldownActive = currentCooldown > 0;
+            if (voteCooldownSecond != lastVoteCooldownSecond || voteCooldownActive != lastVoteCooldownActive)
+            {
+                lastVoteCooldownSecond = voteCooldownSecond;
+                lastVoteCooldownActive = voteCooldownActive;
+                voteTitleText.text = voteCooldownActive ? $"Vote ({voteCooldownSecond}s)" : "Vote Available";
+            }
+
+            if (!forcePlayersRefresh && !voteWindowContainer.activeSelf) return;
+
+            int voteListHash = 17;
+            unchecked
+            {
+                for (int i = 0; i < rolesManager.allPlayersIds.Count; i++)
+                {
+                    ulong playerId = rolesManager.allPlayersIds[i];
+                    voteListHash = voteListHash * 31 + playerId.GetHashCode();
+                    if (rolesManager.allPlayersList.TryGetValue(playerId, out string name))
+                        voteListHash = voteListHash * 31 + name.GetHashCode();
+                }
+            }
+            if (!forcePlayersRefresh && voteListHash == lastVoteListHash &&
+                voteWindowSelectedPlayer == lastVoteSelection && voteCastedPlayer == lastCastedVote)
+                return;
+
+            lastVoteListHash = voteListHash;
+            lastVoteSelection = voteWindowSelectedPlayer;
+            lastCastedVote = voteCastedPlayer;
+
             // Update players list
-            string displayString = "";
-            for (int i = 0; i < rolesManager.allPlayersList.Count; i++)
+            System.Text.StringBuilder displayString = new System.Text.StringBuilder();
+            int playerCount = Mathf.Min(rolesManager.allPlayersList.Count, rolesManager.allPlayersIds.Count);
+            for (int i = 0; i < playerCount; i++)
             {
                 ulong playerId = rolesManager.allPlayersIds[i];
-                string playerName = rolesManager.allPlayersList[playerId];
+                if (!rolesManager.allPlayersList.TryGetValue(playerId, out string playerName)) continue;
                 string playerString = playerName;
                 if (voteCastedPlayer != null)
                 {
@@ -366,28 +442,11 @@ namespace WerewolvesCompany.UI
                 {
                     playerString = $"-> {playerString}";
                 }
-                displayString += $"{playerString}\n";
+                displayString.Append(playerString).Append('\n');
             }
 
-            voteWindowPlayersText = displayString.Trim('\n');
+            voteWindowPlayersText = displayString.ToString().TrimEnd('\n');
             voteText.text = voteWindowFullText;
-
-            // Update cooldown for the vote
-
-            //voteTitleText = "Vote";
-            string cooldownText;
-            float currentCooldown = rolesManager.voteKillCurrentCooldown;
-            
-            if (currentCooldown > 0)
-            { 
-                cooldownText = $" ({(int)currentCooldown}s)";
-            }
-            else
-            {
-                cooldownText = $" Available";
-            }
-
-            voteTitleText.text = $"Vote{cooldownText}";
 
 
 
@@ -402,6 +461,7 @@ namespace WerewolvesCompany.UI
         private void OpenVoteTab()
         {
             voteWindowContainer.SetActive(true);
+            UpdateVoteWindowText(true);
         }
 
         private void CloseVoteTab()

@@ -99,7 +99,8 @@ namespace WerewolvesCompany.Inputs
             if (rolesManager == null || roleHUD == null) return;
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
 
-            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersList.Count);
+            if (rolesManager.allPlayersIds == null || rolesManager.allPlayersIds.Count == 0) return;
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer - 1, rolesManager.allPlayersIds.Count);
             logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
             
             
@@ -110,7 +111,8 @@ namespace WerewolvesCompany.Inputs
             if (rolesManager == null || roleHUD == null) return;
             if (!roleHUD.voteWindowContainer.activeSelf || localController.inTerminalMenu) return;
             
-            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersList.Count);
+            if (rolesManager.allPlayersIds == null || rolesManager.allPlayersIds.Count == 0) return;
+            roleHUD.voteWindowSelectedPlayer = Utils.Modulo(roleHUD.voteWindowSelectedPlayer + 1, rolesManager.allPlayersIds.Count);
             logdebug.LogInfo($"Selected player {roleHUD.voteWindowSelectedPlayer}");
             
         }
@@ -137,6 +139,11 @@ namespace WerewolvesCompany.Inputs
             // else cast the vote
             else
             {
+                if (roleHUD.voteCastedPlayer.Value < 0 || roleHUD.voteCastedPlayer.Value >= rolesManager.allPlayersIds.Count)
+                {
+                    roleHUD.voteCastedPlayer = null;
+                    return;
+                }
                 ulong castPlayerId = rolesManager.allPlayersIds[roleHUD.voteCastedPlayer.Value];
                 rolesManager.CastVoteServerRpc(castPlayerId);
             }

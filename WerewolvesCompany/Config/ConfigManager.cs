@@ -6,7 +6,7 @@ namespace WerewolvesCompany.Config
 {
     internal class ConfigManager : NetworkBehaviour
     {
-        public ConfigManager Instance;
+        public static ConfigManager Instance { get; private set; }
         public ManualLogSource logger => Plugin.Instance.logger;
         public ManualLogSource logdebug => Plugin.Instance.logdebug;
 
@@ -22,7 +22,7 @@ namespace WerewolvesCompany.Config
         public NetworkVariable<bool> useQuota = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaMinMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaPlayersWeight = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        public NetworkVariable<float> quotaNplayersOffset = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> quotaNplayersOffset = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> quotaMaxMultiplier = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         // Werewolf parameters
@@ -69,7 +69,6 @@ namespace WerewolvesCompany.Config
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
                 Plugin.Instance.configManager = this;
             }
             else
@@ -146,7 +145,15 @@ namespace WerewolvesCompany.Config
         public override void OnDestroy()
         {
             base.OnDestroy();
-            logdebug.LogError($"{name} has been destroyed!");
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+            if (Plugin.Instance != null && Plugin.Instance.configManager == this)
+            {
+                Plugin.Instance.configManager = null;
+            }
+            logdebug.LogDebug($"{name} has been destroyed.");
         }
     }
 }

@@ -1,3 +1,18 @@
+### [0.7.0]
+
+- Updated and rebuilt against Lethal Company Version 80 (build 22825947).
+- Updated the BepInEx dependency to 5.4.2305 for the game's current Unity runtime.
+- Updated InputUtils to 0.7.13 and Coroner to 2.4.1.
+- Fixed network manager lifecycle across disconnects and subsequent lobbies.
+- Fixed a mismatched Harmony patch signature on the end-of-round RPC.
+- Updated the runtime UI font for current Unity 2022.3 releases.
+- Added null guards for lobby, disconnect, death, and spectating transitions.
+- Made packaging/deployment opt-in and updated deployment to the configured game directory.
+- Fixed role initialization before the synchronized configuration manager was available.
+- Updated custom terminal nodes to use Unity's required ScriptableObject factory.
+
+
+
 ### [0.6.0]
 
 New roles:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using BepInEx.Logging;
 using GameNetcodeStuff;
 using Unity.Netcode;
@@ -9,11 +10,7 @@ using WerewolvesCompany.UI;
 using WerewolvesCompany.Inputs;
 using WerewolvesCompany.Config;
 using Coroner;
-using System.Numerics;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 using TMPro;
-using System.Drawing;
 
 
 
@@ -22,7 +19,8 @@ namespace WerewolvesCompany.Managers
     class RolesManager : NetworkBehaviour
     {
         
-        public RolesManager Instance;
+        public static RolesManager Instance { get; private set; }
+        private static bool keybindCallbacksRegistered;
         public RoleHUD roleHUD => Plugin.Instance.roleHUD;
         public QuotaManager quotaManager => Plugin.Instance.quotaManager;
         public ConfigManager configManager => Plugin.Instance.configManager;
@@ -42,6 +40,8 @@ namespace WerewolvesCompany.Managers
         public float voteKillCurrentCooldown = 0f;
         public bool isVoteOnCooldown => (voteKillCurrentCooldown > 0);
         public bool hasAlreadyDistributedRolesThisRound = false;
+        private readonly HashSet<ulong> processedDeaths = new HashSet<ulong>();
+        private readonly RaycastHit[] targetingHits = new RaycastHit[32];
         //public Role spectatedPlayerRole;
 
 #nullable enable
@@ -56,8 +56,12 @@ namespace WerewolvesCompany.Managers
         public override void OnNetworkSpawn()
         {
             logdebug.LogInfo("RolesManager NetworkSpawn");
-            logger.LogInfo("Setup Keybinds CallBacks");
-            SetupKeybindCallbacks();
+            if (!keybindCallbacksRegistered)
+            {
+                logger.LogInfo("Setup Keybinds CallBacks");
+                SetupKeybindCallbacks();
+                keybindCallbacksRegistered = true;
+            }
 
 
             if (IsServer)
@@ -74,7 +78,6 @@ namespace WerewolvesCompany.Managers
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject); // Keep it across scenes if needed
                 Plugin.Instance.rolesManager = this;
             }
             else
@@ -94,21 +97,6 @@ namespace WerewolvesCompany.Managers
             // Update cooldown
             voteKillCurrentCooldown -= Time.deltaTime;
 
-            // Check for voted off players
-            if (IsServer)
-            {
-                if (!(allPlayersVotes == null))
-                {
-                    ulong? votedPlayer = CheckForVotedPlayer();
-                    if (votedPlayer != null)
-                    {
-                        ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(votedPlayer.Value);
-                        VoteKillPlayerClientRpc(clientRpcParams);
-                        NotifyAllPlayersOfVoteKillClientRpc(votedPlayer.Value);
-                        ResetVotes();
-                    }
-                }
-            }
         }
 
 
@@ -137,7 +125,15 @@ namespace WerewolvesCompany.Managers
         public override void OnDestroy()
         {
             base.OnDestroy();
-            logdebug.LogError($"{name} has been destroyed!");
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+            if (Plugin.Instance != null && Plugin.Instance.rolesManager == this)
+            {
+                Plugin.Instance.rolesManager = null;
+            }
+            logdebug.LogDebug($"{name} has been destroyed.");
         }
 
 
@@ -182,83 +178,63 @@ namespace WerewolvesCompany.Managers
             }
 
             GameObject playerObject = GetPlayerByNetworkId(myId);
-            //mls.LogInfo("Grab the PlayerControllerB");
-            PlayerControllerB player = playerObject.GetComponent<PlayerControllerB>();
+            if (playerObject == null || !playerObject.TryGetComponent(out PlayerControllerB player)) return null;
             //PlayerControllerB player = HUDManager.Instance.localPlayer;
             Camera playerCamera = player.gameplayCamera;
+            if (playerCamera == null) return null;
 
 
             // Cast rays to check whether another player is in range
-            int playerLayerMask = 1 << playerObject.layer;
-
             UnityEngine.Vector3 castDirection = playerCamera.transform.forward.normalized;
-            RaycastHit[] pushRay = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange, playerLayerMask);
+            int hitCount = Physics.RaycastNonAlloc(playerCamera.transform.position, castDirection, targetingHits, checkRange);
+            PlayerControllerB? closestPlayer = null;
+            float closestPlayerDistance = float.MaxValue;
+            float closestBlockingDistance = float.MaxValue;
 
-            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, castDirection, checkRange);
-            System.Array.Sort(allHits, (a, b) => (a.distance.CompareTo(b.distance)));
-
-            if (allHits.Length == 0) // No hits found
+            for (int i = 0; i < hitCount; i++)
             {
-                return null;
-            }
-            
+                RaycastHit hit = targetingHits[i];
+                Collider hitCollider = hit.collider;
+                if (hitCollider == null) continue;
 
-            //logdebug.LogInfo($"============================");
-            foreach (RaycastHit hit in allHits)
-            {
-                GameObject checkedObject = hit.transform.gameObject;
+                Transform hitTransform = hitCollider.transform;
+                if (hitTransform == null) continue;
 
-                if (checkedObject.transform.parent.name.Contains("Player"))
+                GameObject checkedObject = hitTransform.gameObject;
+                if (checkedObject == null) continue;
+
+                PlayerControllerB hitPlayer = hitTransform.GetComponentInParent<PlayerControllerB>();
+                if (hitPlayer != null)
                 {
-                    //logdebug.LogInfo($"Found something contained in a player: {checkedObject.name}");
-                    checkedObject = checkedObject.transform.parent.gameObject;
-                }
-
-
-                // Skip own player object
-                if (checkedObject == playerObject)
-                {
+                    if (hitPlayer == player || hitPlayer.isPlayerDead || !hitPlayer.isPlayerControlled) continue;
+                    if (hit.distance < closestPlayerDistance)
+                    {
+                        closestPlayer = hitPlayer;
+                        closestPlayerDistance = hit.distance;
+                    }
                     continue;
                 }
-                
+
                 // Skip line of sight
-                string name = hit.collider.name.ToLower();
-                if (name.Contains("lineofsight"))
+                if (hitCollider.name.IndexOf("lineofsight", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     continue;
                 }
-
-
-
-                if (checkedObject.layer == playerObject.layer)
-                {
-                    return checkedObject.GetComponent<PlayerControllerB>();
-                }
-
-                // Now skip for non-rendered objects.
-                // The playercontroller object was not rendered, so it was not possible to move this check above
                 Renderer renderer = checkedObject.GetComponent<Renderer>();
-                if ( renderer == null )
-                {
-                    continue;
-                }
-
-                if (!renderer.enabled || !renderer.isVisible)
-                {
-                    continue;
-                }
-
-                //logdebug.LogInfo($"Skipped object {checkedObject.name}");
-                return null;
-
+                if (renderer != null && renderer.enabled && renderer.isVisible && hit.distance < closestBlockingDistance)
+                    closestBlockingDistance = hit.distance;
             }
-            return null;
+            return closestPlayerDistance < closestBlockingDistance ? closestPlayer : null;
         }
 #nullable disable
 
         private static GameObject GetPlayerByNetworkId(ulong playerId)
         {
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerId, out NetworkObject networkObject))
+            NetworkManager networkManager = NetworkManager.Singleton;
+            if (networkManager == null || networkManager.SpawnManager == null) return null;
+
+            if (networkManager.SpawnManager.SpawnedObjects.TryGetValue(playerId, out NetworkObject networkObject) &&
+                networkObject != null)
             {
                 return networkObject.gameObject;
             }
@@ -267,31 +243,58 @@ namespace WerewolvesCompany.Managers
 
         public PlayerControllerB GetPlayerById(ulong playerId)
         {
-            GameObject[] allPlayers = StartOfRound.Instance.allPlayerObjects;
-            foreach (GameObject player in allPlayers)
+            if (TryGetPlayerById(playerId, out PlayerControllerB player)) return player;
+            logger.LogError($"Could not find player {playerId}");
+            throw new KeyNotFoundException($"Could not find player {playerId}");
+        }
+
+        public bool TryGetPlayerById(ulong playerId, out PlayerControllerB player)
+        {
+            player = null;
+            if (StartOfRound.Instance == null || StartOfRound.Instance.allPlayerScripts == null) return false;
+            foreach (PlayerControllerB candidate in StartOfRound.Instance.allPlayerScripts)
             {
-                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
-                if (playerId == playerController.OwnerClientId)
+                if (candidate != null && playerId == candidate.OwnerClientId)
                 {
-                    return playerController;
+                    player = candidate;
+                    return true;
                 }
             }
-            logger.LogError("Could not find the desired player");
-            throw new Exception("Could not find the player");
+            return false;
+        }
+
+        public List<PlayerControllerB> GetActivePlayers()
+        {
+            List<PlayerControllerB> players = new List<PlayerControllerB>();
+            HashSet<ulong> seenIds = new HashSet<ulong>();
+            if (StartOfRound.Instance == null || StartOfRound.Instance.allPlayerScripts == null) return players;
+            foreach (PlayerControllerB player in StartOfRound.Instance.allPlayerScripts)
+            {
+                if (player == null || !player.isPlayerControlled || !player.IsSpawned) continue;
+                if (seenIds.Add(player.OwnerClientId)) players.Add(player);
+            }
+            return players;
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void BuildAndSendRolesServerRpc()
+        public void BuildAndSendRolesServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             BuildAndSendRoles();
         }
 
         public void BuildAndSendRoles()
         {
+            if (!IsServer) return;
+            processedDeaths.Clear();
             // Build roles
             Dictionary<ulong, Role> finalRoles;
             logger.LogInfo("Roles generation has started");
             finalRoles = BuildFinalRolesFromScratch();
+            foreach (Role role in finalRoles.Values)
+            {
+                role.InitiateCooldowns();
+            }
             logger.LogInfo("Roles generation has finished");
 
             logdebug.LogInfo($"{finalRoles}");
@@ -343,8 +346,7 @@ namespace WerewolvesCompany.Managers
         // Automatically gathers the number of players
         public List<Role> GenerateRoles()
         {
-            //return GenerateRoles(StartOfRound.Instance.allPlayerObjects.Length);
-            return GenerateRoles(GameNetworkManager.Instance.connectedPlayers);
+            return GenerateRoles(GetActivePlayers().Count);
         }
 
         // Specified number of players
@@ -355,7 +357,7 @@ namespace WerewolvesCompany.Managers
             // Fill roles with the current setup
             for (int i = 0; i < currentRolesSetup.Count; i++)
             {
-                roles.Add(currentRolesSetup[i]);
+                roles.Add(References.CreateRole(currentRolesSetup[i].refInt));
             }
 
             // Fill remaining slots with Villagers
@@ -391,21 +393,20 @@ namespace WerewolvesCompany.Managers
         public Dictionary<ulong, Role> BuildFinalRolesFromScratch()
         {
             // Build the roles list and other stuff
-            GameObject[] allPlayers;
-            //List<GameObject> allPlayersList;
+            List<PlayerControllerB> allPlayers;
             List<Role> roles;
             List<ulong> playersIds;
 
 
             logdebug.LogInfo("Getting the list of all connected players");
             // Get list of all players
-            int Nplayers = GameNetworkManager.Instance.connectedPlayers;
-            allPlayers = StartOfRound.Instance.allPlayerObjects;
+            allPlayers = GetActivePlayers();
+            int Nplayers = allPlayers.Count;
 
             string stringnames = $"Found {Nplayers} players : ";
             for (int i = 0; i < Nplayers;i++)
             {
-                string name = allPlayers[i].GetComponent<PlayerControllerB>().playerUsername;
+                string name = allPlayers[i].playerUsername;
                 stringnames += $"{name}";
             }
             logdebug.LogInfo(stringnames);
@@ -421,9 +422,8 @@ namespace WerewolvesCompany.Managers
 
 
             logdebug.LogInfo("Show all playerControllers informations");
-            foreach (GameObject player in allPlayers)
+            foreach (PlayerControllerB playerController in allPlayers)
             {
-                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
                 logdebug.LogInfo($"playerName = {playerController.playerUsername}, playerClientId = {playerController.playerClientId}, actualClientId = {playerController.actualClientId}, OwnerClientId = {playerController.OwnerClientId}, NetworkObjectId = {playerController.NetworkObjectId}, NetworkBehaviourId = {playerController.NetworkBehaviourId}");
             }
 
@@ -432,8 +432,7 @@ namespace WerewolvesCompany.Managers
             playersIds = new List<ulong>();
             for (int i = 0; i<Nplayers;i++)
             {
-                GameObject player = allPlayers[i];
-                PlayerControllerB playerController = player.GetComponent<PlayerControllerB>();
+                PlayerControllerB playerController = allPlayers[i];
                 logdebug.LogInfo($"playerName = {playerController.playerUsername}, playerClientId = {playerController.playerClientId}, actualClientId = {playerController.actualClientId}, OwnerClientId = {playerController.OwnerClientId}, NetworkObjectId = {playerController.NetworkObjectId}, NetworkBehaviourId = {playerController.NetworkBehaviourId}");
 
                 playersIds.Add(playerController.OwnerClientId);
@@ -459,6 +458,7 @@ namespace WerewolvesCompany.Managers
             Role role = References.GetRoleByName(roleName);
             RolesInteractions interactions = myRole.interactions;
             myRole = role;
+            myRole.InitiateCooldowns();
             if (keepInteractions) myRole.interactions = interactions;
         }
 
@@ -477,12 +477,17 @@ namespace WerewolvesCompany.Managers
         {
             // Retrieve the role
             logdebug.LogInfo($"Received my role");
-            Role role = References.references()[roleInt];
+            if (!References.TryCreateRole(roleInt, out Role role))
+            {
+                logger.LogError($"Received unknown role reference {roleInt}.");
+                return;
+            }
             logdebug.LogInfo($"I was given the role {role} with name {role.roleName} and refInt {role.refInt}");
 
 
             // Assign the player's role
             myRole = role;
+            myRole.InitiateCooldowns();
 
 
             logdebug.LogInfo("I have succesfully set my own role");
@@ -497,7 +502,7 @@ namespace WerewolvesCompany.Managers
 
             // Locate the RoleHUD and update it
             logdebug.LogInfo("Trying to update HUD");
-            RoleHUD roleHUD = FindObjectOfType<RoleHUD>();
+            RoleHUD roleHUD = this.roleHUD;
             if (roleHUD != null)
             {
                 logger.LogInfo("Update the HUD with the role");
@@ -523,6 +528,11 @@ namespace WerewolvesCompany.Managers
         {
             Dictionary<ulong, ulong?> newVotes = new Dictionary<ulong, ulong?>();
 
+            if (allRoles == null)
+            {
+                allPlayersVotes = newVotes;
+                return;
+            }
             foreach (var item in allRoles)
             {
                 newVotes.Add(item.Key, null);
@@ -534,6 +544,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void ResetVoteCooldownServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             ResetVoteCooldownClientRpc();
         }
 
@@ -555,20 +566,18 @@ namespace WerewolvesCompany.Managers
             // Check which players are alive
             //logdebug.LogInfo("===================================");
             //logdebug.LogInfo("Build the dictionary");
-            foreach (GameObject playerObject in StartOfRound.Instance.allPlayerObjects)
+            foreach (PlayerControllerB controller in GetActivePlayers())
             {
-                PlayerControllerB controller = playerObject.GetComponent<PlayerControllerB>();
-                if (!controller.isPlayerDead && controller.isPlayerControlled)
+                if (!controller.isPlayerDead)
                 {
-                    //logdebug.LogInfo($"Adding controller name: {controller.playerUsername}, id: {controller.OwnerClientId}");
-                    votesResults.Add(controller.OwnerClientId, 0);
+                    votesResults[controller.OwnerClientId] = 0;
                 }
             }
 
             // Check for existing votes
             foreach (var item in allPlayersVotes)
             {
-                if (item.Value != null)
+                if (item.Value != null && votesResults.ContainsKey(item.Key))
                 {
                     if (votesResults.ContainsKey(item.Value.Value))
                     {
@@ -604,6 +613,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void AddQuotaValueServerRpc(int scrapValue, ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId || scrapValue < 0) return;
             AddQuotaValueClientRpc(scrapValue);
         }
 
@@ -616,6 +626,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void SetNewDailyQuotaServerRpc(int newQuota, ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId || newQuota < 0) return;
             SetNewDailyQuotaClientRpc(newQuota);
         }
         [ClientRpc]
@@ -627,6 +638,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void ResetCurrentQuotaValueServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             ResetCurrentQuotaValueClientRpc();
         }
         [ClientRpc]
@@ -639,6 +651,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void CheatQuotaServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             CheatQuotaClientRpc();
         }
 
@@ -668,7 +681,30 @@ namespace WerewolvesCompany.Managers
 
         public void CastVoteGeneric(ulong? voteId, ulong voterId)
         {
+            if (!IsServer || allPlayersVotes == null || allRoles == null || isVoteOnCooldown) return;
+            if (!allPlayersVotes.ContainsKey(voterId) || !TryGetPlayerById(voterId, out PlayerControllerB voter)) return;
+            if (!voter.IsSpawned || !voter.isPlayerControlled || voter.isPlayerDead) return;
+
+            if (voteId.HasValue)
+            {
+                if (!allRoles.ContainsKey(voteId.Value) || !TryGetPlayerById(voteId.Value, out PlayerControllerB target)) return;
+                if (!target.IsSpawned || !target.isPlayerControlled || target.isPlayerDead) return;
+            }
+
             allPlayersVotes[voterId] = voteId;
+            ResolveVotesIfNeeded();
+        }
+
+        private void ResolveVotesIfNeeded()
+        {
+            if (isVoteOnCooldown || allPlayersVotes == null) return;
+            ulong? votedPlayer = CheckForVotedPlayer();
+            if (!votedPlayer.HasValue) return;
+
+            SetVoteKillOnCooldown();
+            VoteKillPlayerClientRpc(Utils.BuildClientRpcParams(votedPlayer.Value));
+            NotifyAllPlayersOfVoteKillClientRpc(votedPlayer.Value);
+            ResetVotes();
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -679,7 +715,11 @@ namespace WerewolvesCompany.Managers
 
         public void ResetPlayerVote(ulong playerId)
         {
-            allPlayersVotes[playerId] = null;
+            if (allPlayersVotes != null && allPlayersVotes.ContainsKey(playerId))
+            {
+                allPlayersVotes[playerId] = null;
+                if (IsServer) ResolveVotesIfNeeded();
+            }
         }
 
         public void SetVoteKillOnCooldown()
@@ -716,6 +756,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void QueryAllRolesServerRpc(bool sendToAllPlayers = false, ServerRpcParams serverRpcParams = default)
         {
+            if (sendToAllPlayers && serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             QueryAllRolesFromServer(sendToAllPlayers, serverRpcParams);
         }
 
@@ -760,17 +801,19 @@ namespace WerewolvesCompany.Managers
                 roles.Add(item.Value);
             }
 
-            playersRefsIds = "";
+            StringBuilder playerIdsBuilder = new StringBuilder();
             foreach (ulong id in playersIds)
             {
-                playersRefsIds += $"{id}\n";
+                playerIdsBuilder.Append(id).Append('\n');
             }
 
-            rolesRefInts = "";
+            StringBuilder roleIdsBuilder = new StringBuilder();
             foreach (Role role in roles)
             {
-                rolesRefInts += $"{role.refInt}\n";
+                roleIdsBuilder.Append(role.refInt).Append('\n');
             }
+            playersRefsIds = playerIdsBuilder.ToString();
+            rolesRefInts = roleIdsBuilder.ToString();
         }
 
 
@@ -779,19 +822,27 @@ namespace WerewolvesCompany.Managers
 
             Dictionary<ulong, Role> dic = new Dictionary<ulong, Role>();
 
-            string[] roles = rolesRefInts.Split("\n");
-            string[] ids   = playersRefsIds.Split("\n");
+            string[] roles = rolesRefInts.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] ids = playersRefsIds.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (roles.Length != ids.Length || roles.Length > 128)
+            {
+                logger.LogWarning("Rejected malformed player-role data.");
+                return dic;
+            }
 
             for (int i = 0; i < roles.Length; i++)
             {
-                if ((roles[i] == "") || (ids[i] == ""))
+                if (!int.TryParse(roles[i], out int refInt) ||
+                    !ulong.TryParse(ids[i], out ulong playerId) ||
+                    !References.TryCreateRole(refInt, out Role role) ||
+                    dic.ContainsKey(playerId))
                 {
+                    logger.LogWarning("Skipped invalid player-role entry received from the server.");
                     continue;
                 }
                 logdebug.LogInfo($"Trying to convert: {roles[i]} and {ids[i]}");
-                int refInt = Convert.ToInt32(roles[i]);
-                ulong playerid = Convert.ToUInt64(ids[i]);
-                dic.Add(playerid, References.references()[refInt]);
+                dic.Add(playerId, role);
             }
             return dic;
         }
@@ -799,10 +850,10 @@ namespace WerewolvesCompany.Managers
         public List<ulong> GetAllPlayersIds()
         {
             List<ulong> ids = new List<ulong>();
-            
-            foreach (var item in allRoles)
+            if (allRoles == null) return ids;
+            foreach (PlayerControllerB player in GetActivePlayers())
             {
-                ids.Add(item.Key);
+                if (!player.isPlayerDead && allRoles.ContainsKey(player.OwnerClientId)) ids.Add(player.OwnerClientId);
             }
 
             return ids;
@@ -811,10 +862,10 @@ namespace WerewolvesCompany.Managers
         public Dictionary<ulong, string> GetAllPlayersIdsNamesDic()
         {
             Dictionary <ulong, string> dic = new Dictionary<ulong, string>();
-
-            foreach (var item in allRoles)
+            if (allRoles == null) return dic;
+            foreach (PlayerControllerB player in GetActivePlayers())
             {
-                dic.Add(item.Key, GetPlayerById(item.Key).playerUsername);
+                if (!player.isPlayerDead && allRoles.ContainsKey(player.OwnerClientId)) dic[player.OwnerClientId] = player.playerUsername;
             }
 
             return dic;
@@ -827,14 +878,25 @@ namespace WerewolvesCompany.Managers
         {
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
             UpdateCurrentRolesSetupClientRpc(WrapRolesList(currentRolesSetup), false, clientRpcParams);
+            if (quotaManager != null)
+                SyncQuotaClientRpc(quotaManager.currentScrapValue, quotaManager.requiredDailyQuota, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void SyncQuotaClientRpc(int currentValue, int requiredValue, ClientRpcParams clientRpcParams = default)
+        {
+            if (quotaManager == null) return;
+            quotaManager.currentScrapValue = currentValue;
+            quotaManager.requiredDailyQuota = requiredValue;
         }
 
         [ServerRpc(RequireOwnership = false)]
         public void UpdateCurrentRolesServerRpc(string newRolesSetup,ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             logger.LogInfo($"Roles setup was edited by PlayerSenderId = {serverRpcParams.Receive.SenderClientId}");
-            //ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
-            UpdateCurrentRolesSetupClientRpc(newRolesSetup, true);
+            currentRolesSetup = UnwrapRolesList(newRolesSetup);
+            UpdateCurrentRolesSetupClientRpc(WrapRolesList(currentRolesSetup), true);
         }
 
 
@@ -851,12 +913,12 @@ namespace WerewolvesCompany.Managers
 
         public string WrapRolesList(List<Role> roles)
         {
-            string rolesRefInts = "";
+            StringBuilder rolesRefInts = new StringBuilder();
             foreach (Role role in roles)
             {
-                rolesRefInts += $"{role.refInt}\n";
+                rolesRefInts.Append(role.refInt).Append('\n');
             }
-            return rolesRefInts;
+            return rolesRefInts.ToString();
 
         }
 
@@ -865,16 +927,23 @@ namespace WerewolvesCompany.Managers
         {
             List<Role> newCurrentRolesSetup = new List<Role>();
             logdebug.LogInfo("Trying to split the list into individual string-ints");
-            string[] refInts = rolesRefInts.Split('\n');
+            string[] refInts = rolesRefInts.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             logdebug.LogInfo("Successfully splt the string");
+
+            if (refInts.Length > 100)
+            {
+                logger.LogWarning("Rejected a role setup with more than 100 entries.");
+                return newCurrentRolesSetup;
+            }
 
             foreach (string refInt in refInts)
             {
-                if (refInt == "")
+                if (!int.TryParse(refInt, out int roleId) || !References.TryCreateRole(roleId, out Role role))
                 {
+                    logger.LogWarning($"Skipped invalid role reference '{refInt}'.");
                     continue;
                 }
-                newCurrentRolesSetup.Add(References.references()[Convert.ToInt32(refInt)]);
+                newCurrentRolesSetup.Add(role);
             }
             return newCurrentRolesSetup;
         }
@@ -884,8 +953,9 @@ namespace WerewolvesCompany.Managers
         // Debug 
         // Reset all cooldowns to everyone
         [ServerRpc(RequireOwnership = false)]
-        public void ResetAllCooldownsServerRpc()
+        public void ResetAllCooldownsServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             ResetAllCooldownsClientRpc();
         }
 
@@ -905,8 +975,9 @@ namespace WerewolvesCompany.Managers
         }
 
         [ServerRpc(RequireOwnership =false)]
-        public void ResetRolesServerRpc()
+        public void ResetRolesServerRpc(ServerRpcParams serverRpcParams = default)
         {
+            if (serverRpcParams.Receive.SenderClientId != NetworkManager.ServerClientId) return;
             ResetRolesClientRpc();
         }
 
@@ -916,6 +987,7 @@ namespace WerewolvesCompany.Managers
             if (myRole == null) return;
             logger.LogInfo("Resetting my role to its intial state");
             myRole = References.GetRoleByName(myRole.roleName);
+            myRole.InitiateCooldowns();
             HUDManager.Instance.DisplayTip("Admin", "Role reset to its initial state");
         }
 
@@ -971,7 +1043,8 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} main action on cooldown");
             ulong senderId = serverRpcParams.Receive.SenderClientId;
-            allRoles[senderId].SetMainActionOnCooldown();
+            if (allRoles == null || !allRoles.TryGetValue(senderId, out Role senderRole)) return;
+            senderRole.SetMainActionOnCooldown();
 
             // Build the ClientRpcParams to answer to the caller
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -1006,7 +1079,8 @@ namespace WerewolvesCompany.Managers
         {
             logdebug.LogInfo($"Setting Player Id = {serverRpcParams.Receive.SenderClientId} secondary action on cooldown");
             ulong senderId = serverRpcParams.Receive.SenderClientId;
-            allRoles[senderId].SetSecondaryActionOnCooldown();
+            if (allRoles == null || !allRoles.TryGetValue(senderId, out Role senderRole)) return;
+            senderRole.SetSecondaryActionOnCooldown();
 
             // Build the ClientRpcParams to answer to the caller
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -1034,8 +1108,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void NotifyMainActionSuccessServerRpc(ulong originId, ServerRpcParams serverRpcParams = default)
         {
-            PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
-            PlayerControllerB originPlayer = GetPlayerById(originId);
+            if (allRoles == null || !allRoles.ContainsKey(originId) ||
+                !TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB targettedPlayer) ||
+                !TryGetPlayerById(originId, out PlayerControllerB originPlayer)) return;
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) has been affected by the main action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
             ulong targetPlayerId = targettedPlayer.OwnerClientId;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
@@ -1052,8 +1127,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void NotifyMainActionFailedServerRpc(ulong originId, ServerRpcParams serverRpcParams = default)
         {
-            PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
-            PlayerControllerB originPlayer = GetPlayerById(originId);
+            if (allRoles == null || !allRoles.ContainsKey(originId) ||
+                !TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB targettedPlayer) ||
+                !TryGetPlayerById(originId, out PlayerControllerB originPlayer)) return;
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) was not affected by the main action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
             string targetPlayerName = targettedPlayer.playerUsername;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
@@ -1072,8 +1148,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void NotifySecondaryActionSuccessServerRpc(ulong originId, ServerRpcParams serverRpcParams = default)
         {
-            PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
-            PlayerControllerB originPlayer = GetPlayerById(originId);
+            if (allRoles == null || !allRoles.ContainsKey(originId) ||
+                !TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB targettedPlayer) ||
+                !TryGetPlayerById(originId, out PlayerControllerB originPlayer)) return;
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) has been affected by the secondary action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
             string targetPlayerName = targettedPlayer.playerUsername;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
@@ -1091,8 +1168,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void NotifySecondaryActionFailedServerRpc(ulong originId, ServerRpcParams serverRpcParams = default)
         {
-            PlayerControllerB targettedPlayer = GetPlayerById(serverRpcParams.Receive.SenderClientId);
-            PlayerControllerB originPlayer = GetPlayerById(originId);
+            if (allRoles == null || !allRoles.ContainsKey(originId) ||
+                !TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB targettedPlayer) ||
+                !TryGetPlayerById(originId, out PlayerControllerB originPlayer)) return;
             logdebug.LogInfo($"I was notified that the targetted player ({targettedPlayer.playerUsername}) was not affected by the secondary action of the {allRoles[originId]} {originPlayer.playerUsername}. I therefore notify him.");
             string targetPlayerName = targettedPlayer.playerUsername;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(originId);
@@ -1120,7 +1198,11 @@ namespace WerewolvesCompany.Managers
         [SerializeField]
         public void NotifyDeathClientRpc(ulong deadId, string causeOfDeathName, ClientRpcParams clientRpcParams = default)
         {
-            Coroner.API.SetCauseOfDeath(GetPlayerById(deadId), CustomDeaths.references[causeOfDeathName]);
+            if (TryGetPlayerById(deadId, out PlayerControllerB deadPlayer) &&
+                CustomDeaths.references.TryGetValue(causeOfDeathName, out AdvancedCauseOfDeath cause))
+            {
+                Coroner.API.SetCauseOfDeath(deadPlayer, cause);
+            }
             
         }
 
@@ -1141,9 +1223,11 @@ namespace WerewolvesCompany.Managers
             logdebug.LogInfo($"Grabbed sender ID: {senderId}");
             //string playerName = GetPlayerById(targetId).GetComponent<PlayerControllerB>().playerUsername;
 
-            string playerName = GetPlayerById(targetId).GetComponent<PlayerControllerB>().playerUsername;
+            if (!TryGetPlayerById(targetId, out PlayerControllerB targetPlayer)) return;
+            string playerName = targetPlayer.playerUsername;
             //string playerName = "test player name";
-            int refInt = allRoles[targetId].refInt; // Find the refInt of the desired role
+            if (!allRoles.TryGetValue(targetId, out Role targetRole)) return;
+            int refInt = targetRole.refInt; // Find the refInt of the desired role
             logdebug.LogInfo($"grabbed refInt of checked role : {refInt}");
 
             // Build the clientRpcParams to only answer to the caller
@@ -1161,7 +1245,7 @@ namespace WerewolvesCompany.Managers
         {
             // Retrieve the role
             logdebug.LogInfo($"Received refInt {refInt}");
-            Role role = References.references()[refInt];
+            if (!References.TryCreateRole(refInt, out Role role)) return;
             logdebug.LogInfo("Reversed the refInt into a Role");
             ((Seer)myRole).NotifyMainActionSuccess(playerName,role);
         }
@@ -1173,7 +1257,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void WerewolfKillPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
-            logdebug.LogInfo($"Received Werewolf kill command from {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername}, towards {GetPlayerById(targetId).playerUsername}");
+            if (!TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB werewolf) ||
+                !TryGetPlayerById(targetId, out PlayerControllerB target)) return;
+            logdebug.LogInfo($"Received Werewolf kill command from {werewolf.playerUsername}, towards {target.playerUsername}");
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             WerewolfKillPlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
         }
@@ -1218,8 +1304,8 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void WitchPoisonPlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
-            string witchName = GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername;
             ulong witchId = serverRpcParams.Receive.SenderClientId;
+            if (!TryGetPlayerById(witchId, out _) || !TryGetPlayerById(targetId, out _)) return;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             WitchPoisonPlayerClientRpc(witchId, clientRpcParams);
         }
@@ -1267,6 +1353,7 @@ namespace WerewolvesCompany.Managers
         public void WitchImmunizePlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
             ulong witchId = serverRpcParams.Receive.SenderClientId;
+            if (!TryGetPlayerById(witchId, out _) || !TryGetPlayerById(targetId, out _)) return;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             WitchImmunizePlayerClientRpc(witchId, clientRpcParams);
         }
@@ -1286,6 +1373,7 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void IdolizeServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
+            if (!TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out _) || !TryGetPlayerById(targetId, out _)) return;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
             IdolizeClientRpc(targetId, clientRpcParams);
         }
@@ -1298,8 +1386,12 @@ namespace WerewolvesCompany.Managers
 
 
         [ServerRpc(RequireOwnership = false)]
-        public void OnSomebodyDeathServerRpc(ulong deadId)
+        public void OnSomebodyDeathServerRpc(ulong deadId, ServerRpcParams serverRpcParams = default)
         {
+            if (deadId != serverRpcParams.Receive.SenderClientId) return;
+            if (!TryGetPlayerById(deadId, out PlayerControllerB deadPlayer) || !deadPlayer.isPlayerDead) return;
+            if (!processedDeaths.Add(deadId)) return;
+
             logdebug.LogInfo("Someone just died");
             // Somebody just died, notify everyone so they can do their stuff
             OnSomebodyDeathClientRpc(deadId);
@@ -1313,10 +1405,22 @@ namespace WerewolvesCompany.Managers
         public void OnSomebodyDeathClientRpc(ulong deadId)
         {
             logdebug.LogInfo("I was notified that somebody died");
+            allPlayersIds = GetAllPlayersIds();
+            allPlayersList = GetAllPlayersIdsNamesDic();
+            allPlayersIds.Remove(deadId);
+            allPlayersList.Remove(deadId);
+            if (roleHUD != null)
+            {
+                roleHUD.voteWindowSelectedPlayer = allPlayersIds.Count == 0
+                    ? 0
+                    : Utils.Modulo(roleHUD.voteWindowSelectedPlayer, allPlayersIds.Count);
+            }
+            if (myRole == null || Utils.localController == null || Utils.localController.isPlayerDead) return;
             // Check for Wild Boy
             if (myRole.GetType() == typeof(WildBoy))
             {
-                if (deadId == ((WildBoy)myRole).idolizedId.Value)
+                ulong? idolizedId = ((WildBoy)myRole).idolizedId;
+                if (idolizedId.HasValue && deadId == idolizedId.Value)
                 {
                     BecomeWerewolfServerRpc(myRole.roleName);
                 }
@@ -1343,9 +1447,13 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void BecomeWerewolfServerRpc(string reason, ServerRpcParams serverRpcParams = default)
         {
-            allRoles[serverRpcParams.Receive.SenderClientId] = new Werewolf();
+            if (allRoles == null || !allRoles.ContainsKey(serverRpcParams.Receive.SenderClientId)) return;
+            Role werewolfRole = new Werewolf();
+            werewolfRole.InitiateCooldowns();
+            allRoles[serverRpcParams.Receive.SenderClientId] = werewolfRole;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(serverRpcParams.Receive.SenderClientId);
             BecomeWerewolfClientRpc(reason, clientRpcParams);
+            QueryAllRolesFromServer(sendToAllPlayers: true);
 
         }
 
@@ -1368,7 +1476,9 @@ namespace WerewolvesCompany.Managers
         [ServerRpc(RequireOwnership = false)]
         public void CupidRomancePlayerServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
-            logdebug.LogInfo($"Received Cupid romance command from {GetPlayerById(serverRpcParams.Receive.SenderClientId).playerUsername}, towards {GetPlayerById(targetId).playerUsername}");
+            if (!TryGetPlayerById(serverRpcParams.Receive.SenderClientId, out PlayerControllerB cupid) ||
+                !TryGetPlayerById(targetId, out PlayerControllerB target)) return;
+            logdebug.LogInfo($"Received Cupid romance command from {cupid.playerUsername}, towards {target.playerUsername}");
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
             CupidRomancePlayerClientRpc(serverRpcParams.Receive.SenderClientId, clientRpcParams);
         }
@@ -1389,6 +1499,7 @@ namespace WerewolvesCompany.Managers
         public void CupidSendLoversTheirLoverServerRpc(ulong firstLoverId, ulong secondLoverId,  ServerRpcParams serverRpcParams = default)
         {
             ulong cupidId = serverRpcParams.Receive.SenderClientId;
+            if (!TryGetPlayerById(cupidId, out _) || !TryGetPlayerById(firstLoverId, out _) || !TryGetPlayerById(secondLoverId, out _)) return;
             // Send to first lover
             ClientRpcParams firstLoverclientRpcParams = Utils.BuildClientRpcParams(firstLoverId);
             CupidSendLoversTheirLoverClientRpc(cupidId, secondLoverId, firstLoverclientRpcParams);
@@ -1426,9 +1537,13 @@ namespace WerewolvesCompany.Managers
         public void AlphaWerewolfTransformToWerewolfServerRpc(ulong targetId, ServerRpcParams serverRpcParams = default)
         {
             ulong alphaId = serverRpcParams.Receive.SenderClientId;
+            if (allRoles == null || !allRoles.ContainsKey(alphaId) || !TryGetPlayerById(targetId, out _)) return;
             ClientRpcParams clientRpcParams = Utils.BuildClientRpcParams(targetId);
-            allRoles[targetId] = new Werewolf();
+            Role werewolfRole = new Werewolf();
+            werewolfRole.InitiateCooldowns();
+            allRoles[targetId] = werewolfRole;
             AlphaWerewolfTransformToWerewolfClientRpc(alphaId, clientRpcParams);
+            QueryAllRolesFromServer(sendToAllPlayers: true);
         }
         
         [ClientRpc]
@@ -1440,9 +1555,6 @@ namespace WerewolvesCompany.Managers
 
             // Set role cd to 30s
             myRole.currentMainActionCooldown = configManager.AlphaWerewolfCooldownAfterTransform.Value;
-
-            // Update the roles list to all other clients
-            QueryAllRolesServerRpc(sendToAllPlayers: true);
 
             NotifyMainActionSuccessServerRpc(alphaId);
         }

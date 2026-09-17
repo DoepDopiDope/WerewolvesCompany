@@ -13,7 +13,7 @@ namespace WerewolvesCompany.Patches
         static public ManualLogSource logger = Plugin.Instance.logger;
         static public ManualLogSource logdebug = Plugin.Instance.logdebug;
         
-        static private RoleHUD roleHUD = Plugin.Instance.roleHUD;
+        static private RoleHUD roleHUD => Plugin.Instance.roleHUD;
         static private RolesManager rolesManager => Plugin.Instance.rolesManager;
         static private QuotaManager quotaManager => Plugin.Instance.quotaManager;
         static private ConfigManager configManager => Plugin.Instance.configManager;
@@ -24,6 +24,7 @@ namespace WerewolvesCompany.Patches
         {
             if (!(__instance == Utils.GetLocalPlayerControllerB())) return;
             if (!__instance.IsOwner) return;
+            if (rolesManager == null || roleHUD == null) return;
             if (rolesManager.myRole == null) return;
 
             // Check for player in range
@@ -56,9 +57,11 @@ namespace WerewolvesCompany.Patches
             // SKip if not killing the local controller
             if (!(__instance == Utils.GetLocalPlayerControllerB())) return;
             if (!__instance.IsOwner) return;
+            if (rolesManager == null || rolesManager.myRole == null || roleHUD == null) return;
 
             // Reset role to its initial state
             Plugin.Instance.rolesManager.myRole = References.GetRoleByName(Plugin.Instance.rolesManager.myRole.roleName);
+            Plugin.Instance.rolesManager.myRole.InitiateCooldowns();
             logger.LogInfo("Role has been reset due to death");
 
             // Notify server of death
@@ -77,6 +80,7 @@ namespace WerewolvesCompany.Patches
         [HarmonyPatch("ShowNameBillboard")]
         static void ShowRoleSpecificColor(PlayerControllerB __instance)
         {
+            if (rolesManager == null || configManager == null) return;
             // Default color
             __instance.usernameBillboardText.color = UnityEngine.Color.white;
 

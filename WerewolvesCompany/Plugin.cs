@@ -25,7 +25,7 @@ namespace WerewolvesCompany
     {
         const string GUID = "doep.WerewolvesCompany";
         const string NAME = "WerewolvesCompany";
-        const string VERSION = "0.6.0";
+        const string VERSION = "0.7.0";
 
         internal static InputsKeybinds InputActionsInstance;
 
@@ -45,7 +45,6 @@ namespace WerewolvesCompany
         public RolesManager rolesManager;
         public ConfigManager configManager;
         public RoleHUD roleHUD;
-        public CooldownManager cooldownManager;
         public QuotaManager quotaManager;
         
 
@@ -88,10 +87,6 @@ namespace WerewolvesCompany
             logdebug.LogInfo("Setting up the config");
             ConfigParameters.ConfigSetup();
 
-            // Harmony Patches
-            logdebug.LogInfo("Harmony patching");
-            harmony.PatchAll();
-
             // Initialize the random number generator
             logdebug.LogInfo("Initiate the random generator");
             rng = new System.Random();
@@ -101,14 +96,31 @@ namespace WerewolvesCompany
             logdebug.LogInfo("Creating the roles manager");
             string assetDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "netcodemod");
             AssetBundle bundle = AssetBundle.LoadFromFile(assetDir);
+            if (bundle == null)
+            {
+                throw new FileNotFoundException($"Could not load the WerewolvesCompany asset bundle: {assetDir}", assetDir);
+            }
+
             rolesManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/RolesManager.prefab");
+            if (rolesManagerPrefab == null)
+            {
+                throw new InvalidDataException("The netcodemod asset bundle does not contain RolesManager.prefab.");
+            }
             rolesManagerPrefab.AddComponent<RolesManager>();
 
 
             // Load asset bundle for ParametersManager
             logdebug.LogInfo("Creating the config manager");
             configManagerPrefab = bundle.LoadAsset<GameObject>("Assets/WerewolvesCompany/ConfigManager.prefab");
+            if (configManagerPrefab == null)
+            {
+                throw new InvalidDataException("The netcodemod asset bundle does not contain ConfigManager.prefab.");
+            }
             configManagerPrefab.AddComponent<ConfigManager>();
+
+            // Apply patches only after every object used by a patch has been initialized.
+            logdebug.LogInfo("Harmony patching");
+            harmony.PatchAll();
 
 
             // Create a persistent ModManager to handle game initialization
@@ -183,10 +195,8 @@ namespace WerewolvesCompany
 
         void Start()
         {
-            InitializeRolesManager();
-            InitializeConfigManager();
             InitializeHUD();
-            //InitializeCooldownManager();
+            InitializeQuotaManager();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -198,29 +208,14 @@ namespace WerewolvesCompany
             //InitializeRolesManager();
         }
 
-        private void InitializeRolesManager()
+        private void OnDestroy()
         {
-            if (FindObjectOfType<RolesManager>() == null)
-            {
-                GameObject rolesManagerObject = new GameObject("RolesManager");
-                rolesManagerObject.AddComponent<RolesManager>();
-                logdebug.LogWarning("RolesManager has been recreated.");
-                Plugin.Instance.rolesManager = rolesManagerObject.GetComponent<RolesManager>();
-            }
+            if (Instance != this) return;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            Instance = null;
+            if (Plugin.Instance != null && Plugin.Instance.modManager == this)
+                Plugin.Instance.modManager = null;
         }
-
-        private void InitializeConfigManager()
-        {
-            if (FindObjectOfType<ConfigManager>() == null)
-            {
-                GameObject rolesManagerObject = new GameObject("ConfigManager");
-                rolesManagerObject.AddComponent<ConfigManager>();
-                logdebug.LogWarning("ConfigManager has been recreated.");
-                Plugin.Instance.configManager = rolesManagerObject.GetComponent<ConfigManager>();
-            }
-        }
-
-
 
         private void InitializeHUD()
         {
